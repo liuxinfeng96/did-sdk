@@ -7,7 +7,6 @@ import (
 	"crypto/rsa"
 	"did-sdk/utils"
 	"encoding/base64"
-	"encoding/json"
 	"errors"
 	"time"
 
@@ -19,7 +18,7 @@ import (
 
 // PkProofJSON the type of proof signed using a public key algorithm
 type PkProofJSON struct {
-	ProofType          string `json:"type"`
+	Type               string `json:"type"`
 	Created            string `json:"created"`
 	ProofPurpose       string `json:"proofPurpose"`
 	VerificationMethod string `json:"verificationMethod"`
@@ -32,8 +31,8 @@ type PkProofJSON struct {
 // @params verificationMethod did中的验证方法，通常指向一个验证方法的详情
 // @params algorithm：公钥算法（如果为空，可自行解析）
 // @params hash：信息做摘要的哈希类型
-// @return 证明的JSON字符串
-func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash string) ([]byte, error) {
+// @return PkProofJSON 证明的结构
+func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash string) (*PkProofJSON, error) {
 
 	// 使用bcx509包里的解析密钥方法，反序列化密钥，不采用[chainmaker common]包是为了支持Secp256k1公钥算法
 	privateKey, err := bcx509.ParsePrivateKey(skPem)
@@ -52,7 +51,7 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 		setAlgo, isSm2 bool
 	)
 
-	// If the incoming public key algorithm is empty, parse the public key algorithm yourself
+	// 如果传入的公钥算法名称为空，通过密钥类型设置算法名称
 	if len(algorithm) == 0 {
 		setAlgo = true
 	}
@@ -97,7 +96,7 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 
 	var signerOpts crypto.SignerOpts = cryptoHash
 
-	// sign the incoming msg
+	// 对传入的信息进行签名
 	signature, err := key.Sign(rand.Reader, msg, signerOpts)
 	if err != nil {
 		return nil, err
@@ -107,16 +106,13 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 
 	signBase64 := base64.StdEncoding.EncodeToString(signature)
 
-	proofJSON := &PkProofJSON{
-		ProofType:          algorithm,
+	return &PkProofJSON{
+		Type:               algorithm,
 		Created:            created,
 		ProofPurpose:       "assertionMethod",
 		VerificationMethod: verificationMethod,
 		ProofValue:         signBase64,
-	}
-
-	return json.Marshal(proofJSON)
-
+	}, nil
 }
 
 // VerifyPKProof 通过公钥验证证明
@@ -125,15 +121,7 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 // @params pkPem：公钥的PEM编码格式
 // @params hash：信息做摘要的哈希类型
 // @return bool 验证结果
-func VerifyPKProof(msg, proof, pkPem []byte, hash string) (bool, error) {
-
-	var proofJson PkProofJSON
-
-	// 反序列化证明内容
-	err := json.Unmarshal(proof, &proofJson)
-	if err != nil {
-		return false, err
-	}
+func VerifyPKProof(msg, pkPem []byte, proof *PkProofJSON, hash string) (bool, error) {
 
 	// 使用bcx509包里的解析公钥方法，反序列化公钥，不采用[chainmaker common]包是为了支持Secp256k1公钥算法
 	publicKey, err := bcx509.ParsePublicKey(pkPem)
@@ -158,7 +146,7 @@ func VerifyPKProof(msg, proof, pkPem []byte, hash string) (bool, error) {
 	}
 
 	// 将签名内容base64解码
-	signature, err := base64.StdEncoding.DecodeString(proofJson.ProofValue)
+	signature, err := base64.StdEncoding.DecodeString(proof.ProofValue)
 	if err != nil {
 		return false, err
 	}
