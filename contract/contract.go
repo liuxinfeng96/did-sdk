@@ -14,7 +14,8 @@ const (
 	// Contract_Did DID's contract name
 	Contract_Did = "ChainMakerDid"
 	// Method_DidMethod method "DidMethod"
-	Method_DidMethod = "DidMethod"
+	Method_DidMethod      = "DidMethod"
+	Method_AddDidDocument = "AddDidDocument"
 )
 
 // DealTxResponse parse the response returned by the transaction
