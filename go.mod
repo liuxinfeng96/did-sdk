@@ -3,16 +3,17 @@ module did-sdk
 go 1.19
 
 require (
+	chainmaker.org/chainmaker/pb-go/v2 v2.3.3
 	chainmaker.org/chainmaker/sdk-go/v2 v2.3.3
 	github.com/ethereum/go-ethereum v1.9.16
 	github.com/liuxinfeng96/bc-crypto v0.2.18
+	github.com/mr-tron/base58 v1.2.0
 	github.com/test-go/testify v1.1.4
 	github.com/tjfoc/gmsm v1.4.1
 )
 
 require (
 	chainmaker.org/chainmaker/common/v2 v2.3.2 // indirect
-	chainmaker.org/chainmaker/pb-go/v2 v2.3.3 // indirect
 	chainmaker.org/chainmaker/protocol/v2 v2.3.3 // indirect
 	chainmaker.org/chainmaker/utils/v2 v2.3.3 // indirect
 	github.com/Rican7/retry v0.1.0 // indirect
@@ -41,7 +42,6 @@ require (
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
-	github.com/mr-tron/base58 v1.2.0 // indirect
 	github.com/opentracing/opentracing-go v1.1.0 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
 	github.com/pingcap/errors v0.11.5-0.20190809092503-95897b64e011 // indirect
