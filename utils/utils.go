@@ -66,3 +66,13 @@ func ISO8601TimeToUnix(t string) (int64, error) {
 
 	return ti.Unix(), nil
 }
+
+func GetHashTypeByAlgorithm(algo string) string {
+	var hash string
+	if algo == "SM2" {
+		hash = "SM3"
+	} else {
+		hash = "SHA-256"
+	}
+	return hash
+}

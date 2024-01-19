@@ -142,13 +142,8 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 
 	for k, v := range keyInfo {
 		keyId := did + "#keys-" + strconv.Itoa(k)
-		var hash string
-		if v.Algorithm == "SM2" {
-			hash = "SM3"
-		} else {
-			hash = "SHA-256"
-		}
-		pf, err := proof.GenerateProofByKey(v.SkPEM, docByte, keyId, v.Algorithm, hash)
+
+		pf, err := proof.GenerateProofByKey(v.SkPEM, docByte, keyId, v.Algorithm, utils.GetHashTypeByAlgorithm(v.Algorithm))
 		if err != nil {
 			return nil, err
 		}
