@@ -162,7 +162,7 @@ func AddDidDocToChain(doc string, client *cmsdk.ChainClient) error {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "did",
+		Key:   "didDocument",
 		Value: []byte(doc),
 	})
 
@@ -172,6 +172,86 @@ func AddDidDocToChain(doc string, client *cmsdk.ChainClient) error {
 	}
 
 	return nil
+}
+
+// IsValidDidOnChain 判断DID在链上是否有效（格式、是否在黑名单）
+// @params did：DID
+// @params client：长安链客户端
+func IsValidDidOnChain(did string, client *cmsdk.ChainClient) (bool, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "did",
+		Value: []byte(did),
+	})
+
+	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_IsValidDid, params, client)
+	if err != nil {
+		return false, err
+	}
+
+	if string(resp) == "true" {
+		return true, nil
+	}
+
+	return false, nil
+}
+
+// GetDidDocFromChain 通过DID在链上获取DID文档
+// @params did：DID
+// @params client：长安链客户端
+func GetDidDocFromChain(did string, client *cmsdk.ChainClient) ([]byte, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "did",
+		Value: []byte(did),
+	})
+
+	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetDidDocument, params, client)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+// GetDidByPkFromChain 通过PK获取DID
+// @params pkPem：公钥的PEM编码
+// @params client：长安链客户端
+func GetDidByPkFromChain(pkPem string, client *cmsdk.ChainClient) (string, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "pubKey",
+		Value: []byte(pkPem),
+	})
+
+	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetDidByPubkey, params, client)
+	if err != nil {
+		return "", err
+	}
+
+	return string(resp), nil
+}
+
+// GetDidByAddressFromChain 通过Address获取DID
+// @params address：公钥的PEM编码
+// @params client：长安链客户端
+func GetDidByAddressFromChain(address string, client *cmsdk.ChainClient) (string, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "address",
+		Value: []byte(address),
+	})
+
+	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetDidByPubkey, params, client)
+	if err != nil {
+		return "", err
+	}
+
+	return string(resp), nil
 }
 
 func sha256Hash(str []byte) []byte {

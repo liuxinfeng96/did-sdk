@@ -14,8 +14,17 @@ const (
 	// Contract_Did DID's contract name
 	Contract_Did = "ChainMakerDid"
 	// Method_DidMethod method "DidMethod"
-	Method_DidMethod      = "DidMethod"
+	Method_DidMethod = "DidMethod"
+	// Method_AddDidDocument method "AddDidDocument"
 	Method_AddDidDocument = "AddDidDocument"
+	// Method_IsValidDid method "IsValidDid"
+	Method_IsValidDid = "IsValidDid"
+	// Method_GetDidDocument method "GetDidDocument"
+	Method_GetDidDocument = "GetDidDocument"
+	// Method_GetDidByPubkey method "GetDidByPubkey"
+	Method_GetDidByPubkey = "GetDidByPubkey"
+	// Method_GetDidByAddress method "GetDidByAddress"
+	Method_GetDidByAddress = "GetDidByAddress"
 )
 
 // DealTxResponse parse the response returned by the transaction
