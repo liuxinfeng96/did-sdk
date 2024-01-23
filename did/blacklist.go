@@ -1,1 +1,98 @@
 package did
+
+import (
+	"did-sdk/contract"
+	"encoding/json"
+	"strconv"
+
+	"chainmaker.org/chainmaker/pb-go/v2/common"
+	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
+)
+
+// AddDidBlackListToChain
+// @params dids: did列表
+// @params client: 长安链客户端
+func AddDidBlackListToChain(dids []string, client *cmsdk.ChainClient) error {
+
+	didsBytes, err := json.Marshal(dids)
+	if err != nil {
+		return err
+	}
+
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "dids",
+		Value: []byte(didsBytes),
+	})
+
+	_, err = contract.InvokeContract(contract.Contract_Did, contract.Method_AddBlackList, params, client)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetDidBlackListFromChain
+// @params didSearch：搜索的DID关键字
+// @params start：开始的索引，默认从0开始
+// @params count：要获取的数量，默认0表示获取所有
+// @params client：长安链客户端
+func GetDidBlackListFromChain(didSearch string, start int, count int,
+	client *cmsdk.ChainClient) ([]string, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "didSearch",
+		Value: []byte(didSearch),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "start",
+		Value: []byte(strconv.Itoa(start)),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "count",
+		Value: []byte(strconv.Itoa(count)),
+	})
+
+	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetBlackList, params, client)
+	if err != nil {
+		return nil, err
+	}
+
+	list := make([]string, 0)
+
+	err = json.Unmarshal(resp, &list)
+	if err != nil {
+		return nil, err
+	}
+
+	return list, nil
+}
+
+// DeleteDidBlackListFromChain
+// @params dids: did列表
+// @params client: 长安链客户端
+func DeleteDidBlackListFromChain(dids []string, client *cmsdk.ChainClient) error {
+	didsBytes, err := json.Marshal(dids)
+	if err != nil {
+		return err
+	}
+
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "dids",
+		Value: []byte(didsBytes),
+	})
+
+	_, err = contract.InvokeContract(contract.Contract_Did, contract.Method_DeleteBlackList, params, client)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

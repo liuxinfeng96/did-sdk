@@ -254,6 +254,25 @@ func GetDidByAddressFromChain(address string, client *cmsdk.ChainClient) (string
 	return string(resp), nil
 }
 
+// UpdateDidDocToChain 在链上更新DID文档
+// @params doc：DID文档
+// @params client：长安链客户端
+func UpdateDidDocToChain(doc string, client *cmsdk.ChainClient) error {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   "didDocument",
+		Value: []byte(doc),
+	})
+
+	_, err := contract.InvokeContract(contract.Contract_Did, contract.Method_UpdateDidDocument, params, client)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func sha256Hash(str []byte) []byte {
 	hash := sha256.Sum256(str)
 	return hash[:]

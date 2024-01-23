@@ -25,6 +25,20 @@ const (
 	Method_GetDidByPubkey = "GetDidByPubkey"
 	// Method_GetDidByAddress method "GetDidByAddress"
 	Method_GetDidByAddress = "GetDidByAddress"
+	// Method_UpdateDidDocument method "UpdateDidDocument"
+	Method_UpdateDidDocument = "UpdateDidDocument"
+	// Method_AddBlackList method "AddBlackList"
+	Method_AddBlackList = "AddBlackList"
+	// Method_GetBlackList method "GetBlackList"
+	Method_GetBlackList = "GetBlackList"
+	// Method_DeleteBlackList method "DeleteBlackList"
+	Method_DeleteBlackList = "DeleteBlackList"
+	// Method_AddTrustIssuer method "AddTrustIssuer"
+	Method_AddTrustIssuer = "AddTrustIssuer"
+	// Method_GetTrustIssuer method "GetTrustIssuer"
+	Method_GetTrustIssuer = "GetTrustIssuer"
+	// Method_DeleteTrustIssuer method "DeleteTrustIssuer"
+	Method_DeleteTrustIssuer = "DeleteTrustIssuer"
 )
 
 // DealTxResponse parse the response returned by the transaction
