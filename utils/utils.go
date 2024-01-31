@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"bytes"
+	"encoding/json"
 	"time"
 
 	bccrypto "github.com/liuxinfeng96/bc-crypto"
@@ -75,4 +77,14 @@ func GetHashTypeByAlgorithm(algo string) string {
 		hash = "SHA-256"
 	}
 	return hash
+}
+
+// CompactJson 压缩json字符串，去掉空格换行等
+func CompactJson(raw []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	err := json.Compact(&buf, raw)
+	if err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
 }

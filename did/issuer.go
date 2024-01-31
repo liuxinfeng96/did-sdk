@@ -1,10 +1,11 @@
 package did
 
 import (
-	"did-sdk/contract"
+	"did-sdk/invoke"
 	"encoding/json"
 	"strconv"
 
+	"chainmaker.org/chainmaker/did-contract/model"
 	"chainmaker.org/chainmaker/pb-go/v2/common"
 	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
 )
@@ -26,7 +27,7 @@ func AddTrustIssuerListToChain(dids []string, client *cmsdk.ChainClient) error {
 		Value: []byte(didsBytes),
 	})
 
-	_, err = contract.InvokeContract(contract.Contract_Did, contract.Method_AddTrustIssuer, params, client)
+	_, err = invoke.InvokeContract(invoke.DIDContractName, model.Method_AddTrustIssuer, params, client)
 	if err != nil {
 		return err
 	}
@@ -58,7 +59,7 @@ func GetTrustIssuerListFromChain(didSearch string, start int, count int,
 		Value: []byte(strconv.Itoa(count)),
 	})
 
-	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetTrustIssuer, params, client)
+	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetTrustIssuer, params, client)
 	if err != nil {
 		return nil, err
 	}
@@ -89,7 +90,7 @@ func DeleteTrustIssuerListFromChain(dids []string, client *cmsdk.ChainClient) er
 		Value: []byte(didsBytes),
 	})
 
-	_, err = contract.InvokeContract(contract.Contract_Did, contract.Method_DeleteTrustIssuer, params, client)
+	_, err = invoke.InvokeContract(invoke.DIDContractName, model.Method_DeleteTrustIssuer, params, client)
 	if err != nil {
 		return err
 	}

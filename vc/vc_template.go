@@ -1,6 +1,14 @@
 package vc
 
-import "encoding/json"
+import (
+	"did-sdk/invoke"
+	"encoding/json"
+	"strconv"
+
+	"chainmaker.org/chainmaker/did-contract/model"
+	"chainmaker.org/chainmaker/pb-go/v2/common"
+	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
+)
 
 // SimpleVcTemplate 简易的JSON Schema的VC模板
 type SimpleVcTemplate struct {
@@ -43,4 +51,89 @@ func GenerateSimpleVcTemplate(fieldsMap map[string]string) ([]byte, error) {
 	}
 
 	return json.Marshal(t)
+}
+
+// AddVcTemplateToChain VC模板上链
+// @params id：模板ID
+// @params name：模板名称
+// @params version：模板版本
+// @params template：模板内容，需要JSON schema格式
+// @params client：长安链客户端
+func AddVcTemplateToChain(id string, name string, version string, template []byte, client *cmsdk.ChainClient) error {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcTemplateId,
+		Value: []byte(id),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcTemplateName,
+		Value: []byte(name),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcTemplateVersion,
+		Value: []byte(version),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcTemplate,
+		Value: template,
+	})
+
+	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_SetVcTemplate, params, client)
+	if err != nil {
+		return err
+	}
+
+	list := make([]string, 0)
+
+	err = json.Unmarshal(resp, &list)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetVcTemplateFromChain 从链上获取VC模板
+// @params id：模板ID
+// @params client：长安链客户端
+func GetVcTemplateFromChain(id string, client *cmsdk.ChainClient) ([]byte, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcTemplateId,
+		Value: []byte(id),
+	})
+
+	return invoke.InvokeContract(invoke.DIDContractName, model.Method_GetVcTemplate, params, client)
+}
+
+// GetVcTemplateListFromChain 从链上获取VC模板列表
+// @params nameSearch：模板名称关键字
+// @params start：开始的索引
+// @params count：要获取的数量
+// @params client：长安链客户端
+func GetVcTemplateListFromChain(nameSearch string, start int, count int,
+	client *cmsdk.ChainClient) ([]byte, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcTemplateNameSearch,
+		Value: []byte(nameSearch),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_SearchStart,
+		Value: []byte(strconv.Itoa(start)),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_SearchCount,
+		Value: []byte(strconv.Itoa(count)),
+	})
+
+	return invoke.InvokeContract(invoke.DIDContractName, model.Method_GetVcTemplateList, params, client)
 }

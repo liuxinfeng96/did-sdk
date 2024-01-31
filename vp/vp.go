@@ -1,25 +1,19 @@
 package vp
 
 import (
+	"did-sdk/invoke"
 	"did-sdk/proof"
 	"did-sdk/utils"
-	"did-sdk/vc"
 	"encoding/json"
+
+	"chainmaker.org/chainmaker/did-contract/model"
+	"chainmaker.org/chainmaker/pb-go/v2/common"
+	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
 )
 
 var ContextVP = []string{
 	"https://www.w3.org/2018/credentials/v1",
 	"https://www.w3.org/2018/credentials/examples/v1",
-}
-
-// VerifiablePresentation VP
-type VerifiablePresentation struct {
-	Context              []string                   `json:"context"`
-	Id                   string                     `json:"id"`
-	Type                 []string                   `json:"type"`
-	VerifiableCredential []*vc.VerifiableCredential `json:"verifiableCredential"`
-	Holder               string                     `json:"holder"`
-	Proof                *proof.PkProofJSON         `json:"proof"`
 }
 
 // GenerateVP 生成自己的VP
@@ -31,11 +25,11 @@ type VerifiablePresentation struct {
 func GenerateVP(skPem []byte, algorithm string, holder string,
 	vpId string, vcList []string, vpType ...string) ([]byte, error) {
 
-	var verifiablePresentation VerifiablePresentation
+	var verifiablePresentation model.VerifiablePresentation
 
 	vpType = append(vpType, "VerifiablePresentation")
 	for _, v := range vcList {
-		var verifiableCredential vc.VerifiableCredential
+		var verifiableCredential model.VerifiableCredential
 		err := json.Unmarshal([]byte(v), &verifiableCredential)
 		if err != nil {
 			return nil, err
@@ -55,9 +49,14 @@ func GenerateVP(skPem []byte, algorithm string, holder string,
 		return nil, err
 	}
 
+	msg, err := utils.CompactJson(vpBytes)
+	if err != nil {
+		return nil, err
+	}
+
 	keyId := holder + "#keys-1"
 
-	pf, err := proof.GenerateProofByKey(skPem, vpBytes, keyId,
+	pf, err := proof.GenerateProofByKey(skPem, msg, keyId,
 		algorithm, utils.GetHashTypeByAlgorithm(algorithm))
 	if err != nil {
 		return nil, err
@@ -67,4 +66,20 @@ func GenerateVP(skPem []byte, algorithm string, holder string,
 
 	return json.Marshal(verifiablePresentation)
 
+}
+
+func VerifyVPOnChain(vp string, client *cmsdk.ChainClient) (bool, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VpJson,
+		Value: []byte(vp),
+	})
+
+	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_VerifyVp, params, client)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

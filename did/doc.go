@@ -2,7 +2,7 @@ package did
 
 import (
 	"crypto/sha256"
-	"did-sdk/contract"
+	"did-sdk/invoke"
 	"did-sdk/key"
 	"did-sdk/proof"
 	"did-sdk/utils"
@@ -21,6 +21,8 @@ import (
 	ethcrypto "github.com/ethereum/go-ethereum/crypto"
 
 	bcx509 "github.com/liuxinfeng96/bc-crypto/x509"
+
+	"chainmaker.org/chainmaker/did-contract/model"
 )
 
 const (
@@ -28,38 +30,17 @@ const (
 	DidContext = "https://www.w3.org/ns/did/v1"
 )
 
-// DidDocument the JSON structure of the DID document
-type DidDocument struct {
-	Context            string                `json:"@context"`
-	Id                 string                `json:"id"`
-	Created            string                `json:"created"`
-	Updated            string                `json:"updated"`
-	VerificationMethod []*VerificationMethod `json:"verificationMethod"`
-	Authentication     []string              `json:"authentication"`
-	Controller         []string              `json:"controller"`
-	Proof              []*proof.PkProofJSON  `json:"proof"`
-}
-
-// VerificationMethod the JSON structure of the DID document VerificationMethod
-type VerificationMethod struct {
-	Id           string `json:"id"`
-	Type         string `json:"type"`
-	Controller   string `json:"controller"`
-	PublicKeyPem string `json:"publicKeyPem"`
-	Address      string `json:"address"`
-}
-
 // GetDidMethodFromChain query contract from chain
 // @params client the chainmaker sdk client
 // @return string the did method
 func GetDidMethodFromChain(client *cmsdk.ChainClient) (string, error) {
 
-	resp, err := client.QueryContract(contract.Contract_Did, contract.Method_DidMethod, nil, -1)
+	resp, err := client.QueryContract(invoke.DIDContractName, model.Method_DidMethod, nil, -1)
 	if err != nil {
 		return "", fmt.Errorf("send tx failed, err: [%s]", err.Error())
 	}
 
-	result, err := contract.DealTxResponse(resp, contract.Contract_Did, contract.Method_DidMethod)
+	result, err := invoke.DealTxResponse(resp, invoke.DIDContractName, model.Method_DidMethod)
 	if err != nil {
 		return "", err
 	}
@@ -103,7 +84,7 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 		return nil, err
 	}
 
-	verificationMethod := make([]*VerificationMethod, 0)
+	verificationMethod := make([]*model.VerificationMethod, 0)
 	authentication := make([]string, 0)
 	controller = append(controller, did)
 
@@ -123,7 +104,7 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 
 	created := utils.ISO8601Time(time.Now().Unix())
 
-	doc := &DidDocument{
+	doc := &model.DidDocument{
 		Context:            DidContext,
 		Id:                 did,
 		Created:            created,
@@ -133,24 +114,55 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 		Controller:         controller,
 	}
 
-	docByte, err := json.Marshal(doc)
+	docBytes, err := json.Marshal(doc)
 	if err != nil {
 		return nil, err
 	}
 
-	proofs := make([]*proof.PkProofJSON, 0)
+	msg, err := utils.CompactJson(docBytes)
+	if err != nil {
+		return nil, err
+	}
 
-	for k, v := range keyInfo {
-		keyId := did + "#keys-" + strconv.Itoa(k)
+	var proofBytes []byte
 
-		pf, err := proof.GenerateProofByKey(v.SkPEM, docByte, keyId, v.Algorithm, utils.GetHashTypeByAlgorithm(v.Algorithm))
+	if len(keyInfo) > 1 {
+
+		proofs := make([]*model.Proof, 0)
+
+		for k, v := range keyInfo {
+			keyId := did + "#keys-" + strconv.Itoa(k)
+
+			pf, err := proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, utils.GetHashTypeByAlgorithm(v.Algorithm))
+			if err != nil {
+				return nil, err
+			}
+			proofs = append(proofs, pf)
+		}
+
+		proofBytes, err = json.Marshal(proofs)
 		if err != nil {
 			return nil, err
 		}
-		proofs = append(proofs, pf)
+
+	} else {
+
+		keyId := did + "#keys-1"
+
+		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId, keyInfo[0].Algorithm,
+			utils.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
+		if err != nil {
+			return nil, err
+		}
+
+		proofBytes, err = json.Marshal(pf)
+		if err != nil {
+			return nil, err
+		}
+
 	}
 
-	doc.Proof = proofs
+	doc.Proof = proofBytes
 
 	return json.Marshal(doc)
 }
@@ -166,7 +178,7 @@ func AddDidDocToChain(doc string, client *cmsdk.ChainClient) error {
 		Value: []byte(doc),
 	})
 
-	_, err := contract.InvokeContract(contract.Contract_Did, contract.Method_AddDidDocument, params, client)
+	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_AddDidDocument, params, client)
 	if err != nil {
 		return err
 	}
@@ -185,7 +197,7 @@ func IsValidDidOnChain(did string, client *cmsdk.ChainClient) (bool, error) {
 		Value: []byte(did),
 	})
 
-	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_IsValidDid, params, client)
+	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_IsValidDid, params, client)
 	if err != nil {
 		return false, err
 	}
@@ -208,7 +220,7 @@ func GetDidDocFromChain(did string, client *cmsdk.ChainClient) ([]byte, error) {
 		Value: []byte(did),
 	})
 
-	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetDidDocument, params, client)
+	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetDidDocument, params, client)
 	if err != nil {
 		return nil, err
 	}
@@ -227,7 +239,7 @@ func GetDidByPkFromChain(pkPem string, client *cmsdk.ChainClient) (string, error
 		Value: []byte(pkPem),
 	})
 
-	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetDidByPubkey, params, client)
+	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetDidByPubKey, params, client)
 	if err != nil {
 		return "", err
 	}
@@ -246,7 +258,7 @@ func GetDidByAddressFromChain(address string, client *cmsdk.ChainClient) (string
 		Value: []byte(address),
 	})
 
-	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetDidByPubkey, params, client)
+	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetDidByAddress, params, client)
 	if err != nil {
 		return "", err
 	}
@@ -265,7 +277,7 @@ func UpdateDidDocToChain(doc string, client *cmsdk.ChainClient) error {
 		Value: []byte(doc),
 	})
 
-	_, err := contract.InvokeContract(contract.Contract_Did, contract.Method_UpdateDidDocument, params, client)
+	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_UpdateDidDocument, params, client)
 	if err != nil {
 		return err
 	}
@@ -283,7 +295,7 @@ func base58Encode(hash []byte) string {
 	return encoded
 }
 
-func newVerificationMethod(id, algo, controller string, pkPem []byte) (*VerificationMethod, error) {
+func newVerificationMethod(id, algo, controller string, pkPem []byte) (*model.VerificationMethod, error) {
 
 	var pkDer []byte
 
@@ -304,7 +316,7 @@ func newVerificationMethod(id, algo, controller string, pkPem []byte) (*Verifica
 	bytesAddr := ethcrypto.Keccak256(pkDer)
 	addr := hex.EncodeToString(bytesAddr)[24:]
 
-	return &VerificationMethod{
+	return &model.VerificationMethod{
 		Id:           id,
 		Type:         algo,
 		Controller:   controller,

@@ -2,13 +2,17 @@ package vc
 
 import (
 	"did-sdk/did"
+	"did-sdk/invoke"
 	"did-sdk/key"
 	"did-sdk/proof"
 	"did-sdk/utils"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"time"
 
+	"chainmaker.org/chainmaker/did-contract/model"
+	"chainmaker.org/chainmaker/pb-go/v2/common"
 	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
 	jsonschema "github.com/xeipuuv/gojsonschema"
 )
@@ -18,28 +22,22 @@ var ContextVC = []string{
 	"https://www.w3.org/2018/credentials/examples/v1",
 }
 
-// VerifiableCredential VC的结构内容定义
-type VerifiableCredential struct {
-	Context           []string               `json:"@context"`
-	Id                string                 `json:"id"`
-	Type              []string               `json:"type"`
-	CredentialSubject map[string]interface{} `json:"credentialSubject"`
-	Issuer            string                 `json:"issuer"`
-	IssuanceDate      string                 `json:"issuanceDate"`
-	ExpirationDate    string                 `json:"expirationDate"`
-	Proof             *proof.PkProofJSON     `json:"proof"`
-}
-
 // IssueVC 颁发VC
 // @params keyInfo：颁发者的密钥信息
 // @params subject：颁发信息主体，对应VC中的`credentialSubject`字段
 // @params client：需要生成DID，并且在链上校验是否具有颁发资格
 // @params vcId：VC的`id`字段，可以根据业务自定义
 // @params expirationDate：VC的到期时间
-// @params vcTemplate：VC的模板内容，是一个JSON schema，一般存储在链上
+// @params vcTemplateId：VC的模板Id，在链上获取VC模板
 // @params vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写“VerifiableCredential”,可继续根据业务类型追加）
 func IssueVC(keyInfo *key.KeyInfo, subject map[string]interface{}, client *cmsdk.ChainClient,
-	vcId string, expirationDate int64, vcTemplate []byte, vcType ...string) ([]byte, error) {
+	vcId string, expirationDate int64, vcTemplateId string, vcType ...string) ([]byte, error) {
+
+	// 链上获取模板
+	vcTemplate, err := GetVcTemplateFromChain(vcTemplateId, client)
+	if err != nil {
+		return nil, err
+	}
 
 	// 验证subject是否符合VC模板规范
 	ok, err := verifyCredentialSubject(subject, vcTemplate)
@@ -48,18 +46,25 @@ func IssueVC(keyInfo *key.KeyInfo, subject map[string]interface{}, client *cmsdk
 	}
 
 	vcType = append(vcType, "VerifiableCredential")
-
 	issuer, err := did.GenerateDidByPK(keyInfo.PkPEM, client)
 	if err != nil {
 		return nil, err
 	}
 
-	// TODO 校验Issuer是否具有颁发权限
+	// 校验Issuer是否具有颁发权限
+	list, err := did.GetTrustIssuerListFromChain(issuer, 0, 0, client)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(list) == 0 {
+		return nil, errors.New("not a trusted issuer")
+	}
 
 	issuanceDate := utils.ISO8601Time(time.Now().Unix())
 	expirationDateStr := utils.ISO8601Time(expirationDate)
 
-	vc := &VerifiableCredential{
+	vc := &model.VerifiableCredential{
 		Context:           ContextVC,
 		Id:                vcId,
 		Type:              vcType,
@@ -74,8 +79,13 @@ func IssueVC(keyInfo *key.KeyInfo, subject map[string]interface{}, client *cmsdk
 		return nil, err
 	}
 
+	msg, err := utils.CompactJson(vcBytes)
+	if err != nil {
+		return nil, err
+	}
+
 	keyId := issuer + "#keys-1"
-	pf, err := proof.GenerateProofByKey(keyInfo.SkPEM, vcBytes, keyId,
+	pf, err := proof.GenerateProofByKey(keyInfo.SkPEM, msg, keyId,
 		keyInfo.Algorithm, utils.GetHashTypeByAlgorithm(keyInfo.Algorithm))
 	if err != nil {
 		return nil, err
@@ -109,7 +119,7 @@ func IssueVCLocal(skPem []byte, algorithm string, subject map[string]interface{}
 	issuanceDate := utils.ISO8601Time(time.Now().Unix())
 	expirationDateStr := utils.ISO8601Time(expirationDate)
 
-	vc := &VerifiableCredential{
+	vc := &model.VerifiableCredential{
 		Context:           ContextVC,
 		Id:                vcId,
 		Type:              vcType,
@@ -124,8 +134,13 @@ func IssueVCLocal(skPem []byte, algorithm string, subject map[string]interface{}
 		return nil, err
 	}
 
+	msg, err := utils.CompactJson(vcBytes)
+	if err != nil {
+		return nil, err
+	}
+
 	keyId := issuer + "#keys-1"
-	pf, err := proof.GenerateProofByKey(skPem, vcBytes, keyId,
+	pf, err := proof.GenerateProofByKey(skPem, msg, keyId,
 		algorithm, utils.GetHashTypeByAlgorithm(algorithm))
 	if err != nil {
 		return nil, err
@@ -154,5 +169,27 @@ func verifyCredentialSubject(subject map[string]interface{}, vcTemplate []byte) 
 		return true, nil
 	}
 
-	return false, errors.New("the subject does not meet the format requirements of json schema")
+	errMsg := "invalid credentialSubject, errors:"
+	for _, desc := range result.Errors() {
+		errMsg += fmt.Sprintf("- %s\n", desc)
+	}
+
+	return false, fmt.Errorf(errMsg)
+}
+
+// VerifyVCOnChain
+func VerifyVCOnChain(vc string, client *cmsdk.ChainClient) (bool, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcJson,
+		Value: []byte(vc),
+	})
+
+	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_VerifyVc, params, client)
+	if err != nil {
+		return false, err
+	}
+
+	return true, nil
 }

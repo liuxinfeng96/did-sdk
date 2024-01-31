@@ -1,10 +1,11 @@
 package did
 
 import (
-	"did-sdk/contract"
+	"did-sdk/invoke"
 	"encoding/json"
 	"strconv"
 
+	"chainmaker.org/chainmaker/did-contract/model"
 	"chainmaker.org/chainmaker/pb-go/v2/common"
 	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
 )
@@ -22,11 +23,11 @@ func AddDidBlackListToChain(dids []string, client *cmsdk.ChainClient) error {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "dids",
+		Key:   model.Params_DidList,
 		Value: []byte(didsBytes),
 	})
 
-	_, err = contract.InvokeContract(contract.Contract_Did, contract.Method_AddBlackList, params, client)
+	_, err = invoke.InvokeContract(invoke.DIDContractName, model.Method_AddBlackList, params, client)
 	if err != nil {
 		return err
 	}
@@ -44,21 +45,21 @@ func GetDidBlackListFromChain(didSearch string, start int, count int,
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "didSearch",
+		Key:   model.Params_DidSearch,
 		Value: []byte(didSearch),
 	})
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "start",
+		Key:   model.Params_SearchStart,
 		Value: []byte(strconv.Itoa(start)),
 	})
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "count",
+		Key:   model.Params_SearchCount,
 		Value: []byte(strconv.Itoa(count)),
 	})
 
-	resp, err := contract.InvokeContract(contract.Contract_Did, contract.Method_GetBlackList, params, client)
+	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetBlackList, params, client)
 	if err != nil {
 		return nil, err
 	}
@@ -85,11 +86,11 @@ func DeleteDidBlackListFromChain(dids []string, client *cmsdk.ChainClient) error
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "dids",
+		Key:   model.Params_DidList,
 		Value: []byte(didsBytes),
 	})
 
-	_, err = contract.InvokeContract(contract.Contract_Did, contract.Method_DeleteBlackList, params, client)
+	_, err = invoke.InvokeContract(invoke.DIDContractName, model.Method_DeleteBlackList, params, client)
 	if err != nil {
 		return err
 	}

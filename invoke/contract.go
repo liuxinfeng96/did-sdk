@@ -1,4 +1,4 @@
-package contract
+package invoke
 
 import (
 	"context"
@@ -10,36 +10,8 @@ import (
 	sdkutils "chainmaker.org/chainmaker/sdk-go/v2/utils"
 )
 
-const (
-	// Contract_Did DID's contract name
-	Contract_Did = "ChainMakerDid"
-	// Method_DidMethod method "DidMethod"
-	Method_DidMethod = "DidMethod"
-	// Method_AddDidDocument method "AddDidDocument"
-	Method_AddDidDocument = "AddDidDocument"
-	// Method_IsValidDid method "IsValidDid"
-	Method_IsValidDid = "IsValidDid"
-	// Method_GetDidDocument method "GetDidDocument"
-	Method_GetDidDocument = "GetDidDocument"
-	// Method_GetDidByPubkey method "GetDidByPubkey"
-	Method_GetDidByPubkey = "GetDidByPubkey"
-	// Method_GetDidByAddress method "GetDidByAddress"
-	Method_GetDidByAddress = "GetDidByAddress"
-	// Method_UpdateDidDocument method "UpdateDidDocument"
-	Method_UpdateDidDocument = "UpdateDidDocument"
-	// Method_AddBlackList method "AddBlackList"
-	Method_AddBlackList = "AddBlackList"
-	// Method_GetBlackList method "GetBlackList"
-	Method_GetBlackList = "GetBlackList"
-	// Method_DeleteBlackList method "DeleteBlackList"
-	Method_DeleteBlackList = "DeleteBlackList"
-	// Method_AddTrustIssuer method "AddTrustIssuer"
-	Method_AddTrustIssuer = "AddTrustIssuer"
-	// Method_GetTrustIssuer method "GetTrustIssuer"
-	Method_GetTrustIssuer = "GetTrustIssuer"
-	// Method_DeleteTrustIssuer method "DeleteTrustIssuer"
-	Method_DeleteTrustIssuer = "DeleteTrustIssuer"
-)
+// DIDContractName this contract name
+const DIDContractName = "ChainMakerDid"
 
 // DealTxResponse parse the response returned by the transaction
 // @params resp: the chainmaker tx response

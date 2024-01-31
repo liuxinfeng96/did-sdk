@@ -39,7 +39,7 @@ func TestVerifyPKProof(t *testing.T) {
 	proof, err := GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1", "EC_Secp256k1", "SHA-256")
 	require.Nil(t, err)
 
-	ok, err := VerifyPKProof(msg, keyInfo.PkPEM, proof, "SHA-256")
+	ok, err := VerifyPKProof(msg, keyInfo.PkPEM, proof)
 	require.Nil(t, err)
 	require.Equal(t, true, ok)
 
@@ -51,7 +51,7 @@ func TestVerifyPKProof(t *testing.T) {
 	proof, err = GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1", "SM2", "SM3")
 	require.Nil(t, err)
 
-	ok, err = VerifyPKProof(msg, keyInfo.PkPEM, proof, "SM3")
+	ok, err = VerifyPKProof(msg, keyInfo.PkPEM, proof)
 	require.Nil(t, err)
 	require.Equal(t, true, ok)
 }
