@@ -59,7 +59,7 @@ func GetDidBlackListFromChain(didSearch string, start int, count int,
 		Value: []byte(strconv.Itoa(count)),
 	})
 
-	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetBlackList, params, client)
+	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_GetBlackList, params, client)
 	if err != nil {
 		return nil, err
 	}

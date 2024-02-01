@@ -59,7 +59,7 @@ func GetTrustIssuerListFromChain(didSearch string, start int, count int,
 		Value: []byte(strconv.Itoa(count)),
 	})
 
-	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetTrustIssuer, params, client)
+	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_GetTrustIssuer, params, client)
 	if err != nil {
 		return nil, err
 	}

@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"time"
 
 	"chainmaker.org/chainmaker/did-contract/model"
@@ -186,10 +187,59 @@ func VerifyVCOnChain(vc string, client *cmsdk.ChainClient) (bool, error) {
 		Value: []byte(vc),
 	})
 
-	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_VerifyVc, params, client)
+	_, err := invoke.QueryContract(invoke.DIDContractName, model.Method_VerifyVc, params, client)
 	if err != nil {
 		return false, err
 	}
 
 	return true, nil
+}
+
+func RevokeVCOnChain(vcId string, client *cmsdk.ChainClient) error {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcId,
+		Value: []byte(vcId),
+	})
+
+	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_RevokeVc, params, client)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetVCRevokedListFromChain(vcIdSearch string, start int, count int, client *cmsdk.ChainClient) ([]string, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcTemplateNameSearch,
+		Value: []byte(vcIdSearch),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_SearchStart,
+		Value: []byte(strconv.Itoa(start)),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_SearchCount,
+		Value: []byte(strconv.Itoa(count)),
+	})
+
+	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_GetRevokedVcList, params, client)
+	if err != nil {
+		return nil, err
+	}
+
+	var revokedList []string
+
+	err = json.Unmarshal(resp, &revokedList)
+	if err != nil {
+		return nil, err
+	}
+
+	return revokedList, nil
 }

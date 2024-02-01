@@ -108,7 +108,7 @@ func GetVcTemplateFromChain(id string, client *cmsdk.ChainClient) ([]byte, error
 		Value: []byte(id),
 	})
 
-	return invoke.InvokeContract(invoke.DIDContractName, model.Method_GetVcTemplate, params, client)
+	return invoke.QueryContract(invoke.DIDContractName, model.Method_GetVcTemplate, params, client)
 }
 
 // GetVcTemplateListFromChain 从链上获取VC模板列表
@@ -117,7 +117,7 @@ func GetVcTemplateFromChain(id string, client *cmsdk.ChainClient) ([]byte, error
 // @params count：要获取的数量
 // @params client：长安链客户端
 func GetVcTemplateListFromChain(nameSearch string, start int, count int,
-	client *cmsdk.ChainClient) ([]byte, error) {
+	client *cmsdk.ChainClient) ([]string, error) {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
@@ -135,5 +135,17 @@ func GetVcTemplateListFromChain(nameSearch string, start int, count int,
 		Value: []byte(strconv.Itoa(count)),
 	})
 
-	return invoke.InvokeContract(invoke.DIDContractName, model.Method_GetVcTemplateList, params, client)
+	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_GetVcTemplateList, params, client)
+	if err != nil {
+		return nil, err
+	}
+
+	var vcTemplateList []string
+
+	err = json.Unmarshal(resp, &vcTemplateList)
+	if err != nil {
+		return nil, err
+	}
+
+	return vcTemplateList, nil
 }

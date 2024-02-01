@@ -76,7 +76,7 @@ func VerifyVPOnChain(vp string, client *cmsdk.ChainClient) (bool, error) {
 		Value: []byte(vp),
 	})
 
-	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_VerifyVp, params, client)
+	_, err := invoke.QueryContract(invoke.DIDContractName, model.Method_VerifyVp, params, client)
 	if err != nil {
 		return false, err
 	}

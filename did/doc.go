@@ -35,12 +35,7 @@ const (
 // @return string the did method
 func GetDidMethodFromChain(client *cmsdk.ChainClient) (string, error) {
 
-	resp, err := client.QueryContract(invoke.DIDContractName, model.Method_DidMethod, nil, -1)
-	if err != nil {
-		return "", fmt.Errorf("send tx failed, err: [%s]", err.Error())
-	}
-
-	result, err := invoke.DealTxResponse(resp, invoke.DIDContractName, model.Method_DidMethod)
+	result, err := invoke.QueryContract(invoke.DIDContractName, model.Method_DidMethod, nil, client)
 	if err != nil {
 		return "", err
 	}
@@ -197,12 +192,12 @@ func IsValidDidOnChain(did string, client *cmsdk.ChainClient) (bool, error) {
 		Value: []byte(did),
 	})
 
-	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_IsValidDid, params, client)
+	result, err := invoke.QueryContract(invoke.DIDContractName, model.Method_DidMethod, params, client)
 	if err != nil {
 		return false, err
 	}
 
-	if string(resp) == "true" {
+	if string(result) == "true" {
 		return true, nil
 	}
 
@@ -220,7 +215,7 @@ func GetDidDocFromChain(did string, client *cmsdk.ChainClient) ([]byte, error) {
 		Value: []byte(did),
 	})
 
-	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetDidDocument, params, client)
+	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_GetDidDocument, params, client)
 	if err != nil {
 		return nil, err
 	}
@@ -239,7 +234,7 @@ func GetDidByPkFromChain(pkPem string, client *cmsdk.ChainClient) (string, error
 		Value: []byte(pkPem),
 	})
 
-	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetDidByPubKey, params, client)
+	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_GetDidByPubKey, params, client)
 	if err != nil {
 		return "", err
 	}
@@ -258,7 +253,7 @@ func GetDidByAddressFromChain(address string, client *cmsdk.ChainClient) (string
 		Value: []byte(address),
 	})
 
-	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_GetDidByAddress, params, client)
+	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_GetDidByAddress, params, client)
 	if err != nil {
 		return "", err
 	}
