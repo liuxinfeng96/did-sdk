@@ -1,0 +1,3 @@
+2024-02-02 10:35:01.440	[DEBUG]	[SDK]	v2@v2.3.3/sdk_config.go:1016	[SDK] use tls
+2024-02-02 10:35:01.440	[DEBUG]	[SDK]	testdata/chainmaker_client.go:80	[SDK] create [ContractCreate] to be signed payload
+2024-02-02 10:35:01.629	[DEBUG]	[SDK]	v2@v2.3.3/sdk_user_contract.go:274	[SDK] proposalRequest resp: message:"OK" tx_id:"17afeb1ed47166feca33669944e426a146fc68951b894ca3a70e3a741fdc7f4c" 
