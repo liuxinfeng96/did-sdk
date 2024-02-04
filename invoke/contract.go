@@ -56,17 +56,10 @@ func InvokeContract(contractName, method string,
 			return nil, fmt.Errorf("[%s] subscribe tx failed, the tx type error", txId)
 		}
 
-		// 先判断交易执行的状态
-		if txInfo.Result.Code != common.TxStatusCode_SUCCESS {
-			return nil, fmt.Errorf("[%s] exec tx failed, TxId: [%s], TxStatusCode: [%s], Msg: [%s]",
-				contractAndMethodName, resp.TxId, resp.Code.String(), resp.Message)
-		}
-
-		// 再判断合约执行的状态（状态码在合约里定义）
-		if txInfo.Result.ContractResult.Code != 0 {
-			return nil, fmt.Errorf("[%s] exec contract failed, TxId: [%s], ContractCode: [%d], Msg: [%s], Result: [%s]",
-				contractAndMethodName, resp.TxId, resp.ContractResult.Code,
-				resp.ContractResult.Message, string(resp.ContractResult.Result))
+		if txInfo.Result.Code != common.TxStatusCode_SUCCESS || txInfo.Result.ContractResult.Code != 0 {
+			return nil, fmt.Errorf("exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Msg: [%s], Result: [%s]",
+				txInfo.Payload.TxId, txInfo.Result.Code.String(),
+				txInfo.Result.ContractResult.Code, txInfo.Result.ContractResult.Message, string(txInfo.Result.ContractResult.Result))
 		}
 
 		return txInfo.Result.ContractResult.Result, nil
@@ -93,17 +86,10 @@ func QueryContract(contractName, method string,
 		return nil, fmt.Errorf("[%s] send tx failed, err: [%s]", contractAndMethodName, err.Error())
 	}
 
-	// 先判断交易执行的状态
-	if resp.Code != common.TxStatusCode_SUCCESS {
-		return nil, fmt.Errorf("[%s] exec tx failed, TxId: [%s], TxStatusCode: [%s], Msg: [%s]",
-			contractAndMethodName, resp.TxId, resp.Code.String(), resp.Message)
-	}
-
-	// 再判断合约执行的状态（状态码在合约里定义）
-	if resp.ContractResult.Code != 0 {
-		return nil, fmt.Errorf("[%s] exec contract failed, TxId: [%s], ContractCode: [%d], Msg: [%s], Result: [%s]",
-			contractAndMethodName, resp.TxId, resp.ContractResult.Code,
-			resp.ContractResult.Message, string(resp.ContractResult.Result))
+	if resp.Code != common.TxStatusCode_SUCCESS || resp.ContractResult.Code != 0 {
+		return nil, fmt.Errorf("exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Msg: [%s], Result: [%s]",
+			resp.TxId, resp.Code.String(),
+			resp.ContractResult.Code, resp.ContractResult.Message, string(resp.ContractResult.Result))
 	}
 
 	return resp.ContractResult.Result, nil

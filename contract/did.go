@@ -22,7 +22,7 @@ func (d *DidContract) IsValidDid(did string) (bool, error) {
 	}
 
 	ok = d.dal.isInBlackList(did)
-	if !ok {
+	if ok {
 		return false, errors.New("the did in the black list")
 	}
 

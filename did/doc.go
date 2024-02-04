@@ -26,7 +26,7 @@ import (
 )
 
 const (
-	DidPrefix  = "did:"
+	DidPrefix  = "did"
 	DidContext = "https://www.w3.org/ns/did/v1"
 )
 
@@ -192,7 +192,7 @@ func IsValidDidOnChain(did string, client *cmsdk.ChainClient) (bool, error) {
 		Value: []byte(did),
 	})
 
-	result, err := invoke.QueryContract(invoke.DIDContractName, model.Method_DidMethod, params, client)
+	result, err := invoke.QueryContract(invoke.DIDContractName, model.Method_IsValidDid, params, client)
 	if err != nil {
 		return false, err
 	}
@@ -278,6 +278,107 @@ func UpdateDidDocToChain(doc string, client *cmsdk.ChainClient) error {
 	}
 
 	return nil
+}
+
+// UpdateDidDoc 更新DID文档
+// @params oldDoc：老的DID文档
+// @params keyInfo：密钥信息
+// @params controller：父控制器，可变参数
+func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller ...string) ([]byte, error) {
+
+	var newDoc model.DidDocument
+
+	newDoc.Authentication = oldDoc.Authentication
+	newDoc.Context = oldDoc.Context
+	newDoc.Controller = oldDoc.Controller
+	newDoc.Created = oldDoc.Created
+	newDoc.Updated = oldDoc.Updated
+	newDoc.Id = oldDoc.Id
+	newDoc.VerificationMethod = oldDoc.VerificationMethod
+	newDoc.Service = oldDoc.Service
+
+	if len(keyInfo) != 0 {
+
+		verificationMethod := make([]*model.VerificationMethod, 0)
+		authentication := make([]string, 0)
+
+		if len(controller) != 0 {
+			newDoc.Controller = append(controller, newDoc.Id)
+		}
+
+		for k, v := range keyInfo {
+			keyId := newDoc.Id + "#keys-" + strconv.Itoa(k)
+
+			vm, err := newVerificationMethod(keyId, v.Algorithm, newDoc.Id, v.PkPEM)
+			if err != nil {
+				return nil, err
+			}
+
+			verificationMethod = append(verificationMethod, vm)
+
+			authentication = append(authentication, keyId)
+
+		}
+
+		newDoc.Authentication = authentication
+		newDoc.VerificationMethod = verificationMethod
+	}
+
+	updated := utils.ISO8601Time(time.Now().Unix())
+
+	newDoc.Updated = updated
+
+	docBytes, err := json.Marshal(newDoc)
+	if err != nil {
+		return nil, err
+	}
+
+	msg, err := utils.CompactJson(docBytes)
+	if err != nil {
+		return nil, err
+	}
+
+	var proofBytes []byte
+
+	if len(keyInfo) > 1 {
+
+		proofs := make([]*model.Proof, 0)
+
+		for k, v := range keyInfo {
+			keyId := newDoc.Id + "#keys-" + strconv.Itoa(k)
+
+			pf, err := proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, utils.GetHashTypeByAlgorithm(v.Algorithm))
+			if err != nil {
+				return nil, err
+			}
+			proofs = append(proofs, pf)
+		}
+
+		proofBytes, err = json.Marshal(proofs)
+		if err != nil {
+			return nil, err
+		}
+
+	} else {
+
+		keyId := newDoc.Id + "#keys-1"
+
+		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId, keyInfo[0].Algorithm,
+			utils.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
+		if err != nil {
+			return nil, err
+		}
+
+		proofBytes, err = json.Marshal(pf)
+		if err != nil {
+			return nil, err
+		}
+
+	}
+
+	newDoc.Proof = proofBytes
+
+	return json.Marshal(newDoc)
 }
 
 func sha256Hash(str []byte) []byte {

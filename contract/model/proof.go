@@ -75,7 +75,7 @@ func (p *Proof) Verify(msg, pkPem []byte) (bool, error) {
 	}
 
 	// 将签名内容base64解码
-	signature, err := base64.StdEncoding.DecodeString(p.ProofPurpose)
+	signature, err := base64.StdEncoding.DecodeString(p.ProofValue)
 	if err != nil {
 		return false, err
 	}

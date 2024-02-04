@@ -103,7 +103,10 @@ func (d *DidContract) isInRevokeVcList(id string) bool {
 func (d *DidContract) SetVcTemplate(id string, name string, version string, template string) error {
 	// 判读是否有权限
 	if !d.isSenderTrustIssuer() {
-		return errors.New("no operation permission")
+		ok, _ := isSenderCreator()
+		if !ok {
+			return errors.New("no operation permission")
+		}
 	}
 
 	err := d.dal.putVcTemplate(id, name, version, template)
