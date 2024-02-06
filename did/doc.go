@@ -79,6 +79,7 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 		return nil, err
 	}
 
+	// 验证方法构造
 	verificationMethod := make([]*model.VerificationMethod, 0)
 	authentication := make([]string, 0)
 	controller = append(controller, did)
@@ -114,6 +115,7 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 		return nil, err
 	}
 
+	// 压缩JSON
 	msg, err := utils.CompactJson(docBytes)
 	if err != nil {
 		return nil, err
@@ -128,6 +130,7 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 		for k, v := range keyInfo {
 			keyId := did + "#keys-" + strconv.Itoa(k)
 
+			// 生成证明
 			pf, err := proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, utils.GetHashTypeByAlgorithm(v.Algorithm))
 			if err != nil {
 				return nil, err
@@ -142,8 +145,9 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 
 	} else {
 
-		keyId := did + "#keys-1"
+		keyId := did + "#keys-0"
 
+		// 生成证明
 		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId, keyInfo[0].Algorithm,
 			utils.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
 		if err != nil {

@@ -13,9 +13,11 @@ import (
 
 func TestGetDidMethodFromChain(t *testing.T) {
 
+	// 获取测试长安链客户端
 	c, err := testdata.GetChainmakerClient()
 	require.Nil(t, err)
 
+	// 链上获取DID Method
 	method, err := GetDidMethodFromChain(c)
 	require.Nil(t, err)
 

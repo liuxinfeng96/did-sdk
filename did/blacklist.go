@@ -36,9 +36,9 @@ func AddDidBlackListToChain(dids []string, client *cmsdk.ChainClient) error {
 }
 
 // GetDidBlackListFromChain
-// @params didSearch：搜索的DID关键字
-// @params start：开始的索引，默认从0开始
-// @params count：要获取的数量，默认0表示获取所有
+// @params didSearch：要查找的DID编号（空字符串可以查找全部列表）
+// @params start：开始的索引，0表示从第一个开始
+// @params count：要获取的数量，0表示获取所有
 // @params client：长安链客户端
 func GetDidBlackListFromChain(didSearch string, start int, count int,
 	client *cmsdk.ChainClient) ([]string, error) {

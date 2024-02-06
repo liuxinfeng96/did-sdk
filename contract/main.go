@@ -115,13 +115,11 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 		}
 		return Return(d.DeleteBlackList(dids))
 	case model.Method_GetBlackList:
-		didSearch, err := RequireString(model.Params_DidSearch)
-		if err != nil {
-			return sdk.Error(err.Error())
-		}
+		args := sdk.Instance.GetArgs()
+		didSearch := args[model.Params_VcTemplateNameSearch]
 		start := OptionInt(model.Params_SearchStart, 1)
 		count := OptionInt(model.Params_SearchCount, 1000)
-		return ReturnJson(d.GetBlackList(didSearch, start, count))
+		return ReturnJson(d.GetBlackList(string(didSearch), start, count))
 	case model.Method_RevokeVc:
 		vcId, err := RequireString(model.Params_VcId)
 		if err != nil {
@@ -129,13 +127,11 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 		}
 		return Return(d.RevokeVc(vcId))
 	case model.Method_GetRevokedVcList:
-		vcIdSearch, err := RequireString(model.Params_VcIdSearch)
-		if err != nil {
-			return sdk.Error(err.Error())
-		}
+		args := sdk.Instance.GetArgs()
+		vcIdSearch := args[model.Params_VcTemplateNameSearch]
 		start := OptionInt(model.Params_SearchStart, 1)
 		count := OptionInt(model.Params_SearchCount, 1000)
-		return ReturnJson(d.GetRevokedVcList(vcIdSearch, start, count))
+		return ReturnJson(d.GetRevokedVcList(string(vcIdSearch), start, count))
 	case model.Method_SetVcTemplate:
 		templateId, err := RequireString(model.Params_VcTemplateId)
 		if err != nil {
@@ -159,15 +155,13 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 		if err != nil {
 			return sdk.Error(err.Error())
 		}
-		return ReturnJson(d.GetVcTemplate(templateId))
+		return ReturnBytes(d.GetVcTemplate(templateId))
 	case model.Method_GetVcTemplateList:
-		nameSearch, err := RequireString(model.Params_VcTemplateNameSearch)
-		if err != nil {
-			return sdk.Error(err.Error())
-		}
+		args := sdk.Instance.GetArgs()
+		nameSearch := args[model.Params_VcTemplateNameSearch]
 		start := OptionInt("start", 1)
 		count := OptionInt("count", 1000)
-		return ReturnJson(d.GetVcTemplateList(nameSearch, start, count))
+		return ReturnJson(d.GetVcTemplateList(string(nameSearch), start, count))
 	case model.Method_VerifyVc:
 		vcJson, err := RequireString(model.Params_VcJson)
 		if err != nil {
@@ -197,13 +191,11 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 			}
 			return Return(d.DeleteTrustIssuer(dids))
 		case model.Method_GetTrustIssuer:
-			didSearch, err := RequireString(model.Params_DidSearch)
-			if err != nil {
-				return sdk.Error(err.Error())
-			}
+			args := sdk.Instance.GetArgs()
+			didSearch := args[model.Params_DidSearch]
 			start := OptionInt(model.Params_SearchStart, 1)
 			count := OptionInt(model.Params_SearchCount, 1000)
-			return ReturnJson(d.GetTrustIssuer(didSearch, start, count))
+			return ReturnJson(d.GetTrustIssuer(string(didSearch), start, count))
 		}
 	}
 

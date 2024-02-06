@@ -82,14 +82,7 @@ func AddVcTemplateToChain(id string, name string, version string, template []byt
 		Value: template,
 	})
 
-	resp, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_SetVcTemplate, params, client)
-	if err != nil {
-		return err
-	}
-
-	list := make([]string, 0)
-
-	err = json.Unmarshal(resp, &list)
+	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_SetVcTemplate, params, client)
 	if err != nil {
 		return err
 	}
@@ -112,9 +105,9 @@ func GetVcTemplateFromChain(id string, client *cmsdk.ChainClient) ([]byte, error
 }
 
 // GetVcTemplateListFromChain 从链上获取VC模板列表
-// @params nameSearch：模板名称关键字
-// @params start：开始的索引
-// @params count：要获取的数量
+// @params nameSearch：模板名称关键字（空字符串可以查找全部列表）
+// @params start：开始的索引，0表示从第一个开始
+// @params count：要获取的数量，0表示获取所有
 // @params client：长安链客户端
 func GetVcTemplateListFromChain(nameSearch string, start int, count int,
 	client *cmsdk.ChainClient) ([]string, error) {

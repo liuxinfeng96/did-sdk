@@ -5,6 +5,7 @@ import (
 	"did-sdk/proof"
 	"did-sdk/utils"
 	"encoding/json"
+	"strconv"
 
 	"chainmaker.org/chainmaker/did-contract/model"
 	"chainmaker.org/chainmaker/pb-go/v2/common"
@@ -19,10 +20,11 @@ var ContextVP = []string{
 // GenerateVP 生成自己的VP
 // @params skPem: 私钥的PEM编码
 // @params algorithm: 公钥算法名称
+// @params keyIndex：公钥在DID文档中的索引
 // @params vpId：VP的`id`字段，可以根据业务自定义
 // @params VP中包含的VC列表
 // @params vpType：VP中的`type`字段，描述VP的类型信息（可变参数，默认会填写“VerifiablePresentation”,可继续根据业务类型追加）
-func GenerateVP(skPem []byte, algorithm string, holder string,
+func GenerateVP(skPem []byte, algorithm string, keyIndex int, holder string,
 	vpId string, vcList []string, vpType ...string) ([]byte, error) {
 
 	var verifiablePresentation model.VerifiablePresentation
@@ -54,7 +56,7 @@ func GenerateVP(skPem []byte, algorithm string, holder string,
 		return nil, err
 	}
 
-	keyId := holder + "#keys-1"
+	keyId := holder + "#keys-" + strconv.Itoa(keyIndex)
 
 	pf, err := proof.GenerateProofByKey(skPem, msg, keyId,
 		algorithm, utils.GetHashTypeByAlgorithm(algorithm))
@@ -68,6 +70,9 @@ func GenerateVP(skPem []byte, algorithm string, holder string,
 
 }
 
+// VerifyVPOnChain 在链上验证VP的有效性
+// @params vc: VP的JSON字符串
+// @params client：长安链客户端
 func VerifyVPOnChain(vp string, client *cmsdk.ChainClient) (bool, error) {
 	params := make([]*common.KeyValuePair, 0)
 

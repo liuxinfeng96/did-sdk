@@ -41,8 +41,13 @@ func NewVerifiableCredential(vcJson string) (*VerifiableCredential, error) {
 }
 
 // GetCredentialSubjectID 获取VC凭证的持有者DID
-func (vc *VerifiableCredential) GetCredentialSubjectID() string {
-	return vc.CredentialSubject["id"].(string)
+func (vc *VerifiableCredential) GetCredentialSubjectID() (string, error) {
+	v, ok := vc.CredentialSubject["id"]
+	if !ok {
+		return "", errors.New("the credential subject does not contain ‵id‵")
+	}
+
+	return v.(string), nil
 }
 
 func (vc *VerifiableCredential) Verify(pkPem, template []byte) (bool, error) {

@@ -15,13 +15,18 @@ func (d *DidContract) VerifyVc(vcJson string) (bool, error) {
 		return false, fmt.Errorf("invalid vc: [%s]", err.Error())
 	}
 
+	subId, err := vc.GetCredentialSubjectID()
+	if err != nil {
+		return false, err
+	}
+
 	//检查vc拥有者是否在黑名单中
-	if d.dal.isInBlackList(vc.GetCredentialSubjectID()) {
+	if d.dal.isInBlackList(subId) {
 		return false, errors.New("vc owner is in black list")
 	}
 
 	// 检查签发者是否可信任
-	if d.isTrustIssuer(vc.Issuer) {
+	if !d.isTrustIssuer(vc.Issuer) {
 		return false, errors.New("the issuer of VC is not a trusted issuer on the chain")
 	}
 
@@ -107,6 +112,11 @@ func (d *DidContract) SetVcTemplate(id string, name string, version string, temp
 		if !ok {
 			return errors.New("no operation permission")
 		}
+	}
+
+	value, _ := d.GetVcTemplate(id)
+	if len(value) != 0 {
+		return errors.New("the VC template already exists")
 	}
 
 	err := d.dal.putVcTemplate(id, name, version, template)
