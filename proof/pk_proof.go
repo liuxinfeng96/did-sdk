@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/rand"
 	"crypto/rsa"
+	"did-sdk/key"
 	"did-sdk/utils"
 	"encoding/base64"
 	"errors"
@@ -30,12 +31,12 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 		return nil, err
 	}
 
-	key, ok := privateKey.(crypto.Signer)
+	privKey, ok := privateKey.(crypto.Signer)
 	if !ok {
 		return nil, errors.New("private key does not implement crypto.Signer")
 	}
 
-	cryptoHash := utils.HashStringToHashType(hash)
+	cryptoHash := key.HashStringToHashType(hash)
 
 	var (
 		setAlgo, isSm2 bool
@@ -53,24 +54,24 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 		if sk.Curve == sm2.P256Sm2() {
 			isSm2 = true
 			if setAlgo {
-				algorithm = "SM2"
+				algorithm = key.PkAlgorithmSM2
 			}
 		} else {
 			if setAlgo {
-				algorithm = "ECDSA"
+				algorithm = key.PkAlgorithmECDSA
 			}
 		}
 
 	case *ecdsa.PrivateKey:
 
 		if setAlgo {
-			algorithm = "ECDSA"
+			algorithm = key.PkAlgorithmECDSA
 		}
 
 	case *rsa.PrivateKey:
 
 		if setAlgo {
-			algorithm = "RSA"
+			algorithm = key.PkAlgorithmRSA
 		}
 
 	default:
@@ -87,7 +88,7 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 	var signerOpts crypto.SignerOpts = cryptoHash
 
 	// 对传入的信息进行签名
-	signature, err := key.Sign(rand.Reader, msg, signerOpts)
+	signature, err := privKey.Sign(rand.Reader, msg, signerOpts)
 	if err != nil {
 		return nil, err
 	}

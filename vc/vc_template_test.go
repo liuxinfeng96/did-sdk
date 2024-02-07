@@ -13,9 +13,9 @@ import (
 func TestGenerateSimpleVcTemplate(t *testing.T) {
 	fieldsMap := make(map[string]string)
 
-	fieldsMap["name"] = "姓名"
-	fieldsMap["phoneNumber"] = "手机号"
-	fieldsMap["idNumber"] = "身份证号"
+	fieldsMap["name"] = "姓名1"
+	fieldsMap["phoneNumber"] = "手机号1"
+	fieldsMap["idNumber"] = "身份证号1"
 
 	jsonSchema, err := GenerateSimpleVcTemplate(fieldsMap)
 	require.Nil(t, err)
@@ -29,9 +29,9 @@ func TestAddVcTemplateToChain(t *testing.T) {
 	require.Nil(t, err)
 	fieldsMap := make(map[string]string)
 
-	fieldsMap["name"] = "姓名"
-	fieldsMap["phoneNumber"] = "手机号"
-	fieldsMap["idNumber"] = "身份证号"
+	fieldsMap["name"] = "姓名2"
+	fieldsMap["phoneNumber"] = "手机号2"
+	fieldsMap["idNumber"] = "身份证号2"
 
 	jsonSchema, err := GenerateSimpleVcTemplate(fieldsMap)
 	require.Nil(t, err)
@@ -45,9 +45,9 @@ func TestGetVcTemplateFromChain(t *testing.T) {
 	require.Nil(t, err)
 	fieldsMap := make(map[string]string)
 
-	fieldsMap["name"] = "姓名"
-	fieldsMap["phoneNumber"] = "手机号"
-	fieldsMap["idNumber"] = "身份证号"
+	fieldsMap["name"] = "姓名3"
+	fieldsMap["phoneNumber"] = "手机号3"
+	fieldsMap["idNumber"] = "身份证号3"
 
 	jsonSchema, err := GenerateSimpleVcTemplate(fieldsMap)
 	require.Nil(t, err)

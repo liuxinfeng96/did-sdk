@@ -16,9 +16,9 @@ import (
 func TestIssueVCLocal(t *testing.T) {
 	fieldsMap := make(map[string]string)
 
-	fieldsMap["name"] = "姓名"
-	fieldsMap["phoneNumber"] = "手机号"
-	fieldsMap["idNumber"] = "身份证号"
+	fieldsMap["name"] = "姓名4"
+	fieldsMap["phoneNumber"] = "手机号4"
+	fieldsMap["idNumber"] = "身份证号4"
 
 	jsonSchema, err := GenerateSimpleVcTemplate(fieldsMap)
 	require.Nil(t, err)
@@ -28,9 +28,9 @@ func TestIssueVCLocal(t *testing.T) {
 
 	subject := make(map[string]interface{})
 
-	subject["name"] = "小明"
-	subject["phoneNumber"] = "18705453XXX"
-	subject["idNumber"] = "370687199X010200XX"
+	subject["name"] = "小明1"
+	subject["phoneNumber"] = "1870545XXXX"
+	subject["idNumber"] = "3706871996010200XX"
 
 	e := time.Now().Local().Add(time.Hour * 48).Unix()
 	vcBytes, err := IssueVCLocal(keyInfo.SkPEM, keyInfo.Algorithm, 0, subject,
@@ -43,7 +43,7 @@ func TestIssueVCLocal(t *testing.T) {
 
 	subject2 := make(map[string]interface{})
 
-	subject2["name"] = "小明"
+	subject2["name"] = "小明2"
 	subject2["phoneNumber"] = "18705453XXX"
 	subject2["idNumber"] = "370687199X010200XX"
 	subject2["test"] = "test"
@@ -79,9 +79,9 @@ func TestIssueVC(t *testing.T) {
 
 	fieldsMap := make(map[string]string)
 
-	fieldsMap["name"] = "姓名"
-	fieldsMap["phoneNumber"] = "手机号"
-	fieldsMap["idNumber"] = "身份证号"
+	fieldsMap["name"] = "姓名5"
+	fieldsMap["phoneNumber"] = "手机号5"
+	fieldsMap["idNumber"] = "身份证号5"
 
 	jsonSchema, err := GenerateSimpleVcTemplate(fieldsMap)
 	require.Nil(t, err)
@@ -90,7 +90,7 @@ func TestIssueVC(t *testing.T) {
 	require.Nil(t, err)
 
 	sub := make(map[string]interface{})
-	sub["name"] = "XiaoMing"
+	sub["name"] = "XiaoMing1"
 	sub["phoneNumber"] = "18700001111"
 	sub["idNumber"] = "37068711112222000"
 
@@ -146,9 +146,9 @@ func TestVerifyVCOnChain(t *testing.T) {
 	fieldsMap := make(map[string]string)
 
 	fieldsMap["id"] = "DID"
-	fieldsMap["name"] = "姓名"
-	fieldsMap["phoneNumber"] = "手机号"
-	fieldsMap["idNumber"] = "身份证号"
+	fieldsMap["name"] = "姓名6"
+	fieldsMap["phoneNumber"] = "手机号6"
+	fieldsMap["idNumber"] = "身份证号6"
 
 	jsonSchema, err := GenerateSimpleVcTemplate(fieldsMap)
 	require.Nil(t, err)

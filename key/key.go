@@ -11,6 +11,7 @@ import (
 	"errors"
 
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	bccrypto "github.com/liuxinfeng96/bc-crypto"
 	bcecdsa "github.com/liuxinfeng96/bc-crypto/ecdsa"
 	bcx509 "github.com/liuxinfeng96/bc-crypto/x509"
 	"github.com/tjfoc/gmsm/sm2"
@@ -21,6 +22,18 @@ const (
 	PEMPrivateKeyTypeStr = "PRIVATE KEY"
 	// PEMPublicKeyTypeStr a string suffix for the Type field of the PEM Block when used as a public key
 	PEMPublicKeyTypeStr = "PUBLIC KEY"
+
+	// HashTypeSM3 SM3
+	HashTypeSM3 = "SM3"
+	// HashTypeSHA256 SHA256
+	HashTypeSHA256 = "SHA-256"
+
+	// PkAlgorithmSM2 SM2
+	PkAlgorithmSM2 = "SM2"
+	// PkAlgorithmECDSA ECDSA
+	PkAlgorithmECDSA = "ECDSA"
+	// PkAlgorithmRSA RSA
+	PkAlgorithmRSA = "RSA"
 )
 
 // KeyInfo the asymmetric encryption key information
@@ -46,8 +59,6 @@ var SupportAlgorithm = []string{
 	"EC_NISTP384",
 	"EC_NISTP521",
 	// RSA
-	"RSA512",
-	"RSA1024",
 	"RSA2048",
 	"RSA3072",
 }
@@ -109,20 +120,6 @@ func GenerateKey(algorithm string) (*KeyInfo, error) {
 		}
 
 		return ecdsaKeyMarshal(key, algorithm)
-	case "RSA512":
-		key, err := rsa.GenerateKey(rand.Reader, 512)
-		if err != nil {
-			return nil, err
-		}
-
-		return rsaKeyMarshal(key, algorithm)
-	case "RSA1024":
-		key, err := rsa.GenerateKey(rand.Reader, 1024)
-		if err != nil {
-			return nil, err
-		}
-
-		return rsaKeyMarshal(key, algorithm)
 	case "RSA2048":
 		key, err := rsa.GenerateKey(rand.Reader, 2048)
 		if err != nil {
@@ -256,4 +253,64 @@ func rsaKeyMarshal(key *rsa.PrivateKey, algo string) (*KeyInfo, error) {
 		PkPEM:     pkBuf.Bytes(),
 		Algorithm: algo,
 	}, nil
+}
+
+func GetHashTypeByAlgorithm(algo string) string {
+	var hash string
+	if algo == PkAlgorithmSM2 {
+		hash = HashTypeSM3
+	} else {
+		hash = HashTypeSHA256
+	}
+	return hash
+}
+
+// HashStringToHashType 哈希字符串转换成bc crypto包哈希类型
+//
+//nolint:gocyclo
+func HashStringToHashType(h string) bccrypto.Hash {
+	switch h {
+	case "MD4":
+		return bccrypto.MD4
+	case "MD5":
+		return bccrypto.MD5
+	case "SHA-1":
+		return bccrypto.SHA1
+	case "SHA-224":
+		return bccrypto.SHA224
+	case "SHA-256":
+		return bccrypto.SHA256
+	case "SHA-384":
+		return bccrypto.SHA384
+	case "SHA-512":
+		return bccrypto.SHA512
+	case "MD5+SHA1":
+		return bccrypto.MD5SHA1
+	case "RIPEMD-160":
+		return bccrypto.RIPEMD160
+	case "SHA3-224":
+		return bccrypto.SHA3_224
+	case "SHA3-256":
+		return bccrypto.SHA3_256
+	case "SHA3-384":
+		return bccrypto.SHA3_384
+	case "SHA3-512":
+		return bccrypto.SHA3_512
+	case "SHA-512/224":
+		return bccrypto.SHA512_224
+	case "SHA-512/256":
+		return bccrypto.SHA512 / 256
+	case "BLAKE2s-256":
+		return bccrypto.BLAKE2s_256
+	case "BLAKE2b-256":
+		return bccrypto.BLAKE2b_256
+	case "BLAKE2b-384":
+		return bccrypto.BLAKE2b_384
+	case "BLAKE2b-512":
+		return bccrypto.BLAKE2b_512
+	case "SM3":
+		return bccrypto.SM3
+	default:
+		return bccrypto.Hash(0)
+	}
 }

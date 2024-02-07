@@ -8,7 +8,7 @@
 
 **参数说明**
 
-- algorithm：公钥算法名称，主要支持`SM2`, `EC_Secp256k1`, `EC_NISTP224`, `EC_NISTP256`, `EC_NISTP384`, `EC_NISTP521`, `RSA512`, `RSA1024`, `RSA2048`, `RSA3072` 算法
+- algorithm：公钥算法名称，主要支持`SM2`, `EC_Secp256k1`, `EC_NISTP224`, `EC_NISTP256`, `EC_NISTP384`, `EC_NISTP521`, `RSA2048`, `RSA3072` 算法
 
 **返回值说明**
 

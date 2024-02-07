@@ -26,8 +26,9 @@ import (
 )
 
 const (
-	DidPrefix  = "did"
-	DidContext = "https://www.w3.org/ns/did/v1"
+	DidPrefix                   = "did"
+	DidContext                  = "https://www.w3.org/ns/did/v1"
+	VerificationMethodKeySuffix = "#keys-"
 )
 
 // GetDidMethodFromChain query contract from chain
@@ -85,9 +86,10 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 	controller = append(controller, did)
 
 	for k, v := range keyInfo {
-		keyId := did + "#keys-" + strconv.Itoa(k)
+		keyId := did + VerificationMethodKeySuffix + strconv.Itoa(k)
 
-		vm, err := newVerificationMethod(keyId, v.Algorithm, did, v.PkPEM)
+		var vm *model.VerificationMethod
+		vm, err = newVerificationMethod(keyId, v.Algorithm, did, v.PkPEM)
 		if err != nil {
 			return nil, err
 		}
@@ -128,10 +130,11 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 		proofs := make([]*model.Proof, 0)
 
 		for k, v := range keyInfo {
-			keyId := did + "#keys-" + strconv.Itoa(k)
+			keyId := did + VerificationMethodKeySuffix + strconv.Itoa(k)
 
 			// 生成证明
-			pf, err := proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, utils.GetHashTypeByAlgorithm(v.Algorithm))
+			var pf *model.Proof
+			pf, err = proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, key.GetHashTypeByAlgorithm(v.Algorithm))
 			if err != nil {
 				return nil, err
 			}
@@ -145,11 +148,11 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 
 	} else {
 
-		keyId := did + "#keys-0"
+		keyId := did + VerificationMethodKeySuffix + "0"
 
 		// 生成证明
 		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId, keyInfo[0].Algorithm,
-			utils.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
+			key.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
 		if err != nil {
 			return nil, err
 		}
@@ -311,7 +314,7 @@ func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller .
 		}
 
 		for k, v := range keyInfo {
-			keyId := newDoc.Id + "#keys-" + strconv.Itoa(k)
+			keyId := newDoc.Id + VerificationMethodKeySuffix + strconv.Itoa(k)
 
 			vm, err := newVerificationMethod(keyId, v.Algorithm, newDoc.Id, v.PkPEM)
 			if err != nil {
@@ -349,9 +352,10 @@ func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller .
 		proofs := make([]*model.Proof, 0)
 
 		for k, v := range keyInfo {
-			keyId := newDoc.Id + "#keys-" + strconv.Itoa(k)
+			keyId := newDoc.Id + VerificationMethodKeySuffix + strconv.Itoa(k)
 
-			pf, err := proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, utils.GetHashTypeByAlgorithm(v.Algorithm))
+			var pf *model.Proof
+			pf, err = proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, key.GetHashTypeByAlgorithm(v.Algorithm))
 			if err != nil {
 				return nil, err
 			}
@@ -365,10 +369,10 @@ func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller .
 
 	} else {
 
-		keyId := newDoc.Id + "#keys-1"
+		keyId := newDoc.Id + VerificationMethodKeySuffix + "0"
 
 		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId, keyInfo[0].Algorithm,
-			utils.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
+			key.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
 		if err != nil {
 			return nil, err
 		}

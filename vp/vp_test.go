@@ -17,9 +17,9 @@ import (
 func TestGenerateVP(t *testing.T) {
 	fieldsMap := make(map[string]string)
 
-	fieldsMap["name"] = "姓名"
-	fieldsMap["phoneNumber"] = "手机号"
-	fieldsMap["idNumber"] = "身份证号"
+	fieldsMap["name"] = "姓名6"
+	fieldsMap["phoneNumber"] = "手机号6"
+	fieldsMap["idNumber"] = "身份证号6"
 
 	jsonSchema, err := vc.GenerateSimpleVcTemplate(fieldsMap)
 	require.Nil(t, err)

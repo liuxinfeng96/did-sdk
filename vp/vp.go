@@ -1,7 +1,9 @@
 package vp
 
 import (
+	"did-sdk/did"
 	"did-sdk/invoke"
+	"did-sdk/key"
 	"did-sdk/proof"
 	"did-sdk/utils"
 	"encoding/json"
@@ -56,10 +58,10 @@ func GenerateVP(skPem []byte, algorithm string, keyIndex int, holder string,
 		return nil, err
 	}
 
-	keyId := holder + "#keys-" + strconv.Itoa(keyIndex)
+	keyId := holder + did.VerificationMethodKeySuffix + strconv.Itoa(keyIndex)
 
 	pf, err := proof.GenerateProofByKey(skPem, msg, keyId,
-		algorithm, utils.GetHashTypeByAlgorithm(algorithm))
+		algorithm, key.GetHashTypeByAlgorithm(algorithm))
 	if err != nil {
 		return nil, err
 	}

@@ -99,9 +99,9 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 		return nil, err
 	}
 
-	keyId := issuer + "#keys-" + strconv.Itoa(keyIndex)
+	keyId := issuer + did.VerificationMethodKeySuffix + strconv.Itoa(keyIndex)
 	pf, err := proof.GenerateProofByKey(keyInfo.SkPEM, msg, keyId,
-		keyInfo.Algorithm, utils.GetHashTypeByAlgorithm(keyInfo.Algorithm))
+		keyInfo.Algorithm, key.GetHashTypeByAlgorithm(keyInfo.Algorithm))
 	if err != nil {
 		return nil, err
 	}
@@ -155,9 +155,9 @@ func IssueVCLocal(skPem []byte, algorithm string, keyIndex int, subject map[stri
 		return nil, err
 	}
 
-	keyId := issuer + "#keys-" + strconv.Itoa(keyIndex)
+	keyId := issuer + did.VerificationMethodKeySuffix + strconv.Itoa(keyIndex)
 	pf, err := proof.GenerateProofByKey(skPem, msg, keyId,
-		algorithm, utils.GetHashTypeByAlgorithm(algorithm))
+		algorithm, key.GetHashTypeByAlgorithm(algorithm))
 	if err != nil {
 		return nil, err
 	}
@@ -207,6 +207,7 @@ func VerifyVCOnChain(vc string, client *cmsdk.ChainClient) (bool, error) {
 	_, err := invoke.QueryContract(invoke.DIDContractName, model.Method_VerifyVc, params, client)
 	if err != nil {
 		return false, err
+
 	}
 
 	return true, nil
