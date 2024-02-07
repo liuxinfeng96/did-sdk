@@ -10,7 +10,7 @@ import (
 	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
 )
 
-// AddTrustIssuerListToChain
+// AddTrustIssuerListToChain 在链上添加信任颁发者
 // @params dids：权威颁发者DID列表
 // @params client: 长安链客户端
 func AddTrustIssuerListToChain(dids []string, client *cmsdk.ChainClient) error {
@@ -23,7 +23,7 @@ func AddTrustIssuerListToChain(dids []string, client *cmsdk.ChainClient) error {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "dids",
+		Key:   model.Params_DidList,
 		Value: []byte(didsBytes),
 	})
 
@@ -35,7 +35,7 @@ func AddTrustIssuerListToChain(dids []string, client *cmsdk.ChainClient) error {
 	return nil
 }
 
-// GetTrustIssuerListFromChain
+// GetTrustIssuerListFromChain 从链上获取权威签发者列表
 // @params didSearch：要查找的DID编号（空字符串可以查找全部列表）
 // @params start：开始的索引，0表示从第一个开始
 // @params count：要获取的数量，0表示获取所有
@@ -45,17 +45,17 @@ func GetTrustIssuerListFromChain(didSearch string, start int, count int,
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "didSearch",
+		Key:   model.Params_DidSearch,
 		Value: []byte(didSearch),
 	})
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "start",
+		Key:   model.Params_SearchStart,
 		Value: []byte(strconv.Itoa(start)),
 	})
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "count",
+		Key:   model.Params_SearchCount,
 		Value: []byte(strconv.Itoa(count)),
 	})
 
@@ -86,7 +86,7 @@ func DeleteTrustIssuerListFromChain(dids []string, client *cmsdk.ChainClient) er
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "dids",
+		Key:   model.Params_DidList,
 		Value: []byte(didsBytes),
 	})
 

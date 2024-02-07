@@ -26,9 +26,12 @@ const (
 // KeyInfo the asymmetric encryption key information
 // It includes the public key algorithm name, public key REM code and private key PEM code
 type KeyInfo struct {
+	// 公钥的PEM编码
 	PkPEM []byte
+	// 私钥的PEM编码
 	SkPEM []byte
 
+	// 公钥算法名称
 	Algorithm string
 }
 

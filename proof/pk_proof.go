@@ -19,10 +19,9 @@ import (
 // GenerateProofByKey 通过私钥生成证明
 // @params skPem：私钥的PEM编码
 // @params msg：签名的信息
-// @params verificationMethod did中的验证方法，通常指向一个验证方法的详情
+// @params verificationMethod did中的验证方法，通常是`[DID]#key-[i]`格式
 // @params algorithm：公钥算法（如果为空，可自行解析）
 // @params hash：信息做摘要的哈希类型
-// @return PkProofJSON 证明的结构
 func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash string) (*model.Proof, error) {
 
 	// 使用bcx509包里的解析密钥方法，反序列化密钥，不采用[chainmaker common]包是为了支持Secp256k1公钥算法
@@ -108,8 +107,8 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 
 // VerifyPKProof 通过公钥验证证明
 // @params msg：证明的信息
-// @params proof：证明的内容(序列化的“PkProofJSON”)
 // @params pkPem：公钥的PEM编码格式
+// @params proof：证明的结构（引自合约）
 // @return bool 验证结果
 func VerifyPKProof(msg, pkPem []byte, proof *model.Proof) (bool, error) {
 	// 直接使用合约里的验证方法

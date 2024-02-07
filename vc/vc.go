@@ -23,7 +23,7 @@ var ContextVC = []string{
 	"https://www.w3.org/2018/credentials/examples/v1",
 }
 
-// IssueVC 颁发VC
+// IssueVC 颁发VC（需要链上校验）
 // @params keyInfo：颁发者的密钥信息
 // @params keyIndex：公钥在DID文档中的索引
 // @params subject：颁发信息主体，对应VC中的`credentialSubject`字段

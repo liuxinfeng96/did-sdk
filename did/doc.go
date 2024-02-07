@@ -173,7 +173,7 @@ func AddDidDocToChain(doc string, client *cmsdk.ChainClient) error {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "didDocument",
+		Key:   model.Params_DidDocument,
 		Value: []byte(doc),
 	})
 
@@ -192,7 +192,7 @@ func IsValidDidOnChain(did string, client *cmsdk.ChainClient) (bool, error) {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "did",
+		Key:   model.Params_Did,
 		Value: []byte(did),
 	})
 
@@ -215,7 +215,7 @@ func GetDidDocFromChain(did string, client *cmsdk.ChainClient) ([]byte, error) {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "did",
+		Key:   model.Params_Did,
 		Value: []byte(did),
 	})
 
@@ -234,7 +234,7 @@ func GetDidByPkFromChain(pkPem string, client *cmsdk.ChainClient) (string, error
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "pubKey",
+		Key:   model.Params_DidPubkey,
 		Value: []byte(pkPem),
 	})
 
@@ -253,7 +253,7 @@ func GetDidByAddressFromChain(address string, client *cmsdk.ChainClient) (string
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "address",
+		Key:   model.Params_DidAddress,
 		Value: []byte(address),
 	})
 
@@ -272,7 +272,7 @@ func UpdateDidDocToChain(doc string, client *cmsdk.ChainClient) error {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
-		Key:   "didDocument",
+		Key:   model.Params_DidDocument,
 		Value: []byte(doc),
 	})
 
@@ -284,7 +284,7 @@ func UpdateDidDocToChain(doc string, client *cmsdk.ChainClient) error {
 	return nil
 }
 
-// UpdateDidDoc 更新DID文档
+// UpdateDidDoc 更新DID文档（本地生成）
 // @params oldDoc：老的DID文档
 // @params keyInfo：密钥信息
 // @params controller：父控制器，可变参数
