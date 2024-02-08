@@ -52,8 +52,6 @@ func TestIssueVCLocal(t *testing.T) {
 	_, err = IssueVCLocal(keyInfo.SkPEM, keyInfo.Algorithm, 0, subject2,
 		"did:cmdid:0xadfwfkqwfmkqm", "vc1", e, jsonSchema)
 	require.NotNil(t, err)
-	println(err.Error())
-
 }
 
 func TestIssueVC(t *testing.T) {

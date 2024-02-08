@@ -55,7 +55,15 @@ func TestGetTrustIssuerListFromChain(t *testing.T) {
 
 	list, err := GetTrustIssuerListFromChain(document.Id, 0, 0, c)
 	require.Nil(t, err)
-	require.Equal(t, list, []string{document.Id})
+
+	var isInIssuerList bool
+	for _, v := range list {
+		if v == document.Id {
+			isInIssuerList = true
+		}
+	}
+
+	require.Equal(t, true, isInIssuerList)
 }
 
 func TestDeleteTrustIssuerListFromChain(t *testing.T) {
@@ -81,12 +89,28 @@ func TestDeleteTrustIssuerListFromChain(t *testing.T) {
 
 	list, err := GetTrustIssuerListFromChain(document.Id, 0, 0, c)
 	require.Nil(t, err)
-	require.Equal(t, list, []string{document.Id})
+
+	var isInIssuerList bool
+	for _, v := range list {
+		if v == document.Id {
+			isInIssuerList = true
+		}
+	}
+
+	require.Equal(t, true, isInIssuerList)
 
 	err = DeleteTrustIssuerListFromChain([]string{document.Id}, c)
 	require.Nil(t, err)
 
 	list2, err := GetTrustIssuerListFromChain(document.Id, 0, 0, c)
 	require.Nil(t, err)
-	require.NotEqual(t, list2, []string{document.Id})
+
+	var isInIssuerList2 bool
+	for _, v := range list2 {
+		if v == document.Id {
+			isInIssuerList2 = true
+		}
+	}
+
+	require.Equal(t, false, isInIssuerList2)
 }

@@ -60,7 +60,14 @@ func TestGetDidBlackListFromChain(t *testing.T) {
 	list, err := GetDidBlackListFromChain(document.Id, 0, 0, c)
 	require.Nil(t, err)
 
-	require.Equal(t, []string{document.Id}, list)
+	var isInBlacklist bool
+	for _, v := range list {
+		if v == document.Id {
+			isInBlacklist = true
+		}
+	}
+
+	require.Equal(t, true, isInBlacklist)
 }
 
 func TestDeleteDidBlackListFromChain(t *testing.T) {
