@@ -313,6 +313,7 @@ func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller .
 			newDoc.Controller = append(controller, newDoc.Id)
 		}
 
+		// 多密钥生成VerificationMethod
 		for k, v := range keyInfo {
 			keyId := newDoc.Id + VerificationMethodKeySuffix + strconv.Itoa(k)
 

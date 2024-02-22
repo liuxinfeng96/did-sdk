@@ -10,6 +10,7 @@ require (
 	github.com/ethereum/go-ethereum v1.9.16
 	github.com/liuxinfeng96/bc-crypto v0.2.18
 	github.com/mr-tron/base58 v1.2.0
+	github.com/spf13/cobra v1.1.1
 	github.com/test-go/testify v1.1.4
 	github.com/tjfoc/gmsm v1.4.1
 	github.com/xeipuuv/gojsonschema v1.2.0
@@ -36,6 +37,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway v1.16.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
+	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
