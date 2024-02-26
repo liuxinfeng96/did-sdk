@@ -41,7 +41,13 @@ func docGenCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Generate the did document.
 Example:
-$ cmc doc gen -sks ./testdata/sk.pem -pks ./testdata/pk.pem -als SM2 -c did:cm:test1 -C ./testdata/sdk.yaml -doc ./testdata/doc.json
+$ cmc doc gen \
+-sks ./testdata/sk.pem \
+-pks ./testdata/pk.pem \
+-als SM2 \
+-c did:cm:test1 \ 
+-C ./testdata/sdk.yaml \ 
+-doc ./testdata/doc.json
 `,
 		),
 
@@ -126,7 +132,9 @@ func docAdd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Add the did document to blockchain.
 Example:
-$ cmc doc add -C ./testdata/sdk.yaml -doc ./testdata/doc.json
+$ cmc doc add \
+-C ./testdata/sdk.yaml \
+-doc ./testdata/doc.json
 `,
 		),
 
@@ -175,7 +183,10 @@ func docGet() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get the did document from blockchain.
 Example:
-$ cmc doc get -C ./testdata/sdk.yaml -doc ./testdata/doc.json -d did:cm:test1
+$ cmc doc get \
+-C ./testdata/sdk.yaml \
+-doc ./testdata/doc.json \
+-d did:cm:test1
 `,
 		),
 
@@ -228,7 +239,13 @@ func docUpdateLocal() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Update the did document at local.
 Example:
-$ cmc doc update-local -sks ./testdata/sk.pem -pks ./testdata/pk.pem -als SM2 -c did:cm:test1 -odoc ./testdata/olddoc.json -ndoc ./testdata/newdoc.json
+$ cmc doc update-local \
+-sks ./testdata/sk.pem \
+-pks ./testdata/pk.pem \
+-als SM2 \
+-c did:cm:test1 \
+-odoc ./testdata/olddoc.json \
+-ndoc ./testdata/newdoc.json
 `,
 		),
 
@@ -315,7 +332,9 @@ func docUpdate() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Update the did document on blockchain.
 Example:
-$ cmc doc update -C ./testdata/sdk.yaml -doc ./testdata/doc.json
+$ cmc doc update \
+-C ./testdata/sdk.yaml \
+-doc ./testdata/doc.json
 `,
 		),
 

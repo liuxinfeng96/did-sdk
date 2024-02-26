@@ -75,7 +75,9 @@ func didGenCMD() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Generate did string by public key file.
 Example:
-$ cmc did gen -C ./testdata/sdk.yaml -pk ./testdata/pk.pem
+$ cmc did gen \
+-C ./testdata/sdk.yaml \
+-pk ./testdata/pk.pem
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -124,7 +126,9 @@ func didValidCMD() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Whether did is valid on chain.
 Example:
-$ cmc did valid -d did:cm:test1 -C ./testdata/sdk.yaml
+$ cmc did valid \
+-d did:cm:test1 \
+-C ./testdata/sdk.yaml
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -167,7 +171,9 @@ func didGetCMD() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get the did string by public key or address. 
 Example:
-$ cmc did get -pk ./testdata/pk.pem -C ./testdata/sdk.yaml 
+$ cmc did get \
+-pk ./testdata/pk.pem \
+-C ./testdata/sdk.yaml 
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {

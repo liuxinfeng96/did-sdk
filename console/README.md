@@ -197,7 +197,7 @@ $ ./didc vc issue \
 --subject=./testdata/subject.json \
 --expiration=2025-01-25 \
 --id=111233 \
---template=./testdata/template.json \
+--temp-id=12313213 \
 --type=Identity \
 --vc-path=./testdata/vc.json \
 --sdk-path=./testdata/sdk.yaml
@@ -277,6 +277,7 @@ $ ./didv vc-template add \
 ```shell
 $ ./didv vc-template get \
 --id=151515 \
+--template=./testdata/template.json \
 --sdk-path=./testdata/sdk.yaml
 ```
 
@@ -294,6 +295,17 @@ $ ./didv vc-template list \
 
 
 
+### 生成VC模板
+
+```shell
+$ ./didv vc-template gen \
+--map-key=name,age,sex \
+--map-value=liu,18,man \
+--template=./testdata/temp.json
+```
+
+
+
 ## vp
 
 ### 生成VP
@@ -303,9 +315,11 @@ $ ./didv vp gen \
 --sk-path=./testdata/sk.pem \
 --algo=SM2 \
 --key-index=1 \
+--holder=did:cm:admin \
 --id=1231232 \
---vcs=./testdata/vc1.json,./testdata/vc2.json \
---type=Identity
+--vc-list=./testdata/vc1.json,./testdata/vc2.json \
+--type=Identity \
+--vp-path=./testdata/vp.json
 ```
 
 
