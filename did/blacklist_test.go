@@ -11,7 +11,7 @@ import (
 )
 
 func TestAddDidBlackListToChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")
@@ -37,7 +37,7 @@ func TestAddDidBlackListToChain(t *testing.T) {
 }
 
 func TestGetDidBlackListFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")
@@ -71,7 +71,7 @@ func TestGetDidBlackListFromChain(t *testing.T) {
 }
 
 func TestDeleteDidBlackListFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")

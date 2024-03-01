@@ -14,7 +14,7 @@ import (
 func TestGetDidMethodFromChain(t *testing.T) {
 
 	// 获取测试长安链客户端
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	// 链上获取DID Method
@@ -28,7 +28,7 @@ func TestGenerateDidDoc(t *testing.T) {
 	keyInfo, err := key.GenerateKey("SM2")
 	require.Nil(t, err)
 
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	doc, err := GenerateDidDoc([]*key.KeyInfo{keyInfo}, c)
@@ -41,7 +41,7 @@ func TestAddDidDocToChain(t *testing.T) {
 	keyInfo, err := key.GenerateKey("SM2")
 	require.Nil(t, err)
 
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	doc, err := GenerateDidDoc([]*key.KeyInfo{keyInfo}, c)
@@ -54,7 +54,7 @@ func TestAddDidDocToChain(t *testing.T) {
 }
 
 func TestIsValidDidOnChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("SM2")
@@ -69,7 +69,7 @@ func TestIsValidDidOnChain(t *testing.T) {
 }
 
 func TestGetDidDocFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")
@@ -93,7 +93,7 @@ func TestGetDidDocFromChain(t *testing.T) {
 }
 
 func TestGetDidByAddressFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")
@@ -117,7 +117,7 @@ func TestGetDidByAddressFromChain(t *testing.T) {
 }
 
 func TestGetDidByPkFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")
@@ -141,7 +141,7 @@ func TestGetDidByPkFromChain(t *testing.T) {
 }
 
 func TestUpdateDidDocToChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")

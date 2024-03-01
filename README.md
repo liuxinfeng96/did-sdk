@@ -1,5 +1,51 @@
 # ChainMaker DID SDK
 
+## 合约管理员相关
+
+### SetAdminForDidContract
+
+**功能**：为DID合约设置管理员（仅合约创建者有权限）
+
+**参数说明**
+
+- pubKey：公钥
+- hash：哈希算法（一般与链保持一致）
+- client：长安链客户端
+
+```go
+func SetAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) error
+```
+
+### DeleteAdminForDidContract
+
+**功能**：为DID合约删除管理员（仅合约创建者有权限）
+
+**参数说明**
+
+- pubKey：公钥
+- hash：哈希算法（一般与链保持一致）
+- client：长安链客户端
+
+```go
+func DeleteAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) error
+```
+
+### IsAdminOfDidContract
+
+**功能**：查询是否拥有合约管理员权限
+
+**参数说明**
+
+- pubKey：公钥
+- hash：哈希算法（一般与链保持一致）
+- client：长安链客户端
+
+```go
+func IsAdminOfDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) (bool, error)
+```
+
+
+
 ## 密钥相关
 
 ### GenerateKey
@@ -446,7 +492,42 @@ func GetVcTemplateFromChain(id string, client *cmsdk.ChainClient) ([]byte, error
 - client：长安链客户端
 
 ```go
-func GetVcTemplateListFromChain(nameSearch string, start int, count int, client *cmsdk.ChainClient) ([]string, error)
+func GetVcTemplateListFromChain(nameSearch string, start int, count int, client *cmsdk.ChainClient) ([]*model.VcTemplate, error) 
+```
+
+
+
+### AddVcIssueLogToChain
+
+功能：在链上添加VC签发日志
+
+**参数说明**
+
+- issuer：签发者DID（需要在链上被认可）
+- did：被签发者did
+- vcId：VC业务编号
+- vcTemplateId：模板编号
+- client：长安链客户端
+
+```go
+func AddVcIssueLogToChain(issuer, did, vcId, vcTemplateId string, client *cmsdk.ChainClient) error
+```
+
+
+
+### GetVcIssueLogListFromChain
+
+**功能**：从链上获取VC签发日志列表
+
+**参数说明**
+
+- vcIdSearch：VC编号关键字（空字符串可以查找全部列表）
+- start：开始的索引，0表示从第一个开始
+- count：要获取的数量，0表示获取所有
+- client：长安链客户端
+
+```go
+func GetVcIssueLogListFromChain(vcIdSearch string, start int, count int, client *cmsdk.ChainClient)  ([]model.VcIssueLog, error)
 ```
 
 

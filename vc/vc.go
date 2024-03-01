@@ -35,6 +35,17 @@ var ContextVC = []string{
 func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{}, client *cmsdk.ChainClient,
 	vcId string, expirationDate int64, vcTemplateId string, vcType ...string) ([]byte, error) {
 
+	// 获取sunject中的DID
+	d, ok := subject["id"]
+	if !ok {
+		return nil, errors.New("the id field must be included in the subject")
+	}
+
+	didStr, ok := d.(string)
+	if !ok {
+		return nil, errors.New("the data type of the id is incorrect")
+	}
+
 	// 链上获取模板
 	vcTemplate, err := GetVcTemplateFromChain(vcTemplateId, client)
 	if err != nil {
@@ -48,7 +59,7 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 	}
 
 	// 验证subject是否符合VC模板规范
-	ok, err := verifyCredentialSubject(subject, vcTemplate)
+	ok, err = verifyCredentialSubject(subject, vcTemplate)
 	if !ok {
 		return nil, err
 	}
@@ -57,16 +68,6 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 	issuer, err := did.GenerateDidByPK(keyInfo.PkPEM, client)
 	if err != nil {
 		return nil, err
-	}
-
-	// 校验Issuer是否具有颁发权限
-	list, err := did.GetTrustIssuerListFromChain(issuer, 0, 0, client)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(list) == 0 {
-		return nil, errors.New("not a trusted issuer")
 	}
 
 	issuanceDate := utils.ISO8601Time(time.Now().Unix())
@@ -108,8 +109,18 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 
 	vc.Proof = pf
 
-	return json.Marshal(vc)
+	vcBytesJSON, err := json.Marshal(vc)
+	if err != nil {
+		return nil, err
+	}
 
+	// 在链上生成签发日志（会对Issuer, did, vcTemplate进行校验）
+	err = AddVcIssueLogToChain(issuer, didStr, vcId, vcTemplateId, client)
+	if err != nil {
+		return nil, err
+	}
+
+	return vcBytesJSON, nil
 }
 
 // IssueVCLocal 本地颁发VC（不经过链上计算和校验）
@@ -124,6 +135,17 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 // @params vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写“VerifiableCredential”,可继续根据业务类型追加）
 func IssueVCLocal(skPem []byte, algorithm string, keyIndex int, subject map[string]interface{}, issuer string,
 	vcId string, expirationDate int64, vcTemplate []byte, vcType ...string) ([]byte, error) {
+	// 获取sunject中的DID
+	d, ok := subject["id"]
+	if !ok {
+		return nil, errors.New("the id field must be included in the subject")
+	}
+
+	_, ok = d.(string)
+	if !ok {
+		return nil, errors.New("the data type of the id is incorrect")
+	}
+
 	// 验证subject是否符合VC模板规范
 	ok, err := verifyCredentialSubject(subject, vcTemplate)
 	if !ok {
@@ -268,4 +290,81 @@ func GetVCRevokedListFromChain(vcIdSearch string, start int, count int, client *
 	}
 
 	return revokedList, nil
+}
+
+// AddVcIssueLogToChain 在链上添加VC签发日志
+// @params issuer：签发者DID（需要在链上被认可）
+// @params did：被签发者did
+// @params vcId：VC业务编号
+// @params vcTemplateId：模板编号
+// @params client：长安链客户端
+func AddVcIssueLogToChain(issuer, did, vcId, vcTemplateId string,
+	client *cmsdk.ChainClient) error {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_Issuer,
+		Value: []byte(issuer),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_Did,
+		Value: []byte(did),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcId,
+		Value: []byte(vcId),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcTemplateId,
+		Value: []byte(vcTemplateId),
+	})
+
+	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_VcIssueLog, params, client)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// GetVcIssueLogListFromChain 从链上获取VC签发日志列表
+// @params vcIdSearch：VC编号关键字（空字符串可以查找全部列表）
+// @params start：开始的索引，0表示从第一个开始
+// @params count：要获取的数量，0表示获取所有
+// @params client：长安链客户端
+func GetVcIssueLogListFromChain(vcIdSearch string, start int, count int,
+	client *cmsdk.ChainClient) ([]*model.VcIssueLog, error) {
+	params := make([]*common.KeyValuePair, 0)
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_VcIdSearch,
+		Value: []byte(vcIdSearch),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_SearchStart,
+		Value: []byte(strconv.Itoa(start)),
+	})
+
+	params = append(params, &common.KeyValuePair{
+		Key:   model.Params_SearchCount,
+		Value: []byte(strconv.Itoa(count)),
+	})
+
+	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_GetVcIssueLogs, params, client)
+	if err != nil {
+		return nil, err
+	}
+
+	var vcIssueLogs []*model.VcIssueLog
+
+	err = json.Unmarshal(resp, &vcIssueLogs)
+	if err != nil {
+		return nil, err
+	}
+
+	return vcIssueLogs, nil
 }

@@ -35,7 +35,8 @@ func didMethodCMD() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get ChainMaker DID method name from chain.
 Example:
-$ cmc did method -C ./testdata/sdk.yaml
+$ ./console did method \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -75,9 +76,9 @@ func didGenCMD() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Generate did string by public key file.
 Example:
-$ cmc did gen \
--C ./testdata/sdk.yaml \
--pk ./testdata/pk.pem
+$ ./console did gen \
+--pk-path=./testdata/pk.pem \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -126,9 +127,9 @@ func didValidCMD() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Whether did is valid on chain.
 Example:
-$ cmc did valid \
--d did:cm:test1 \
--C ./testdata/sdk.yaml
+$ ./console did valid \
+--did=did:cm:test1 \
+--sdk-psath=./testdata/sdk_config.yml 
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -147,8 +148,9 @@ $ cmc did valid \
 			}
 
 			ok, err := did.IsValidDidOnChain(didStr, c)
-			if err != nil {
-				return err
+			if err != nil || !ok {
+				fmt.Printf("whether the did is valid: [%+v]\n, err: [%s]", ok, err.Error())
+				return nil
 			}
 
 			fmt.Printf("whether the did is valid: [%+v]\n", ok)
@@ -171,9 +173,9 @@ func didGetCMD() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get the did string by public key or address. 
 Example:
-$ cmc did get \
--pk ./testdata/pk.pem \
--C ./testdata/sdk.yaml 
+$ ./console did get \
+--pk-path=./testdata/pk.pem \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {

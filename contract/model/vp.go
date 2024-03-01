@@ -39,7 +39,7 @@ func (vp *VerifiablePresentation) Verify(pkPem []byte) (bool, error) {
 
 	if len(vp.ExpirationDate) != 0 {
 		// 检查当前时间是否在有效期内
-		myTime, err := getTxTime()
+		myTime, err := GetTxTime()
 		if err != nil {
 			return false, err
 		}

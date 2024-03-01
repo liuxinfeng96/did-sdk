@@ -2,6 +2,7 @@ package main
 
 import (
 	"did-contract/model"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -19,6 +20,29 @@ func (d *DidContract) VerifyVp(vpJson string) (bool, error) {
 		return false, errors.New("vp owner is in black list")
 	}
 
+	// 验证VP中的VC
+	for _, v := range vp.VerifiableCredential {
+
+		subId, err := v.GetCredentialSubjectID()
+		if err != nil {
+			return false, err
+		}
+
+		if vp.Holder != subId {
+			return false, errors.New("the holder is different from the VC's subject ID")
+		}
+
+		vcString, err := json.Marshal(v)
+		if err != nil {
+			return false, err
+		}
+
+		ok, err := d.VerifyVc(string(vcString))
+		if !ok {
+			return false, fmt.Errorf("vc verify failed, err: [%s]", err.Error())
+		}
+
+	}
 	// 获取签发者DID公钥
 	didDoc, err := d.dal.getDidDocument(vp.Holder)
 	if err != nil {

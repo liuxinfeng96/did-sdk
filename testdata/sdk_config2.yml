@@ -1,0 +1,56 @@
+chain_client:
+  # 链ID
+  chain_id: "chain1"
+  # 组织ID
+  org_id: "wx-org2.chainmaker.org"
+  # 客户端用户私钥路径
+  user_key_file_path: "../testdata/crypto-config/wx-org2.chainmaker.org/user/client1/client1.tls.key"
+  # 客户端用户证书路径
+  user_crt_file_path: "../testdata/crypto-config/wx-org2.chainmaker.org/user/client1/client1.tls.crt"
+  # 客户端用户加密私钥路径(tls加密证书对应私钥，应用于国密GMTLS双证书体系；若未设置仅使用单证书）
+  user_enc_key_file_path: "../testdata/crypto-config/wx-org2.chainmaker.org/user/client1/client1.tls.enc.key"
+  # 客户端用户加密证书路径(tls加密证书，应用于国密GMTLS双证书体系；若未设置仅使用单证书）
+  user_enc_crt_file_path: "../testdata/crypto-config/wx-org2.chainmaker.org/user/client1/client1.tls.enc.crt"
+  # 客户端用户交易签名私钥路径(若未设置，将使用user_key_file_path)
+  user_sign_key_file_path: "../testdata/crypto-config/wx-org2.chainmaker.org/user/client1/client1.sign.key"
+  # 客户端用户交易签名证书路径(若未设置，将使用user_crt_file_path)
+  user_sign_crt_file_path: "../testdata/crypto-config/wx-org2.chainmaker.org/user/client1/client1.sign.crt"
+  # 同步交易结果模式下，轮训获取交易结果时的最大轮训次数，删除此项或设为<=0则使用默认值 10
+  retry_limit: 10
+  # 同步交易结果模式下，每次轮训交易结果时的等待时间，单位：ms 删除此项或设为<=0则使用默认值 500
+  retry_interval: 500
+  # 当前签名证书的别名。当设置此配置项时，chain client 对象将自动检查链上是否已添加此别名，如果没有则自动上链此证书别名，
+  # 并且后续所有交易都会使用别名，别名可降低交易体大小。若为空则不启用。
+#  alias: my_cert_alias
+  # 默认支持TimestampKey，如果开启enableNormalKey则使用NormalKey
+  enable_normal_key: false
+
+  nodes:
+    - # 节点地址，格式为：IP:端口:连接数
+      node_addr: "127.0.0.1:12301"
+      # 节点连接数
+      conn_cnt: 10
+      # RPC连接是否启用双向TLS认证
+      enable_tls: true
+      # 信任证书池路径
+      trust_root_paths:
+        - "../testdata/crypto-config/wx-org1.chainmaker.org/ca"
+        - "../testdata/crypto-config/wx-org2.chainmaker.org/ca"
+      # TLS hostname
+      tls_host_name: "chainmaker.org"
+  archive:
+    # 数据归档链外存储相关配置
+    type: "mysql"
+    dest: "root:123456:localhost:3306"
+    secret_key: xxx
+  rpc_client:
+    max_receive_message_size: 16 # grpc客户端接收消息时，允许单条message大小的最大值(MB)
+    max_send_message_size: 16 # grpc客户端发送消息时，允许单条message大小的最大值(MB)
+  pkcs11:
+    enabled: false # pkcs11 is not used by default
+    type: pkcs11 #support pkcs11 and sdf
+    library: /usr/local/lib64/pkcs11/libupkcs11.so # path to the .so file of pkcs11 interface
+    label: HSM # label for the slot to be used
+    password: 11111111 # password to logon the HSM(Hardware security module)
+    session_cache_size: 10 # size of HSM session cache, default to 10
+    hash: "SHA256" # hash algorithm used to compute SKI

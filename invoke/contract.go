@@ -58,7 +58,8 @@ func InvokeContract(contractName, method string,
 
 		if txInfo.Result.Code != common.TxStatusCode_SUCCESS || txInfo.Result.ContractResult.Code != 0 {
 			return nil,
-				fmt.Errorf("exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Result: [%s]",
+				fmt.Errorf("[%s] exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Result: [%s]",
+					contractAndMethodName,
 					txInfo.Payload.TxId,
 					txInfo.Result.Code.String(),
 					txInfo.Result.ContractResult.Code,
@@ -91,7 +92,8 @@ func QueryContract(contractName, method string,
 
 	if resp.Code != common.TxStatusCode_SUCCESS || resp.ContractResult.Code != 0 {
 		return nil,
-			fmt.Errorf("exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Result: [%s]",
+			fmt.Errorf("[%s] exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Result: [%s]",
+				contractAndMethodName,
 				resp.TxId,
 				resp.Code.String(),
 				resp.ContractResult.Code,

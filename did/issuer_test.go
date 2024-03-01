@@ -11,7 +11,7 @@ import (
 )
 
 func TestAddTrustIssuerListToChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")
@@ -33,7 +33,7 @@ func TestAddTrustIssuerListToChain(t *testing.T) {
 }
 
 func TestGetTrustIssuerListFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")
@@ -67,7 +67,7 @@ func TestGetTrustIssuerListFromChain(t *testing.T) {
 }
 
 func TestDeleteTrustIssuerListFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")

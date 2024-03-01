@@ -1,6 +1,7 @@
 package main
 
 import (
+	"did-contract/model"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -11,7 +12,7 @@ import (
 	"chainmaker.org/chainmaker/contract-sdk-go/v2/sdk"
 )
 
-// RequireString 必须要有参数 string类型
+// RequireString 必须要有参数 string 类型
 // @param key
 // @return string
 // @return error
@@ -22,6 +23,19 @@ func RequireString(key string) (string, error) {
 		return "", fmt.Errorf("missing required parameters:'%s'", key)
 	}
 	return string(b), nil
+}
+
+// RequireBytes 必须要有参数 []bytes 类型
+// @param key
+// @return []byte
+// @return error
+func RequireBytes(key string) ([]byte, error) {
+	args := sdk.Instance.GetArgs()
+	b, ok := args[key]
+	if !ok || len(b) == 0 {
+		return nil, fmt.Errorf("missing required parameters:'%s'", key)
+	}
+	return b, nil
 }
 
 // RequireBool 必须要有参数 Bool类型
@@ -157,6 +171,20 @@ func isSenderCreator() (bool, error) {
 	return false, nil
 }
 
+func isSenderAdmin(d *DidContract) (bool, error) {
+	senderPk, err := sdk.Instance.GetSenderPk()
+	if err != nil {
+		return false, err
+	}
+
+	createrPk, err := sdk.Instance.GetCreatorPk()
+	if err != nil {
+		return false, err
+	}
+
+	return (d.IsAdmin(senderPk)) || (senderPk == createrPk), nil
+}
+
 func (d *DidContract) isSenderTrustIssuer() bool {
 	if !d.enableTrustIssuer {
 		return true
@@ -203,4 +231,30 @@ func isInList(str string, list []string) bool {
 		}
 	}
 	return false
+}
+
+func (d *DidContract) isSenderIssued(vcId string) (bool, error) {
+	senderPk, err := sdk.Instance.GetSenderPk()
+	if err != nil {
+		return false, err
+	}
+
+	did, err := d.GetDidByPubkey(senderPk)
+	if err != nil {
+		return false, err
+	}
+
+	// 查找颁发记录
+	log, err := d.dal.getVcIssueLog(vcId)
+	if err != nil {
+		return false, err
+	}
+
+	var issueLog model.VcIssueLog
+	err = json.Unmarshal(log, &issueLog)
+	if err != nil {
+		return false, err
+	}
+
+	return did == issueLog.Issuer, nil
 }

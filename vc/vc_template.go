@@ -42,6 +42,17 @@ func GenerateSimpleVcTemplate(fieldsMap map[string]string) ([]byte, error) {
 		required = append(required, k)
 	}
 
+	// 默认添加id字段
+	_, ok := properties["id"]
+	if !ok {
+		properties["id"] = &SimplePropertyField{
+			Type:  "string",
+			Title: "DID",
+		}
+
+		required = append(required, "id")
+	}
+
 	t := &SimpleVcTemplate{
 		Schema:               "http://json-schema.org/draft-07/schema#",
 		Type:                 "object",
@@ -110,7 +121,7 @@ func GetVcTemplateFromChain(id string, client *cmsdk.ChainClient) ([]byte, error
 // @params count：要获取的数量，0表示获取所有
 // @params client：长安链客户端
 func GetVcTemplateListFromChain(nameSearch string, start int, count int,
-	client *cmsdk.ChainClient) ([]string, error) {
+	client *cmsdk.ChainClient) ([]*model.VcTemplate, error) {
 	params := make([]*common.KeyValuePair, 0)
 
 	params = append(params, &common.KeyValuePair{
@@ -133,7 +144,7 @@ func GetVcTemplateListFromChain(nameSearch string, start int, count int,
 		return nil, err
 	}
 
-	var vcTemplateList []string
+	var vcTemplateList []*model.VcTemplate
 
 	err = json.Unmarshal(resp, &vcTemplateList)
 	if err != nil {

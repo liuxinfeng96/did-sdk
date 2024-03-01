@@ -2,6 +2,7 @@ package main
 
 import (
 	"did-contract/model"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -75,12 +76,17 @@ func (d *DidContract) VerifyVc(vcJson string) (bool, error) {
 
 // RevokeVc 撤销VC
 func (d *DidContract) RevokeVc(vcID string) error {
-	ok, err := isSenderCreator()
+	// 判断是不是管理员
+	ok, err := isSenderAdmin(d)
 	if err != nil {
 		return err
 	}
 	if !ok {
-		return errors.New("no operation permission")
+		// 判断是不是签发者本人
+		isIssuer, _ := d.isSenderIssued(vcID)
+		if !isIssuer {
+			return errors.New("no operation permission")
+		}
 	}
 
 	err = d.dal.putRevokeVc(vcID)
@@ -108,7 +114,7 @@ func (d *DidContract) isInRevokeVcList(id string) bool {
 func (d *DidContract) SetVcTemplate(id string, name string, version string, template string) error {
 	// 判读是否有权限
 	if !d.isSenderTrustIssuer() {
-		ok, _ := isSenderCreator()
+		ok, _ := isSenderAdmin(d)
 		if !ok {
 			return errors.New("no operation permission")
 		}
@@ -119,12 +125,54 @@ func (d *DidContract) SetVcTemplate(id string, name string, version string, temp
 		return errors.New("the VC template already exists")
 	}
 
-	err := d.dal.putVcTemplate(id, name, version, template)
+	// 需要校验一下模板里面是否包含ID字段
+	var tempJson model.VcTemplateJSONSchema
+	err := json.Unmarshal([]byte(template), &tempJson)
+	if err != nil {
+		return errors.New("the template does not conform to the json Schema specification")
+	}
+
+	var isIncludedId bool
+
+	for _, v := range tempJson.Required {
+		if v == "id" {
+			isIncludedId = true
+			break
+		}
+	}
+
+	if !isIncludedId {
+		return errors.New("the template must contain the `id` subfield")
+	}
+
+	temp, err := model.CompactJson([]byte(template))
 	if err != nil {
 		return err
 	}
 
-	emitSetVcTemplateEvent(id, name, version, template)
+	vcTemp := &model.VcTemplate{
+		Id:       id,
+		Name:     name,
+		Version:  version,
+		Template: string(temp),
+	}
+
+	tempBytes, err := json.Marshal(vcTemp)
+	if err != nil {
+		return err
+	}
+
+	compactJson, err := model.CompactJson(tempBytes)
+	if err != nil {
+		return err
+	}
+
+	err = d.dal.putVcTemplate(id, compactJson)
+	if err != nil {
+		return err
+	}
+
+	emitSetVcTemplateEvent(id, compactJson)
 	return nil
 }
 
@@ -135,6 +183,54 @@ func (d *DidContract) GetVcTemplate(id string) ([]byte, error) {
 
 // GetVcTemplateList 获取VC模板列表
 func (d *DidContract) GetVcTemplateList(templateNameSearch string, start int, count int) (
-	[]string, error) {
+	[]*model.VcTemplate, error) {
 	return d.dal.searchVcTemplate(templateNameSearch, start, count)
+}
+
+// VcIssueLog 存储签发日志
+func (d *DidContract) VcIssueLog(issuer, did, templateId, vcId string) error {
+	// 校验签发者是否具有签发资格
+	if !d.isTrustIssuer(issuer) {
+		return errors.New("the issuer is not in trust issuer list")
+	}
+
+	// 校验被签发者是否合格
+	if d.dal.isInBlackList(did) {
+		return errors.New("the did is in black list")
+	}
+
+	if !d.dal.isDidDocExisting(did) {
+		return fmt.Errorf("the did's doc not found on chain, did: [%s]", did)
+	}
+
+	// 检查模板是否在链上
+	temp, err := d.GetVcTemplate(templateId)
+	if err != nil {
+		return err
+	}
+
+	if len(temp) == 0 {
+		return errors.New("the vc template not found on chain")
+	}
+
+	myTime, err := model.GetTxTime()
+	if err != nil {
+		return err
+	}
+
+	vcIssueLog := model.NewVcIssueLog(issuer, did, templateId, vcId, myTime)
+
+	v, err := json.Marshal(vcIssueLog)
+	if err != nil {
+		return err
+	}
+
+	emitVcIssueLogEvent(vcId, v)
+
+	return d.dal.putVcIssueLog(vcId, v)
+}
+
+func (d *DidContract) GetVcIssueLogs(vcIdSearch string, start int, count int) (
+	[]*model.VcIssueLog, error) {
+	return d.dal.searchVcIssueLogs(vcIdSearch, start, count)
 }

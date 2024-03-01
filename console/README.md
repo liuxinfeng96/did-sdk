@@ -5,7 +5,7 @@
 ### 生成公私钥
 
 ```shell
-$ ./didc key gen \
+$ ./console key gen \
 --algo=SM2 \
 --pk-path=./testdata/pk.pem \
 --sk-path=./testdata/sk.pem
@@ -18,8 +18,8 @@ $ ./didc key gen \
 ### 获取DID方法
 
 ```shell
-$ ./didc did method \
---sdk-path=./testdata/sdk.yaml
+$ ./console did method \
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -27,9 +27,9 @@ $ ./didc did method \
 ### 根据公钥生成DID
 
 ```shell
-$ ./didc did gen \
+$ ./console did gen \
 --pk-path=./testdata/pk.pem \
---sdk-path=./testdata/sdk.yaml
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -37,9 +37,9 @@ $ ./didc did gen \
 ### DID在链上是否有效
 
 ```shell
-$ ./didc did valid \
---did=did:cm:test1 \
---sdk-psath=./testdata/sdk.yaml 
+$ ./console did valid \
+--did=did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
+--sdk-path=./testdata/sdk_config.yml 
 ```
 
 
@@ -47,10 +47,10 @@ $ ./didc did valid \
 ### 获取DID
 
 ```shell
-$ ./didc did get \
+$ ./console did get \
 --pk-path=./testdata/pk.pem \
---address=dkalwdkladawldakdwa \
---sdk-path=./testdata/sdk.yaml
+# --address=5a53a9ddf58129140734a0e5ab3ade209ae487fb \
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -60,12 +60,12 @@ $ ./didc did get \
 ### 生成DID文档
 
 ```shell
-$ ./didc doc gen \
---sk-path=./testdata/sk.pem \
---pk-path=./testdata/pk.pem \
---algo=SM2 \
+$ ./console doc gen \
+--sks-path=./testdata/sk.pem \
+--pks-path=./testdata/pk.pem \
+--algos=SM2 \
 --controller=did:cm:test1,did:cm:test2 \
---sdk-path=./testdata/sdk.yaml \
+--sdk-path=./testdata/sdk_config.yml \
 --doc-path=./testdata/doc.json
 ```
 
@@ -74,9 +74,9 @@ $ ./didc doc gen \
 ### DID文档上链
 
 ```shell
-$ ./didc doc add \
+$ ./console doc add \
 --doc-path=./testdata/doc.json \
---sdk-path=./testdata/sdk.yaml 
+--sdk-path=./testdata/sdk_config.yml 
 ```
 
 
@@ -84,9 +84,9 @@ $ ./didc doc add \
 ### 获取DID文档
 
 ```shell
-$ ./didc doc get \
---did=did:cm:test1 \
---sdk-path=./testdata/sdk.yaml \
+$ ./console doc get \
+--did=did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
+--sdk-path=./testdata/sdk_config.yml \
 --doc-path=./testdata/doc.json
 ```
 
@@ -95,13 +95,13 @@ $ ./didc doc get \
 ### 更新DID文档
 
 ```shell
-$ ./didc doc update-local  \
---sk-path=./testdata/sk.pem \
---pk-path=./testdata/pk.pem \
---algo=SM2 \
---controller=did:cm:test1,did:cm:test2 \
+$ ./console doc update-local  \
+--sks-path=./testdata/sk.pem \
+--pks-path=./testdata/pk.pem \
+--algos=SM2 \
+--controller=did:cm:test6 \
 --old-doc-path=./testdata/doc.json \
---new-doc-path=./testdata/doc2.json
+--new-doc-path=./testdata/newdoc.json
 ```
 
 
@@ -109,9 +109,9 @@ $ ./didc doc update-local  \
 ### 链上更新DID文档
 
 ```shell
-$ ./didc doc update \
---doc-path=./testdata/doc.json \
---sdk-path=./testdata/sdk.yaml 
+$ ./console doc update \
+--doc-path=./testdata/newdoc.json \
+--sdk-path=./testdata/sdk_config.yml 
 ```
 
 
@@ -121,9 +121,9 @@ $ ./didc doc update \
 ### 黑名单上链
 
 ```shell
-$ ./didc black add \
---dids=did:cm:test1,did:cm:test2 \
---sdk-path=./testdata/sdk.yaml 
+$ ./console black add \
+--dids=did:cm:test1,did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
+--sdk-path=./testdata/sdk_config.yml 
 ```
 
 
@@ -131,11 +131,10 @@ $ ./didc black add \
 ### 链上获取黑名单
 
 ```shell
-$ ./didc black list \
---search=did:cm:test1 \
+$ ./console black list \
 --start=1 \
---count=10\
---sdk-path=./testdata/sdk.yaml
+--count=10 \
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -143,9 +142,9 @@ $ ./didc black list \
 ### 链上删除黑名单
 
 ```shell
-$ ./didc black delete \
---dids=did:cm:test1,did:cm:test2 \
---sdk-path=./testdata/sdk.yaml 
+$ ./console black delete \
+--dids=did:cm:test1,did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
+--sdk-path=./testdata/sdk_config.yml 
 ```
 
 
@@ -155,9 +154,9 @@ $ ./didc black delete \
 ### 链上添加权威签发者
 
 ```shell
-$ ./didc issuer add \
---dids=did:cm:test1,did:cm:test2 \
---sdk-path=./testdata/sdk.yaml 
+$ ./console issuer add \
+--dids=did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -165,11 +164,10 @@ $ ./didc issuer add \
 ### 链上获取权威签发者列表
 
 ```shell
-$ ./didc issuer list \
---search=did:cm:test1 \
+$ ./console issuer list \
 --start=1 \
 --count=10 \
---sdk-path=./testdata/sdk.yaml
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -177,9 +175,9 @@ $ ./didc issuer list \
 ### 链上删除权威签发者
 
 ```shell
-$ ./didc issuer delete \
---dids=did:cm:test1,did:cm:test2 \
---sdk-path=./testdata/sdk.yaml 
+$ ./console issuer delete \
+--dids=did:cm:test1 \
+--sdk-path=./testdata/sdk_config.yml 
 ```
 
 
@@ -189,18 +187,17 @@ $ ./didc issuer delete \
 ### 链上颁发VC
 
 ```shell
-$ ./didc vc issue \
+$ ./console vc issue \
 --sk-path=./testdata/sk.pem \
 --pk-path=./testdata/pk.pem \
 --algo=SM2 \
---key-index=1 \
 --subject=./testdata/subject.json \
 --expiration=2025-01-25 \
---id=111233 \
+--id=vc001 \
 --temp-id=12313213 \
 --type=Identity \
 --vc-path=./testdata/vc.json \
---sdk-path=./testdata/sdk.yaml
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -208,15 +205,14 @@ $ ./didc vc issue \
 ### 本地颁发VC
 
 ```shell
-$ ./didc vc issue-local \
+$ ./console vc issue-local \
 --sk-path=./testdata/sk.pem \
 --algo=SM2 \
---key-index=1 \
 --subject=./testdata/subject.json \
 --issuer=did:cm:admin \
 --expiration=2025-01-25 \
---id=111233 \
---template=./testdata/template.json \
+--id=vc001 \
+--temp-path=./testdata/template.json \
 --type=Identity \
 --vc-path=./testdata/vc.json 
 ```
@@ -226,9 +222,9 @@ $ ./didc vc issue-local \
 ### 链上验证VC的有效性
 
 ```shell
-$ ./didc vc verify \
+$ ./console vc verify \
 --vc-path=./testdata/vc.json \
---sdk-path=./testdata/sdk.yaml
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -238,9 +234,9 @@ $ ./didc vc verify \
 ### 链上吊销VC
 
 ```shell
-$ ./didv vc-revoke add \
+$ ./console vc-revoke add \
 --id=16516616 \
---sdk-path=./testdata/sdk.yaml
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -248,11 +244,11 @@ $ ./didv vc-revoke add \
 ### 链上获取吊销列表
 
 ```shell
-$ ./didv vc-revoke list \
+$ ./console vc-revoke list \
 --search=111515515 \
 --start=1 \
 --count=10 \
---sdk-path=./testdata/sdk.yaml
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -262,12 +258,12 @@ $ ./didv vc-revoke list \
 ### VC模板上链
 
 ```shell
-$ ./didv vc-template add \
---id=1515 \
---name=模板1 \
---version=v1.0.0 \
---template=./testdata/template.json \
---sdk-path=./testdata/sdk.yaml
+$ ./console vc-template add \
+--temp-id=temp001 \
+--temp-name=模板1 \
+--temp-version=v1.0.0 \
+--temp-path=./testdata/temp.json \
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -275,10 +271,10 @@ $ ./didv vc-template add \
  ### 获取VC模板
 
 ```shell
-$ ./didv vc-template get \
---id=151515 \
---template=./testdata/template.json \
---sdk-path=./testdata/sdk.yaml
+$ ./console vc-template get \
+--temp-id=temp001 \
+--temp-path=./testdata/temp.json \
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -286,11 +282,10 @@ $ ./didv vc-template get \
 ### 获取VC模板列表
 
 ```shell
-$ ./didv vc-template list \
---search=模板1 \
+$ ./console vc-template list \
 --start=1 \
 --count=10 \
---sdk-path=./testdata/sdk.yaml
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -298,10 +293,10 @@ $ ./didv vc-template list \
 ### 生成VC模板
 
 ```shell
-$ ./didv vc-template gen \
+$ ./console vc-template gen \
 --map-key=name,age,sex \
 --map-value=liu,18,man \
---template=./testdata/temp.json
+--temp-path=./testdata/temp.json
 ```
 
 
@@ -311,10 +306,9 @@ $ ./didv vc-template gen \
 ### 生成VP
 
 ```shell
-$ ./didv vp gen \
+$ ./console vp gen \
 --sk-path=./testdata/sk.pem \
 --algo=SM2 \
---key-index=1 \
 --holder=did:cm:admin \
 --id=1231232 \
 --vc-list=./testdata/vc1.json,./testdata/vc2.json \
@@ -327,8 +321,8 @@ $ ./didv vp gen \
 ### 链上验证VP
 
 ```shell
-$ ./didv vp verify \
+$ ./console vp verify \
 --vp-path=./testdata/vp.json \
---sdk-path=./testdata/sdk.yaml
+--sdk-path=./testdata/sdk_config.yml
 ```
 

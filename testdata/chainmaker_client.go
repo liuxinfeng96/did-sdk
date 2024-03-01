@@ -19,7 +19,8 @@ import (
 )
 
 const (
-	ConfigPath           = "../testdata/sdk_config.yml"
+	ConfigPath1          = "../testdata/sdk_config.yml"
+	ConfigPath2          = "../testdata/sdk_config2.yml"
 	ContractByteCodePath = "../contract/ChainMakerDid.7z"
 	HashType             = "SHA256"
 	ContractVersion      = "1.0.0"
@@ -54,9 +55,9 @@ var testUser = []*ChainMakerTestUser{
 	},
 }
 
-func GetChainmakerClient() (*cmsdk.ChainClient, error) {
+func GetChainmakerClient(path string) (*cmsdk.ChainClient, error) {
 	return cmsdk.NewChainClient(
-		cmsdk.WithConfPath(ConfigPath),
+		cmsdk.WithConfPath(path),
 	)
 }
 

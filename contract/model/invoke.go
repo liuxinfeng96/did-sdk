@@ -41,6 +41,16 @@ const (
 	Method_VerifyVc = "VerifyVc"
 	// Method_VerifyVp method "VerifyVp"
 	Method_VerifyVp = "VerifyVp"
+	// Method_SetAdmin method "SetAdmin"
+	Method_SetAdmin = "SetAdmin"
+	// Method_DeleteAdmin method "DeleteAdmin"
+	Method_DeleteAdmin = "DeleteAdmin"
+	// Method_IsAdmin method "IsAdmin"
+	Method_IsAdmin = "IsAdmin"
+	// Method_VcIssueLog method "VcIssueLog"
+	Method_VcIssueLog = "VcIssueLog"
+	// Method_GetVcIssueLogs method "GetVcIssueLogs"
+	Method_GetVcIssueLogs = "GetVcIssueLogs"
 )
 
 const (
@@ -58,45 +68,51 @@ const (
 	Topic_RevokeVc = "DidTopic_RevokeVc"
 	// Topic_SetVcTemplate contract event topic "SetVcTemplate"
 	Topic_SetVcTemplate = "DidTopic_SetVcTemplate"
+	// Topic_VcIssueLog event topic "VcIssueLog"
+	Topic_VcIssueLog = "DidTopic_VcIssueLog"
 )
 
 const (
-	// Params_DidMethod parameters of the contract method "didMethod"
+	// Params_DidMethod parameter of the contract method
 	Params_DidMethod = "didMethod"
-	// Params_EnableTrustIssuer parameters of the contract method "enableTrustIssuer"
+	// Params_EnableTrustIssuer parameter of the contract method
 	Params_EnableTrustIssuer = "enableTrustIssuer"
-	// Params_DidDocument parameters of the contract method "didDocument"
+	// Params_DidDocument parameter of the contract method
 	Params_DidDocument = "didDocument"
-	// Params_Did parameters of the contract method "did"
+	// Params_Did parameter of the contract method
 	Params_Did = "did"
-	// Params_DidList parameters of the contract method "dids"
+	// Params_DidList parameter of the contract method
 	Params_DidList = "dids"
-	// Params_DidSearch parameters of the contract method "didSearch"
+	// Params_DidSearch parameter of the contract method
 	Params_DidSearch = "didSearch"
-	// Params_SearchStart parameters of the contract method "start"
+	// Params_SearchStart parameter of the contract method
 	Params_SearchStart = "start"
-	// Params_SearchCount parameters of the contract method "count"
+	// Params_SearchCount parameter of the contract method
 	Params_SearchCount = "count"
-	// Params_DidPubkey parameters of the contract method "pubKey"
+	// Params_DidPubkey parameter of the contract method
 	Params_DidPubkey = "pubKey"
-	// Params_DidAddress parameters of the contract method "address"
+	// Params_DidAddress parameter of the contract method
 	Params_DidAddress = "address"
-	// Params_VcId parameters of the contract method "vcId"
+	// Params_VcId parameter of the contract method
 	Params_VcId = "vcId"
-	// Params_VcIdSearch parameters of the contract method "vcIdSearch"
+	// Params_VcIdSearch parameter of the contract method
 	Params_VcIdSearch = "vcIdSearch"
-	// Params_VcTemplateId parameters of the contract method "vcTemplateId"
+	// Params_VcTemplateId parameter of the contract method
 	Params_VcTemplateId = "vcTemplateId"
-	// Params_VcTemplateName parameters of the contract method "vcTemplateName"
+	// Params_VcTemplateName parameter of the contract method
 	Params_VcTemplateName = "vcTemplateName"
-	// Params_VcTemplate parameters of the contract method "vcTemplate"
+	// Params_VcTemplate parameter of the contract method
 	Params_VcTemplate = "vcTemplate"
-	// Params_VcTemplateVersion parameters of the contract method "vcTemplateVersion"
+	// Params_VcTemplateVersion parameter of the contract method
 	Params_VcTemplateVersion = "vcTemplateVersion"
-	// Params_VcTemplateNameSearch parameters of the contract method "vcTemplateNameSearch"
+	// Params_VcTemplateNameSearch parameter of the contract method
 	Params_VcTemplateNameSearch = "vcTemplateNameSearch"
-	// Params_VcJson parameters of the contract method "vcJson"
+	// Params_VcJson parameter of the contract method
 	Params_VcJson = "vcJson"
-	// Params_VpJson parameters of the contract method "vpJson"
+	// Params_VpJson parameter of the contract method
 	Params_VpJson = "vpJson"
+	// Params_Ski parameter of the contract method
+	Params_Ski = "ski"
+	// Params_Issuer parameter of the contract method
+	Params_Issuer = "issuer"
 )

@@ -131,7 +131,7 @@ func (d *DidContract) UpdateDidDocument(didDocument string) error {
 	}
 
 	if !hasPermission {
-		ok, _ := isSenderCreator()
+		ok, _ := isSenderAdmin(d)
 		if !ok {
 			return errors.New("no operation permission")
 		}
@@ -231,7 +231,7 @@ func (d *DidContract) GetDidByAddress(address string) (string, error) {
 // AddBlackList 添加黑名单
 func (d *DidContract) AddBlackList(dids []string) error {
 
-	ok, err := isSenderCreator()
+	ok, err := isSenderAdmin(d)
 	if err != nil {
 		return err
 	}
@@ -253,7 +253,7 @@ func (d *DidContract) AddBlackList(dids []string) error {
 
 // DeleteBlackList 删除黑名单
 func (d *DidContract) DeleteBlackList(dids []string) error {
-	ok, err := isSenderCreator()
+	ok, err := isSenderAdmin(d)
 	if err != nil {
 		return err
 	}
@@ -279,7 +279,7 @@ func (d *DidContract) GetBlackList(didSearch string, start int, count int) ([]st
 
 // AddTrustIssuerList 添加信任发行者
 func (d *DidContract) AddTrustIssuerList(dids []string) error {
-	ok, err := isSenderCreator()
+	ok, err := isSenderAdmin(d)
 	if err != nil {
 		return err
 	}
@@ -288,6 +288,12 @@ func (d *DidContract) AddTrustIssuerList(dids []string) error {
 	}
 
 	for _, did := range dids {
+		// 判断DID Doc是否已经上链
+		ok := d.dal.isDidDocExisting(did)
+		if !ok {
+			return fmt.Errorf("the did's doc not found on chain, did: [%s]", did)
+		}
+
 		err := d.dal.putTrustIssuer(did)
 		if err != nil {
 			return err
@@ -298,8 +304,8 @@ func (d *DidContract) AddTrustIssuerList(dids []string) error {
 }
 
 // DeleteTrustIssuer 删除信任发行者
-func (e *DidContract) DeleteTrustIssuer(dids []string) error {
-	ok, err := isSenderCreator()
+func (d *DidContract) DeleteTrustIssuer(dids []string) error {
+	ok, err := isSenderAdmin(d)
 	if err != nil {
 		return err
 	}
@@ -308,7 +314,7 @@ func (e *DidContract) DeleteTrustIssuer(dids []string) error {
 	}
 
 	for _, did := range dids {
-		err := e.dal.deleteTrustIssuer(did)
+		err := d.dal.deleteTrustIssuer(did)
 		if err != nil {
 			return err
 		}

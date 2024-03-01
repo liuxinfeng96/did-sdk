@@ -30,10 +30,10 @@ func keyGenCMD() *cobra.Command {
 			`Generate the private key of the specified crypto algorithm.
 Supported algorithms: SM2, EC_Secp256k1, EC_NISTP224, EC_NISTP256, EC_NISTP384, EC_NISTP521, RSA2048, RSA3072 .
 Example:
-$ cmc key gen \
--al EC_Secp256k1 \
--pk ./pk.pem \
--sk ./sk.pem
+$ ./console key gen \
+--algo=SM2 \
+--pk-path=./testdata/pk.pem \
+--sk-path=./testdata/sk.pem
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {

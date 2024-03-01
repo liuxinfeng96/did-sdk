@@ -9,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"chainmaker.org/chainmaker/did-contract/model"
 	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
 	"github.com/spf13/cobra"
 )
@@ -40,18 +41,17 @@ func vcIssueCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Issue the vc on the blockchain.
 Example:
-$ cmc vc issue \
--sk ./testdata/sk.pem \
--pk ./testdata/pk.pem \
--al SM2 \
--ki 1 \
--sub ./testdata/temp.json \
--e 2024-12-30 \
--id 1223355 \
--ti 123131231 \
--t Identity \
--vc ./testdata/vc.json \
--C ./testdata/sdk.yaml
+$ ./console vc issue \
+--sk-path=./testdata/sk.pem \
+--pk-path=./testdata/pk.pem \
+--algo=SM2 \
+--subject=./testdata/subject.json \
+--expiration=2025-01-25 \
+--id=111233 \
+--temp-id=12313213 \
+--type=Identity \
+--vc-path=./testdata/vc.json \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -177,17 +177,16 @@ func vcIssueLocalCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Issue the vc at local.
 Example:
-$ cmc vc issue-local \
--sk ./testdata/sk.pem \
--al SM2 \
--ki 1 \
--sub ./testdata/temp.json \
--i did:cm:admin \
--e 2024-12-30 \
--id 1223355 \
--temp ./testdata/template.json \
--t Identity \
--vc ./testdata/vc.json 
+$ ./console vc issue-local \
+--sk-path=./testdata/sk.pem \
+--algo=SM2 \
+--subject=./testdata/subject.json \
+--issuer=did:cm:admin \
+--expiration=2025-01-25 \
+--id=111233 \
+--temp-path=./testdata/template.json \
+--type=Identity \
+--vc-path=./testdata/vc.json 
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -257,7 +256,13 @@ $ cmc vc issue-local \
 				return err
 			}
 
-			vcBytes, err := vc.IssueVCLocal(skPem, algo, keyIndex, sub, issuer, id, timeUnix, temp, vcType...)
+			var vcTemp model.VcTemplate
+			err = json.Unmarshal(temp, &vcTemp)
+			if err != nil {
+				return err
+			}
+
+			vcBytes, err := vc.IssueVCLocal(skPem, algo, keyIndex, sub, issuer, id, timeUnix, []byte(vcTemp.Template), vcType...)
 			if err != nil {
 				return err
 			}
@@ -297,9 +302,9 @@ func vcVerifyCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Verify the vc on blockchain.
 Example:
-$ cmc vc verify \
--vc ./testdata/vc.json \
--C ./testdata/sdk.yaml
+$ ./console vc verify \
+--vc-path=./testdata/vc.json \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {

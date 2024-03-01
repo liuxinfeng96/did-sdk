@@ -116,7 +116,7 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 		return Return(d.DeleteBlackList(dids))
 	case model.Method_GetBlackList:
 		args := sdk.Instance.GetArgs()
-		didSearch := args[model.Params_VcTemplateNameSearch]
+		didSearch := args[model.Params_DidSearch]
 		start := OptionInt(model.Params_SearchStart, 1)
 		count := OptionInt(model.Params_SearchCount, 1000)
 		return ReturnJson(d.GetBlackList(string(didSearch), start, count))
@@ -128,7 +128,7 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 		return Return(d.RevokeVc(vcId))
 	case model.Method_GetRevokedVcList:
 		args := sdk.Instance.GetArgs()
-		vcIdSearch := args[model.Params_VcTemplateNameSearch]
+		vcIdSearch := args[model.Params_VcIdSearch]
 		start := OptionInt(model.Params_SearchStart, 1)
 		count := OptionInt(model.Params_SearchCount, 1000)
 		return ReturnJson(d.GetRevokedVcList(string(vcIdSearch), start, count))
@@ -159,8 +159,8 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 	case model.Method_GetVcTemplateList:
 		args := sdk.Instance.GetArgs()
 		nameSearch := args[model.Params_VcTemplateNameSearch]
-		start := OptionInt("start", 1)
-		count := OptionInt("count", 1000)
+		start := OptionInt(model.Params_SearchStart, 1)
+		count := OptionInt(model.Params_SearchCount, 1000)
 		return ReturnJson(d.GetVcTemplateList(string(nameSearch), start, count))
 	case model.Method_VerifyVc:
 		vcJson, err := RequireString(model.Params_VcJson)
@@ -174,6 +174,54 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 			return sdk.Error(err.Error())
 		}
 		return ReturnBool(d.VerifyVp(vpJson))
+	case model.Method_SetAdmin:
+		ski, err := RequireString(model.Params_Ski)
+		if err != nil {
+			return sdk.Error(err.Error())
+		}
+		return Return(d.SetAdmin(ski))
+	case model.Method_DeleteAdmin:
+		ski, err := RequireString(model.Params_Ski)
+		if err != nil {
+			return sdk.Error(err.Error())
+		}
+		return Return(d.DeleteAdmin(ski))
+	case model.Method_IsAdmin:
+		ski, err := RequireString(model.Params_Ski)
+		if err != nil {
+			return sdk.Error(err.Error())
+		}
+		ok := d.IsAdmin(ski)
+		return ReturnBool(ok, nil)
+	case model.Method_VcIssueLog:
+		issuer, err := RequireString(model.Params_Issuer)
+		if err != nil {
+			return sdk.Error(err.Error())
+		}
+
+		did, err := RequireString(model.Params_Did)
+		if err != nil {
+			return sdk.Error(err.Error())
+		}
+
+		vcId, err := RequireString(model.Params_VcId)
+		if err != nil {
+			return sdk.Error(err.Error())
+		}
+
+		vcTemplateId, err := RequireString(model.Params_VcTemplateId)
+		if err != nil {
+			return sdk.Error(err.Error())
+		}
+
+		return Return(d.VcIssueLog(issuer, did, vcTemplateId, vcId))
+
+	case model.Method_GetVcIssueLogs:
+		args := sdk.Instance.GetArgs()
+		vcIdSearch := args[model.Params_VcIdSearch]
+		start := OptionInt(model.Params_SearchStart, 1)
+		count := OptionInt(model.Params_SearchCount, 1000)
+		return ReturnJson(d.GetVcIssueLogs(string(vcIdSearch), start, count))
 	}
 
 	if d.enableTrustIssuer {

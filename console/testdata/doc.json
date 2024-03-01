@@ -1,0 +1,29 @@
+{
+    "@context": "https://www.w3.org/ns/did/v1",
+    "id": "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT",
+    "created": "2024-02-27T09:03:27+08:00",
+    "updated": "2024-02-27T09:29:25+08:00",
+    "verificationMethod": [
+        {
+            "id": "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT#keys-0",
+            "type": "SM2",
+            "controller": "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT",
+            "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEuo8SwofnfF9Vu05EKVSHV+1fSdtl\ntqH0xJx3wVpk35xAzLbMUSMHMe0bG/IbB/aHkrR8OvGi+p7jJqs1lC408w==\n-----END PUBLIC KEY-----\n",
+            "address": "5a53a9ddf58129140734a0e5ab3ade209ae487fb"
+        }
+    ],
+    "authentication": [
+        "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT#keys-0"
+    ],
+    "controller": [
+        "did:cm:test6",
+        "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT"
+    ],
+    "proof": {
+        "type": "SM2",
+        "created": "2024-02-27T09:29:25+08:00",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT#keys-0",
+        "proofValue": "MEUCIQCIRQTBV/3E9jCPJ+rmNRpfKMaxjC5KHmXCR4RXANaRsAIgO2Jg4B48W/QfXgLOtEAy7Q/lu0W7HWKF//wkjjpCtBE="
+    }
+}

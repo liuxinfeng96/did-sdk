@@ -29,28 +29,28 @@ func VcTemplateCMD() *cobra.Command {
 
 func vcTemplateAddCmd() *cobra.Command {
 
-	var idStr, tname, tversion string
+	var tid, tname, tversion string
 	var sdkPath, tempPath string
 
 	vcTemplateAddCmd := &cobra.Command{
-		Use:   "vc-template",
+		Use:   "add",
 		Short: "Add vc template",
 		Long: strings.TrimSpace(
 			`Add vc template to blockchain.
 Example:
-$ cmc vc-template add \
--id 123333test \
--tn 模板1 \
--tv 1.0.0 \
--temp ./testdata/temp.json \
--C ./testdata/sdk.yaml
+$ ./console vc-template add \
+--temp-id=1515 \
+--temp-name=模板1 \
+--temp-version=v1.0.0 \
+--temp-path=./testdata/template.json \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 
 		RunE: func(_ *cobra.Command, _ []string) error {
 
-			if len(idStr) == 0 {
-				return ParamsEmptyError(ParamsFlagId)
+			if len(tid) == 0 {
+				return ParamsEmptyError(ParamsFlagTemplateId)
 			}
 
 			if len(tname) == 0 {
@@ -79,7 +79,7 @@ $ cmc vc-template add \
 				return err
 			}
 
-			err = vc.AddVcTemplateToChain(idStr, tname, tversion, temp, c)
+			err = vc.AddVcTemplateToChain(tid, tname, tversion, temp, c)
 			if err != nil {
 				return err
 			}
@@ -91,7 +91,10 @@ $ cmc vc-template add \
 	}
 
 	attachFlagString(vcTemplateAddCmd, ParamsFlagCMSdkPath, &sdkPath)
-	attachFlagString(vcTemplateAddCmd, ParamsFlagId, &idStr)
+	attachFlagString(vcTemplateAddCmd, ParamsFlagTemplateId, &tid)
+	attachFlagString(vcTemplateAddCmd, ParamsFlagTemplateName, &tname)
+	attachFlagString(vcTemplateAddCmd, ParamsFlagTemplateVersion, &tversion)
+	attachFlagString(vcTemplateAddCmd, ParamsFlagTemplatePath, &tempPath)
 
 	return vcTemplateAddCmd
 }
@@ -106,11 +109,11 @@ func vcTemplateListCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get the vc template list from blockchain.
 Example:
-$ cmc vc-template list \
--qse vctemp1 \
--qs 1 \
--qc 10 \
--C ./testdata/sdk.yaml
+$ ./console vc-template list \
+--search=模板1 \
+--start=1 \
+--count=10 \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 
@@ -145,7 +148,7 @@ $ cmc vc-template list \
 }
 
 func vcTemplateGetCmd() *cobra.Command {
-	var idStr, sdkPath, tempPath string
+	var tid, sdkPath, tempPath string
 
 	vcTemplateGetCmd := &cobra.Command{
 		Use:   "get",
@@ -153,15 +156,16 @@ func vcTemplateGetCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get the vc template from blockchain. 
 Example:
-$ cmc vc-template get \
--id 15152515 \
--C ./testdata/sdk.yaml 
+$ ./console vc-template get \
+--temp-id=151515 \
+--temp-path=./testdata/template.json \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
 
-			if len(idStr) == 0 {
-				return ParamsEmptyError(ParamsFlagId)
+			if len(tid) == 0 {
+				return ParamsEmptyError(ParamsFlagTemplateId)
 			}
 
 			if len(sdkPath) == 0 {
@@ -177,7 +181,7 @@ $ cmc vc-template get \
 				return err
 			}
 
-			temp, err := vc.GetVcTemplateFromChain(idStr, c)
+			temp, err := vc.GetVcTemplateFromChain(tid, c)
 			if err != nil {
 				return err
 			}
@@ -193,7 +197,7 @@ $ cmc vc-template get \
 
 	attachFlagString(vcTemplateGetCmd, ParamsFlagCMSdkPath, &sdkPath)
 	attachFlagString(vcTemplateGetCmd, ParamsFlagTemplatePath, &tempPath)
-	attachFlagString(vcTemplateGetCmd, ParamsFlagId, &idStr)
+	attachFlagString(vcTemplateGetCmd, ParamsFlagTemplateId, &tid)
 
 	return vcTemplateGetCmd
 }
@@ -208,10 +212,10 @@ func vcTemplateGenCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Generate vc template. 
 Example:
-$ cmc vc-template gen \ 
--mk name,age,sex \
--mv liu,18,man \
--temp ./testdata/temp.json
+$ ./console vc-template gen \
+--map-key=name,age,sex \
+--map-value=liu,18,man \
+--temp-path=./testdata/temp.json
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -242,6 +246,8 @@ $ cmc vc-template gen \
 			if err != nil {
 				return err
 			}
+
+			fmt.Println(ConsoleOutputSuccessfulOperation)
 
 			return nil
 		},

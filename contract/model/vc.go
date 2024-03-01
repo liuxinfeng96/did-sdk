@@ -72,7 +72,7 @@ func (vc *VerifiableCredential) Verify(pkPem, template []byte) (bool, error) {
 	}
 
 	// 检查当前时间是否在有效期内
-	myTime, err := getTxTime()
+	myTime, err := GetTxTime()
 	if err != nil {
 		return false, err
 	}
@@ -101,7 +101,7 @@ func (vc *VerifiableCredential) Verify(pkPem, template []byte) (bool, error) {
 	return vc.Proof.Verify(withoutProof, pkPem)
 }
 
-func getTxTime() (int64, error) {
+func GetTxTime() (int64, error) {
 	timestamp, err := sdk.Instance.GetTxTimeStamp()
 	if err != nil {
 		return 0, err
@@ -115,6 +115,15 @@ type VcTemplate struct {
 	Name     string `json:"name"`
 	Template string `json:"template"`
 	Version  string `json:"version"`
+}
+
+// VcTemplateJSONSchema VC template的JSON Schema
+type VcTemplateJSONSchema struct {
+	Schema               string      `json:"$schema"`
+	Type                 string      `json:"type"`
+	Properties           interface{} `json:"properties"`
+	Required             []string    `json:"required"`
+	AdditionalProperties bool        `json:"additionalProperties"`
 }
 
 func (vc *VerifiableCredential) verifyCredentialSubject(vcTemplate []byte) (bool, error) {
@@ -152,4 +161,23 @@ func (vc *VerifiableCredential) verifyCredentialSubject(vcTemplate []byte) (bool
 	}
 
 	return false, fmt.Errorf(errMsg)
+}
+
+type VcIssueLog struct {
+	Issuer     string `json:"issuer"`
+	Did        string `json:"did"`
+	TemplateId string `json:"templateId"`
+	VcId       string `json:"vcId"`
+	IssueTime  int64  `json:"issueTime"`
+}
+
+func NewVcIssueLog(issuer, did, templateId,
+	vcId string, issueTime int64) *VcIssueLog {
+	return &VcIssueLog{
+		Issuer:     issuer,
+		Did:        did,
+		TemplateId: templateId,
+		VcId:       vcId,
+		IssueTime:  issueTime,
+	}
 }

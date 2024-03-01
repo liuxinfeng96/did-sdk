@@ -12,13 +12,15 @@ import (
 
 // 此为存入数据库的世界状态key，故越短越好
 const (
-	keyDid          = "d"
-	keyIndexPubKey  = "p"
-	keyIndexAddress = "a"
-	keyTrustIssuer  = "ti"
-	keyRevokeVc     = "r"
-	keyBlackList    = "b"
-	keyVcTemplate   = "vt"
+	keyDid           = "d"
+	keyIndexPubKey   = "p"
+	keyIndexAddress  = "a"
+	keyTrustIssuer   = "ti"
+	keyRevokeVc      = "r"
+	keyBlackList     = "b"
+	keyVcTemplate    = "vt"
+	keyContractAdmin = "admin"
+	keyVcIssueLog    = "l"
 )
 
 const (
@@ -42,6 +44,36 @@ func (dal *Dal) Db() sdk.SDKInterface {
 	return sdk.Instance
 }
 
+func (dal *Dal) putAdmin(ski string) error {
+	err := dal.Db().PutStateByte(keyContractAdmin, ski, []byte(ski))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dal *Dal) deleteAdmin(ski string) error {
+	err := dal.Db().DelState(keyContractAdmin, ski)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dal *Dal) isAdmin(ski string) bool {
+	//从数据库中获取DID Document
+	v, err := dal.Db().GetStateByte(keyContractAdmin, ski)
+	if err != nil {
+		return false
+	}
+
+	if len(v) == 0 {
+		return false
+	}
+
+	return true
+}
+
 func (dal *Dal) putDidDocument(did string, didDocument []byte) error {
 	//将DID Document存入数据库
 	err := dal.Db().PutStateByte(keyDid, dal.didToDbKey(did), didDocument)
@@ -60,9 +92,22 @@ func (dal *Dal) getDidDocument(did string) ([]byte, error) {
 	return didDocument, nil
 }
 
+func (dal *Dal) isDidDocExisting(did string) bool {
+	didDocument, err := dal.Db().GetStateByte(keyDid, dal.didToDbKey(did))
+	if err != nil {
+		return false
+	}
+
+	if len(didDocument) == 0 {
+		return false
+	}
+
+	return true
+}
+
 func (dal *Dal) putIndexPubKey(pubKey string, did string) error {
 	//将索引存入数据库
-	err := dal.Db().PutStateByte(keyIndexPubKey, pubKeyToDbKey(pubKey), []byte(did))
+	err := dal.Db().PutStateByte(keyIndexPubKey, pubKeyToDbKey([]byte(pubKey)), []byte(did))
 	if err != nil {
 		return err
 	}
@@ -71,7 +116,7 @@ func (dal *Dal) putIndexPubKey(pubKey string, did string) error {
 
 func (dal *Dal) deleteIndexPubKey(pubKey string) error {
 	//从数据库中删除索引
-	err := dal.Db().DelState(keyIndexPubKey, pubKeyToDbKey(pubKey))
+	err := dal.Db().DelState(keyIndexPubKey, pubKeyToDbKey([]byte(pubKey)))
 	if err != nil {
 		return err
 	}
@@ -80,7 +125,7 @@ func (dal *Dal) deleteIndexPubKey(pubKey string) error {
 
 func (dal *Dal) getDidByPubKey(pubKey string) (string, error) {
 	//从数据库中获取索引
-	did, err := dal.Db().GetStateByte(keyIndexPubKey, pubKeyToDbKey(pubKey))
+	did, err := dal.Db().GetStateByte(keyIndexPubKey, pubKeyToDbKey([]byte(pubKey)))
 	if err != nil {
 		return "", err
 	}
@@ -292,16 +337,8 @@ func (dal *Dal) searchRevokeVc(vcIDSearch string, start int, count int) ([]strin
 	return vcIdSlice, nil
 }
 
-func (dal *Dal) putVcTemplate(templateId string, templateName string, version string, vcTemplate string) error {
-	//将VcTemplate存入数据库
-	vcTemplateObj := model.VcTemplate{
-		Id:       templateId,
-		Name:     templateName,
-		Template: vcTemplate,
-		Version:  version,
-	}
-	value, _ := json.Marshal(vcTemplateObj)
-	err := dal.Db().PutStateByte(keyVcTemplate, templateId, value)
+func (dal *Dal) putVcTemplate(templateId string, template []byte) error {
+	err := dal.Db().PutStateByte(keyVcTemplate, templateId, template)
 	if err != nil {
 		return err
 	}
@@ -318,7 +355,7 @@ func (dal *Dal) getVcTemplate(templateId string) ([]byte, error) {
 	return value, nil
 }
 
-func (dal *Dal) searchVcTemplate(templateNameSearch string, start int, count int) ([]string, error) {
+func (dal *Dal) searchVcTemplate(templateNameSearch string, start int, count int) ([]*model.VcTemplate, error) {
 	//从数据库中查询VcTemplate迭代器
 	iter, err := dal.Db().NewIteratorPrefixWithKeyField(keyVcTemplate, templateNameSearch)
 	if err != nil {
@@ -327,7 +364,7 @@ func (dal *Dal) searchVcTemplate(templateNameSearch string, start int, count int
 
 	defer iter.Close()
 
-	var vcTemplateSlice []string
+	var vcTemplateSlice []*model.VcTemplate
 
 	if count == 0 {
 		count = defaultSearchCount
@@ -351,10 +388,73 @@ func (dal *Dal) searchVcTemplate(templateNameSearch string, start int, count int
 			continue
 		}
 
-		vcTemplateSlice = append(vcTemplateSlice, string(value))
+		var temp model.VcTemplate
+		err = json.Unmarshal(value, &temp)
+		if err != nil {
+			return nil, err
+		}
+
+		vcTemplateSlice = append(vcTemplateSlice, &temp)
 	}
 
 	return vcTemplateSlice, nil
+}
+
+func (dal *Dal) putVcIssueLog(vcId string, log []byte) error {
+	err := dal.Db().PutStateByte(keyVcIssueLog, vcIdToKey(vcId), log)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (dal *Dal) getVcIssueLog(vcId string) ([]byte, error) {
+	return dal.Db().GetStateByte(keyVcIssueLog, vcIdToKey(vcId))
+}
+
+func (dal *Dal) searchVcIssueLogs(searchVcId string, start, count int) ([]*model.VcIssueLog, error) {
+	iter, err := dal.Db().NewIteratorPrefixWithKeyField(keyVcIssueLog, vcIdToKey(searchVcId))
+	if err != nil {
+		return nil, err
+	}
+
+	defer iter.Close()
+
+	var issueLogSlice []*model.VcIssueLog
+
+	if count == 0 {
+		count = defaultSearchCount
+	}
+
+	if start == 0 {
+		start = defaultSearchStart
+	}
+
+	for i := 1; iter.HasNext(); i++ {
+		_, _, value, err := iter.Next()
+		if err != nil {
+			return nil, err
+		}
+
+		if i >= start+count {
+			break
+		}
+
+		if i < start {
+			continue
+		}
+
+		var issueLog model.VcIssueLog
+		err = json.Unmarshal(value, &issueLog)
+		if err != nil {
+			return nil, err
+		}
+
+		issueLogSlice = append(issueLogSlice, &issueLog)
+	}
+
+	return issueLogSlice, nil
 }
 
 func (dal *Dal) didToDbKey(did string) string {
@@ -362,13 +462,17 @@ func (dal *Dal) didToDbKey(did string) string {
 	return strings.TrimPrefix(did, didPrefix)
 }
 
-func pubKeyToDbKey(pubKey string) string {
-	hash := sha256.Sum256([]byte(pubKey))
+func pubKeyToDbKey(pubKey []byte) string {
+	hash := sha256.Sum256(pubKey)
 	return hex.EncodeToString(hash[:])
 }
 
 func vcIdToKey(vcID string) string {
 	//vcid 是一个http url，为了存入数据库，需要将其转换为一个只有字母大小写、数字、下划线的字符串
+	if len(vcID) == 0 {
+		return vcID
+	}
+
 	vcID = strings.ReplaceAll(vcID, ":", "_")
 	vcID = strings.ReplaceAll(vcID, "/", "_")
 	vcID = strings.ReplaceAll(vcID, ".", "_")

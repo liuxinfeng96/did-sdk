@@ -25,7 +25,7 @@ func TestGenerateSimpleVcTemplate(t *testing.T) {
 
 func TestAddVcTemplateToChain(t *testing.T) {
 
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 	fieldsMap := make(map[string]string)
 
@@ -41,7 +41,7 @@ func TestAddVcTemplateToChain(t *testing.T) {
 }
 
 func TestGetVcTemplateFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 	fieldsMap := make(map[string]string)
 
@@ -66,11 +66,13 @@ func TestGetVcTemplateFromChain(t *testing.T) {
 }
 
 func TestGetVcTemplateListFromChain(t *testing.T) {
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	list, err := GetVcTemplateListFromChain("", 0, 0, c)
 	require.Nil(t, err)
 
-	fmt.Println(list)
+	for _, v := range list {
+		fmt.Printf("%+v\n", v)
+	}
 }

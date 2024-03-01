@@ -33,9 +33,9 @@ func blackAdd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Add did black list DID to blockchain.
 Example:
-$ cmc black add \
--C ./testdata/sdk.yaml \
--ds did:cm:test1
+$ ./console black add \
+--dids=did:cm:test1,did:cm:test2 \
+--sdk-path=./testdata/sdk_config.yml 
 `,
 		),
 
@@ -81,11 +81,11 @@ func blackList() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get the did black list from blockchain.
 Example:
-$ cmc black list \
--qse did:cm:test1 \
--qs 1 \
--qc 10 \
--C ./testdata/sdk.yaml
+$ ./console black list \
+--search=did:cm:test1 \
+--start=1 \
+--count=10\
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 
@@ -129,9 +129,9 @@ func blackDelete() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Delete did black list DID on blockchain.
 Example:
-$ cmc black delete \
--C ./testdata/sdk.yaml \
--ds did:cm:test1
+$ ./console black delete \
+--dids=did:cm:test1,did:cm:test2 \
+--sdk-path=./testdata/sdk_config.yml 
 `,
 		),
 

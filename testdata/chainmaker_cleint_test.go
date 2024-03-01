@@ -8,7 +8,7 @@ import (
 
 func TestInstallDidContract(t *testing.T) {
 
-	c, err := GetChainmakerClient()
+	c, err := GetChainmakerClient(ConfigPath1)
 	require.Nil(t, err)
 
 	err = InstallDidContract(c)

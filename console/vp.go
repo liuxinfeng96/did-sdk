@@ -35,14 +35,14 @@ func vpGenCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Generate the vc at local.
 Example:
-$ cmc vp gen \
--sk ./testdata/sk.pem \
--al SM2 \
--ki 1 \
--id 1223355 \
--t Identity \
--vcs ./testdata/vc1.json,./testdata/vc2.json \
--vp ./testdata.json
+$ ./console vp gen \
+--sk-path=./testdata/sk.pem \
+--algo=SM2 \
+--holder=did:cm:admin \
+--id=1231232 \
+--vc-list=./testdata/vc1.json,./testdata/vc2.json \
+--type=Identity \
+--vp-path=./testdata/vp.json
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {
@@ -119,9 +119,9 @@ func vpVerifyCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Verify the vp on blockchain.
 Example:
-$ cmc vp verify \
--vc ./testdata/vc.json \
--C ./testdata/sdk.yaml
+$ ./console vp verify \
+--vp-path=./testdata/vp.json \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 		RunE: func(_ *cobra.Command, _ []string) error {

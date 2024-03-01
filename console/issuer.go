@@ -12,7 +12,7 @@ import (
 func IssuerCMD() *cobra.Command {
 
 	issuerCmd := &cobra.Command{
-		Use:   "Issuer",
+		Use:   "issuer",
 		Short: "ChainMaker DID issuer command",
 		Long:  "ChainMaker DID issuer command",
 	}
@@ -33,9 +33,9 @@ func issuerAdd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Add issuer DID list to blockchain.
 Example:
-$ cmc issuer add \
--C ./testdata/sdk.yaml \
--ds did:cm:test1
+$ ./console issuer add \
+--dids=did:cm:test1,did:cm:test2 \
+--sdk-path=./testdata/sdk_config.yml 
 `,
 		),
 
@@ -80,11 +80,11 @@ func issuerList() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get the did list of issuer from blockchain.
 Example:
-$ cmc issuer list \
--qse did:cm:test1 \
--qs 1 \
--qc 10 \
--C ./testdata/sdk.yaml
+$ ./console issuer list \
+--search=did:cm:test1 \
+--start=1 \
+--count=10 \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 
@@ -128,9 +128,9 @@ func issuerDelete() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Delete did list of issuer on blockchain.
 Example:
-$ cmc issuer delete \
--C ./testdata/sdk.yaml \
--ds did:cm:test1
+$ ./console issuer delete \
+--dids=did:cm:test1,did:cm:test2 \
+--sdk-path=./testdata/sdk_config.yml 
 `,
 		),
 

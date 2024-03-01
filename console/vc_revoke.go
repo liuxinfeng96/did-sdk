@@ -33,9 +33,9 @@ func vcRevokeAddCmd() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Add vc revoke list to blockchain.
 Example:
-$ cmc vc-revoke add \
--i 123333test \
--C ./testdata/sdk.yaml
+$ ./console vc-revoke add \
+--id=16516616 \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 
@@ -80,11 +80,11 @@ func vcRevokeList() *cobra.Command {
 		Long: strings.TrimSpace(
 			`Get the vc revoke list from blockchain.
 Example:
-$ cmc vc-revoke list \
--qse did:cm:test1 \
--qs 1 \
--qc 10 \
--C ./testdata/sdk.yaml
+$ ./console vc-revoke list \
+--search=111515515 \
+--start=1 \
+--count=10 \
+--sdk-path=./testdata/sdk_config.yml
 `,
 		),
 

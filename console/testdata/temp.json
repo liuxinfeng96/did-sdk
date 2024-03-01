@@ -1,0 +1,6 @@
+{
+    "id": "temp001",
+    "name": "模板1",
+    "template": "{\"$schema\":\"http://json-schema.org/draft-07/schema#\",\"type\":\"object\",\"properties\":{\"age\":{\"type\":\"string\",\"title\":\"18\"},\"name\":{\"type\":\"string\",\"title\":\"liu\"},\"sex\":{\"type\":\"string\",\"title\":\"man\"}},\"required\":[\"name\",\"age\",\"sex\"],\"additionalProperties\":false}",
+    "version": "v1.0.0"
+}

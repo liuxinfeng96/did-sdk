@@ -32,6 +32,7 @@ func TestGenerateVP(t *testing.T) {
 	subject["name"] = "小明"
 	subject["phoneNumber"] = "18705453XXX"
 	subject["idNumber"] = "370687199X010200XX"
+	subject["id"] = "did:cm:test1"
 
 	e := time.Now().Local().Add(time.Hour * 48).Unix()
 	vcBytes, err := vc.IssueVCLocal(keyInfo.SkPEM, keyInfo.Algorithm, 0, subject,
@@ -50,7 +51,7 @@ func TestGenerateVP(t *testing.T) {
 func TestVerifyVPOnChain(t *testing.T) {
 	// VP验证完整流程测试
 	// 生成签发者
-	c, err := testdata.GetChainmakerClient()
+	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
 	// 签发者密钥生成
