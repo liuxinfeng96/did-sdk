@@ -1,0 +1,52 @@
+{
+    "@context": [
+        "https://www.w3.org/2018/credentials/v1",
+        "https://www.w3.org/2018/credentials/examples/v1"
+    ],
+    "id": "vp001",
+    "type": [
+        "Identity",
+        "VerifiablePresentation"
+    ],
+    "verifiableCredential": [
+        {
+            "@context": [
+                "https://www.w3.org/2018/credentials/v1",
+                "https://www.w3.org/2018/credentials/examples/v1"
+            ],
+            "id": "vc001",
+            "type": [
+                "Identity",
+                "VerifiableCredential"
+            ],
+            "credentialSubject": {
+                "age": "18",
+                "id": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf",
+                "name": "刘",
+                "sex": "男"
+            },
+            "issuer": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf",
+            "issuanceDate": "2024-03-01T16:57:54+08:00",
+            "expirationDate": "2025-01-25T00:00:00+08:00",
+            "template": {
+                "id": "temp001",
+                "name": "模板1"
+            },
+            "proof": {
+                "type": "SM2",
+                "created": "2024-03-01T16:57:54+08:00",
+                "proofPurpose": "assertionMethod",
+                "verificationMethod": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf#keys-0",
+                "proofValue": "MEUCIQDF/ld38VoqV1rwHUHfHkAHFmbeCzn3TePGKE4F/ced3wIgWnfeyue4tPqBfekOzB+RA2paJ+mdWMuPC4egmqPyif8="
+            }
+        }
+    ],
+    "holder": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf",
+    "proof": {
+        "type": "SM2",
+        "created": "2024-03-01T18:01:18+08:00",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf#keys-0",
+        "proofValue": "MEYCIQDmLjgidknnqEFq9k3CYyvELUlJUDlsk4Oaf5vA+t2kbQIhAKuRm6y9txtIVbdNzmuQ2oIvgmBSukri86HVxCwbq45p"
+    }
+}

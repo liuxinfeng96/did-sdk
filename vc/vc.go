@@ -52,6 +52,10 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 		return nil, err
 	}
 
+	if len(vcTemplate) == 0 {
+		return nil, errors.New("vc template not found on chain")
+	}
+
 	var template model.VcTemplate
 	err = json.Unmarshal(vcTemplate, &template)
 	if err != nil {

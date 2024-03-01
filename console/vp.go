@@ -39,8 +39,8 @@ $ ./console vp gen \
 --sk-path=./testdata/sk.pem \
 --algo=SM2 \
 --holder=did:cm:admin \
---id=1231232 \
---vc-list=./testdata/vc1.json,./testdata/vc2.json \
+--id=vp001 \
+--vc-list=./testdata/vc.json \
 --type=Identity \
 --vp-path=./testdata/vp.json
 `,
@@ -148,14 +148,14 @@ $ ./console vp verify \
 				return err
 			}
 
-			fmt.Printf("the verification result of vp is: [%+v]", ok)
+			fmt.Printf("the verification result of vp is: [%+v]\n", ok)
 
 			return nil
 		},
 	}
 
 	attachFlagString(vpVerifyCmd, ParamsFlagCMSdkPath, &sdkPath)
-	attachFlagString(vpVerifyCmd, ParamsFlagVcPath, &vpPath)
+	attachFlagString(vpVerifyCmd, ParamsFlagVpPath, &vpPath)
 
 	return vpVerifyCmd
 }

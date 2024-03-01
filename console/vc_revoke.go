@@ -28,7 +28,7 @@ func vcRevokeAddCmd() *cobra.Command {
 	var idStr, sdkPath string
 
 	vcRevokeAddCmd := &cobra.Command{
-		Use:   "vc-revoke",
+		Use:   "add",
 		Short: "Add vc revoke list",
 		Long: strings.TrimSpace(
 			`Add vc revoke list to blockchain.

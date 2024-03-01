@@ -23,6 +23,7 @@ func main() {
 	mainCmd.AddCommand(VcTemplateCMD())
 	mainCmd.AddCommand(VcCMD())
 	mainCmd.AddCommand(VpCMD())
+	mainCmd.AddCommand(AdminCMD())
 
 	mainCmd.Execute()
 }

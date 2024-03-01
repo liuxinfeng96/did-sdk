@@ -145,16 +145,11 @@ func (d *DidContract) SetVcTemplate(id string, name string, version string, temp
 		return errors.New("the template must contain the `id` subfield")
 	}
 
-	temp, err := model.CompactJson([]byte(template))
-	if err != nil {
-		return err
-	}
-
 	vcTemp := &model.VcTemplate{
 		Id:       id,
 		Name:     name,
 		Version:  version,
-		Template: string(temp),
+		Template: json.RawMessage(template),
 	}
 
 	tempBytes, err := json.Marshal(vcTemp)
@@ -162,17 +157,12 @@ func (d *DidContract) SetVcTemplate(id string, name string, version string, temp
 		return err
 	}
 
-	compactJson, err := model.CompactJson(tempBytes)
+	err = d.dal.putVcTemplate(id, tempBytes)
 	if err != nil {
 		return err
 	}
 
-	err = d.dal.putVcTemplate(id, compactJson)
-	if err != nil {
-		return err
-	}
-
-	emitSetVcTemplateEvent(id, compactJson)
+	emitSetVcTemplateEvent(id, tempBytes)
 	return nil
 }
 

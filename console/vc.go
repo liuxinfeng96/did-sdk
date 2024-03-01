@@ -25,6 +25,7 @@ func VcCMD() *cobra.Command {
 	vcCmd.AddCommand(vcIssueCmd())
 	vcCmd.AddCommand(vcIssueLocalCmd())
 	vcCmd.AddCommand(vcVerifyCmd())
+	vcCmd.AddCommand(vcLogCmd())
 	return vcCmd
 }
 
@@ -47,7 +48,7 @@ $ ./console vc issue \
 --algo=SM2 \
 --subject=./testdata/subject.json \
 --expiration=2025-01-25 \
---id=111233 \
+--id=vc001 \
 --temp-id=12313213 \
 --type=Identity \
 --vc-path=./testdata/vc.json \
@@ -167,7 +168,7 @@ $ ./console vc issue \
 func vcIssueLocalCmd() *cobra.Command {
 	var skPath, algo, issuer string
 	var keyIndex int
-	var tempPath, subjectPath, expiration, id, tid, vcPath string
+	var tempPath, subjectPath, expiration, id, vcPath string
 	var timeUnix int64
 	var vcType []string
 
@@ -183,8 +184,8 @@ $ ./console vc issue-local \
 --subject=./testdata/subject.json \
 --issuer=did:cm:admin \
 --expiration=2025-01-25 \
---id=111233 \
---temp-path=./testdata/template.json \
+--id=vc001 \
+--temp-path=./testdata/temp.json \
 --type=Identity \
 --vc-path=./testdata/vc.json 
 `,
@@ -212,10 +213,6 @@ $ ./console vc issue-local \
 
 			if len(id) == 0 {
 				return ParamsEmptyError(ParamsFlagId)
-			}
-
-			if len(tid) == 0 {
-				return ParamsEmptyError(ParamsFlagTemplateId)
 			}
 
 			if len(vcPath) == 0 {
@@ -331,7 +328,7 @@ $ ./console vc verify \
 				return err
 			}
 
-			fmt.Printf("the verification result of vc is: [%+v]", ok)
+			fmt.Printf("the verification result of vc is: [%+v]\n", ok)
 
 			return nil
 		},
@@ -341,4 +338,53 @@ $ ./console vc verify \
 	attachFlagString(vcVerifyCmd, ParamsFlagVcPath, &vcPath)
 
 	return vcVerifyCmd
+}
+
+func vcLogCmd() *cobra.Command {
+	var start, count int
+	var search, sdkPath string
+
+	vcLogCmd := &cobra.Command{
+		Use:   "log",
+		Short: "Get vc issue log list",
+		Long: strings.TrimSpace(
+			`Get the vc issue log list on chain.
+Example:
+$ ./console vc log \
+--start=1 \
+--count=10 \
+--sdk-path=./testdata/sdk_config.yml
+`,
+		),
+
+		RunE: func(_ *cobra.Command, _ []string) error {
+
+			if len(sdkPath) == 0 {
+				return ParamsEmptyError(ParamsFlagCMSdkPath)
+			}
+
+			c, err := cmsdk.NewChainClient(cmsdk.WithConfPath(sdkPath))
+			if err != nil {
+				return err
+			}
+
+			list, err := vc.GetVcIssueLogListFromChain(search, start, count, c)
+			if err != nil {
+				return err
+			}
+
+			for _, v := range list {
+				fmt.Printf("%+v\n", v)
+			}
+
+			return nil
+		},
+	}
+
+	attachFlagString(vcLogCmd, ParamsFlagListSearch, &search)
+	attachFlagString(vcLogCmd, ParamsFlagCMSdkPath, &sdkPath)
+	attachFlagInt(vcLogCmd, ParamsFlagListStart, &start)
+	attachFlagInt(vcLogCmd, ParamsFlagListCount, &count)
+
+	return vcLogCmd
 }

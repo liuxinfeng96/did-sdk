@@ -1,5 +1,36 @@
 # Console
 
+## admin
+
+### 设置管理员
+
+```shell
+$ ./console admin add \
+--admin-sdk-path=./testdata/sdk_config2.yml \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+
+
+### 删除管理员
+
+```shell
+$ ./console admin delete \
+--admin-sdk-path=./testdata/sdk_config2.yml \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+
+
+### 查询是否拥有管理员权限
+
+```shell
+$ ./console admin auth \
+--sdk-path=./testdata/sdk_config2.yml
+```
+
+
+
 ## key
 
 ### 生成公私钥
@@ -39,7 +70,7 @@ $ ./console did gen \
 ```shell
 $ ./console did valid \
 --did=did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
---sdk-path=./testdata/sdk_config.yml 
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 
@@ -49,7 +80,6 @@ $ ./console did valid \
 ```shell
 $ ./console did get \
 --pk-path=./testdata/pk.pem \
-# --address=5a53a9ddf58129140734a0e5ab3ade209ae487fb \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
@@ -85,7 +115,7 @@ $ ./console doc add \
 
 ```shell
 $ ./console doc get \
---did=did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
+--did=did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf \
 --sdk-path=./testdata/sdk_config.yml \
 --doc-path=./testdata/doc.json
 ```
@@ -155,7 +185,7 @@ $ ./console black delete \
 
 ```shell
 $ ./console issuer add \
---dids=did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
+--dids=did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
@@ -194,7 +224,7 @@ $ ./console vc issue \
 --subject=./testdata/subject.json \
 --expiration=2025-01-25 \
 --id=vc001 \
---temp-id=12313213 \
+--temp-id=temp001 \
 --type=Identity \
 --vc-path=./testdata/vc.json \
 --sdk-path=./testdata/sdk_config.yml
@@ -212,7 +242,7 @@ $ ./console vc issue-local \
 --issuer=did:cm:admin \
 --expiration=2025-01-25 \
 --id=vc001 \
---temp-path=./testdata/template.json \
+--temp-path=./testdata/temp.json \
 --type=Identity \
 --vc-path=./testdata/vc.json 
 ```
@@ -229,13 +259,25 @@ $ ./console vc verify \
 
 
 
+### 获取VC签发日志
+
+```shell
+$ ./console vc log \
+--search=vc001 \
+--start=1 \
+--count=10 \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+
+
 ## vc-revoke
 
 ### 链上吊销VC
 
 ```shell
 $ ./console vc-revoke add \
---id=16516616 \
+--id=vc001 \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
@@ -245,7 +287,6 @@ $ ./console vc-revoke add \
 
 ```shell
 $ ./console vc-revoke list \
---search=111515515 \
 --start=1 \
 --count=10 \
 --sdk-path=./testdata/sdk_config.yml
@@ -295,7 +336,7 @@ $ ./console vc-template list \
 ```shell
 $ ./console vc-template gen \
 --map-key=name,age,sex \
---map-value=liu,18,man \
+--map-value=姓名,年龄,性别 \
 --temp-path=./testdata/temp.json
 ```
 
@@ -309,9 +350,9 @@ $ ./console vc-template gen \
 $ ./console vp gen \
 --sk-path=./testdata/sk.pem \
 --algo=SM2 \
---holder=did:cm:admin \
---id=1231232 \
---vc-list=./testdata/vc1.json,./testdata/vc2.json \
+--holder=did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf \
+--id=vp001 \
+--vc-list=./testdata/vc.json \
 --type=Identity \
 --vp-path=./testdata/vp.json
 ```
@@ -325,4 +366,6 @@ $ ./console vp verify \
 --vp-path=./testdata/vp.json \
 --sdk-path=./testdata/sdk_config.yml
 ```
+
+
 

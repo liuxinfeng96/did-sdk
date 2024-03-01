@@ -53,8 +53,19 @@ func (vc *VerifiableCredential) GetCredentialSubjectID() (string, error) {
 func (vc *VerifiableCredential) Verify(pkPem, template []byte) (bool, error) {
 
 	// Check if the VC type is correct
-	if len(vc.Type) == 0 || vc.Type[0] != "VerifiableCredential" {
+	if len(vc.Type) == 0 {
 		return false, errors.New("invalid VC type")
+	} else {
+		var isVcType bool
+		for _, v := range vc.Type {
+			if v == "VerifiableCredential" {
+				isVcType = true
+			}
+		}
+
+		if !isVcType {
+			return false, errors.New("invalid VC type")
+		}
 	}
 
 	issuanceDate, err := time.Parse(time.RFC3339, vc.IssuanceDate)
@@ -111,10 +122,10 @@ func GetTxTime() (int64, error) {
 
 // VcTemplate VC模板的结构内容定义
 type VcTemplate struct {
-	Id       string `json:"id"`
-	Name     string `json:"name"`
-	Template string `json:"template"`
-	Version  string `json:"version"`
+	Id       string          `json:"id"`
+	Name     string          `json:"name"`
+	Template json.RawMessage `json:"template"`
+	Version  string          `json:"version"`
 }
 
 // VcTemplateJSONSchema VC template的JSON Schema

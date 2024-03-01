@@ -133,7 +133,9 @@ $ ./console vc-template list \
 				return err
 			}
 
-			fmt.Printf("get the vc template list: [%+v]\n", list)
+			for _, v := range list {
+				fmt.Printf("%+v\n", v)
+			}
 
 			return nil
 		},
@@ -214,7 +216,7 @@ func vcTemplateGenCmd() *cobra.Command {
 Example:
 $ ./console vc-template gen \
 --map-key=name,age,sex \
---map-value=liu,18,man \
+--map-value=姓名,年龄,性别 \
 --temp-path=./testdata/temp.json
 `,
 		),

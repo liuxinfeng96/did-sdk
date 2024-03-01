@@ -1,29 +1,29 @@
 {
     "@context": "https://www.w3.org/ns/did/v1",
-    "id": "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT",
-    "created": "2024-02-27T09:03:27+08:00",
-    "updated": "2024-02-27T09:29:25+08:00",
+    "id": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf",
+    "created": "2024-03-01T15:45:23+08:00",
+    "updated": "2024-03-01T15:47:56+08:00",
     "verificationMethod": [
         {
-            "id": "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT#keys-0",
+            "id": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf#keys-0",
             "type": "SM2",
-            "controller": "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT",
-            "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEuo8SwofnfF9Vu05EKVSHV+1fSdtl\ntqH0xJx3wVpk35xAzLbMUSMHMe0bG/IbB/aHkrR8OvGi+p7jJqs1lC408w==\n-----END PUBLIC KEY-----\n",
-            "address": "5a53a9ddf58129140734a0e5ab3ade209ae487fb"
+            "controller": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf",
+            "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEAsN8ggneXgfRIRfpFTs4jXZEoZUe\npnzF4L3XHoLUpSjirq8LKAfKbMJVm73Ovp1L8vMACUHkKZxq8AVg7dtTeA==\n-----END PUBLIC KEY-----\n",
+            "address": "57eed71f9993297b7be51ee7068f1a52a42a2de0"
         }
     ],
     "authentication": [
-        "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT#keys-0"
+        "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf#keys-0"
     ],
     "controller": [
         "did:cm:test6",
-        "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT"
+        "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf"
     ],
     "proof": {
         "type": "SM2",
-        "created": "2024-02-27T09:29:25+08:00",
+        "created": "2024-03-01T15:47:56+08:00",
         "proofPurpose": "assertionMethod",
-        "verificationMethod": "did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT#keys-0",
-        "proofValue": "MEUCIQCIRQTBV/3E9jCPJ+rmNRpfKMaxjC5KHmXCR4RXANaRsAIgO2Jg4B48W/QfXgLOtEAy7Q/lu0W7HWKF//wkjjpCtBE="
+        "verificationMethod": "did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf#keys-0",
+        "proofValue": "MEQCICiWmkkY7chkCjcLlJkvu5Qk5IEb0yqKTU9M7xeATUF3AiBHiF5kzqv+TnBbbcMP4iPq0cnx/iSPm5fGbhLptrFAcQ=="
     }
 }

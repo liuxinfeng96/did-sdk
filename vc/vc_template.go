@@ -90,7 +90,7 @@ func AddVcTemplateToChain(id string, name string, version string, template []byt
 
 	params = append(params, &common.KeyValuePair{
 		Key:   model.Params_VcTemplate,
-		Value: template,
+		Value: json.RawMessage(template),
 	})
 
 	_, err := invoke.InvokeContract(invoke.DIDContractName, model.Method_SetVcTemplate, params, client)

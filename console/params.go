@@ -48,6 +48,7 @@ const (
 	ParamsFlagHolder          = "holder"
 	ParamsFlagMapKey          = "map-key"
 	ParamsFlagMapValue        = "map-value"
+	ParamsFlagAdminSdkPath    = "admin-sdk-path"
 )
 
 var paramsList = map[string]struct {
@@ -88,6 +89,7 @@ var paramsList = map[string]struct {
 	ParamsFlagHolder:          {"", "", "specify the holder of vp"},
 	ParamsFlagMapKey:          {"", "", "specify the key list of vc template"},
 	ParamsFlagMapValue:        {"", "", "specify the value list of vc template"},
+	ParamsFlagAdminSdkPath:    {"", "", "specify the path of admin's sdk config file"},
 }
 
 func attachFlagString(cmd *cobra.Command, key string, params *string) {

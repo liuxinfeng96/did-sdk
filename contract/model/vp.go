@@ -33,8 +33,19 @@ func NewVerifiablePresentation(vpJson string) (*VerifiablePresentation, error) {
 
 func (vp *VerifiablePresentation) Verify(pkPem []byte) (bool, error) {
 	// Check if the VC type is correct
-	if len(vp.Type) == 0 || vp.Type[0] != "VerifiablePresentation" {
+	if len(vp.Type) == 0 {
 		return false, errors.New("invalid VP type")
+	} else {
+		var isVpType bool
+		for _, v := range vp.Type {
+			if v == "VerifiablePresentation" {
+				isVpType = true
+			}
+		}
+
+		if !isVpType {
+			return false, errors.New("invalid VP type")
+		}
 	}
 
 	if len(vp.ExpirationDate) != 0 {
