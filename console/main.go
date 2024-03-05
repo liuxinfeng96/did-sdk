@@ -25,5 +25,9 @@ func main() {
 	mainCmd.AddCommand(VpCMD())
 	mainCmd.AddCommand(AdminCMD())
 
-	mainCmd.Execute()
+	err := mainCmd.Execute()
+	if err != nil {
+		panic(err)
+	}
+
 }

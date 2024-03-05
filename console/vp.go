@@ -74,7 +74,8 @@ $ ./console vp gen \
 			vcList := make([]string, 0)
 
 			for _, p := range vcListPath {
-				vc, err := os.ReadFile(p)
+				var vc []byte
+				vc, err = os.ReadFile(p)
 				if err != nil {
 					return err
 				}
@@ -87,7 +88,7 @@ $ ./console vp gen \
 				return err
 			}
 
-			err = os.WriteFile(vpPath, vp, 0777)
+			err = os.WriteFile(vpPath, vp, 0600)
 			if err != nil {
 				return err
 			}

@@ -138,7 +138,7 @@ $ ./console vc issue \
 				return err
 			}
 
-			err = os.WriteFile(vcPath, vcBytes, 0777)
+			err = os.WriteFile(vcPath, vcBytes, 0600)
 			if err != nil {
 				return err
 			}
@@ -264,7 +264,7 @@ $ ./console vc issue-local \
 				return err
 			}
 
-			err = os.WriteFile(vcPath, vcBytes, 0777)
+			err = os.WriteFile(vcPath, vcBytes, 0600)
 			if err != nil {
 				return err
 			}

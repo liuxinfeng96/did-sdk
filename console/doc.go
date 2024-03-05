@@ -77,12 +77,13 @@ $ ./console doc gen \
 			keyInfos := make([]*key.KeyInfo, 0)
 
 			for i := 0; i < len(sksPath); i++ {
-				pkPem, err := os.ReadFile(pksPath[i])
+				var pkPem, skPem []byte
+				pkPem, err = os.ReadFile(pksPath[i])
 				if err != nil {
 					return err
 				}
 
-				skPem, err := os.ReadFile(sksPath[i])
+				skPem, err = os.ReadFile(sksPath[i])
 				if err != nil {
 					return err
 				}
@@ -104,7 +105,7 @@ $ ./console doc gen \
 				return err
 			}
 
-			err = os.WriteFile(docPath, doc, 0777)
+			err = os.WriteFile(docPath, doc, 0600)
 			if err != nil {
 				return err
 			}
@@ -213,7 +214,7 @@ $ ./console doc get \
 				return err
 			}
 
-			err = os.WriteFile(docPath, doc, 0777)
+			err = os.WriteFile(docPath, doc, 0600)
 			if err != nil {
 				return err
 			}
@@ -304,7 +305,7 @@ $ ./console doc update-local  \
 				return err
 			}
 
-			err = os.WriteFile(newDocPath, newDoc, 0777)
+			err = os.WriteFile(newDocPath, newDoc, 0600)
 			if err != nil {
 				return err
 			}

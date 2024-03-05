@@ -31,7 +31,7 @@ func TestIssueVCLocal(t *testing.T) {
 	subject["name"] = "小明1"
 	subject["phoneNumber"] = "1870545XXXX"
 	subject["idNumber"] = "3706871996010200XX"
-	subject["id"] = "did:cm:test1"
+	subject["id"] = "did:cm:test66"
 
 	e := time.Now().Local().Add(time.Hour * 48).Unix()
 	vcBytes, err := IssueVCLocal(keyInfo.SkPEM, keyInfo.Algorithm, 0, subject,

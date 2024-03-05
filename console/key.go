@@ -66,12 +66,12 @@ func keyGen(algo, skPath, pkPath string) error {
 		return err
 	}
 
-	err = os.WriteFile(skPath, keyInfo.SkPEM, 0777)
+	err = os.WriteFile(skPath, keyInfo.SkPEM, 0600)
 	if err != nil {
 		return err
 	}
 
-	err = os.WriteFile(pkPath, keyInfo.PkPEM, 0777)
+	err = os.WriteFile(pkPath, keyInfo.PkPEM, 0600)
 	if err != nil {
 		return err
 	}

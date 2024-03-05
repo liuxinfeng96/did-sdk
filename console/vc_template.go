@@ -188,7 +188,7 @@ $ ./console vc-template get \
 				return err
 			}
 
-			err = os.WriteFile(tempPath, temp, 0777)
+			err = os.WriteFile(tempPath, temp, 0600)
 			if err != nil {
 				return err
 			}
@@ -244,7 +244,7 @@ $ ./console vc-template gen \
 				return err
 			}
 
-			err = os.WriteFile(tempPath, tempJson, 0777)
+			err = os.WriteFile(tempPath, tempJson, 0600)
 			if err != nil {
 				return err
 			}
