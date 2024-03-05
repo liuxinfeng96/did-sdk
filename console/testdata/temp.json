@@ -1,34 +1,29 @@
 {
-    "id": "temp001",
-    "name": "模板1",
-    "template": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "type": "object",
-        "properties": {
-            "age": {
-                "type": "string",
-                "title": "年龄"
-            },
-            "id": {
-                "type": "string",
-                "title": "DID"
-            },
-            "name": {
-                "type": "string",
-                "title": "姓名"
-            },
-            "sex": {
-                "type": "string",
-                "title": "性别"
-            }
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "properties": {
+        "age": {
+            "type": "string",
+            "title": "年龄"
         },
-        "required": [
-            "name",
-            "age",
-            "sex",
-            "id"
-        ],
-        "additionalProperties": false
+        "id": {
+            "type": "string",
+            "title": "DID"
+        },
+        "name": {
+            "type": "string",
+            "title": "姓名"
+        },
+        "sex": {
+            "type": "string",
+            "title": "性别"
+        }
     },
-    "version": "v1.0.0"
+    "required": [
+        "name",
+        "age",
+        "sex",
+        "id"
+    ],
+    "additionalProperties": false
 }
