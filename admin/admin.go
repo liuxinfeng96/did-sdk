@@ -17,11 +17,14 @@ import (
 // @params client：长安链客户端
 func SetAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) error {
 
+	// 由于长安链合约中获取的CreatorPk和SenderPk是公钥的SKI
+	// 所以这里进行SKI的转换
 	ski, err := cmcert.ComputeSKI(hash, pubKey)
 	if err != nil {
 		return err
 	}
 
+	// 十六进制编码
 	skiStr := hex.EncodeToString(ski)
 
 	params := make([]*common.KeyValuePair, 0)
@@ -31,6 +34,7 @@ func SetAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *
 		Value: []byte(skiStr),
 	})
 
+	// 需要区块链落块持久化，采用Invoke方式发送交易
 	_, err = invoke.InvokeContract(invoke.DIDContractName, model.Method_SetAdmin, params, client)
 	if err != nil {
 		return err
@@ -44,11 +48,15 @@ func SetAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *
 // @params hash：哈希算法（一般与链保持一致）
 // @params client：长安链客户端
 func DeleteAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) error {
+
+	// 由于长安链合约中获取的CreatorPk和SenderPk是公钥的SKI
+	// 所以这里进行SKI的转换
 	ski, err := cmcert.ComputeSKI(hash, pubKey)
 	if err != nil {
 		return err
 	}
 
+	// 十六进制编码
 	skiStr := hex.EncodeToString(ski)
 
 	params := make([]*common.KeyValuePair, 0)
@@ -58,6 +66,7 @@ func DeleteAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, clien
 		Value: []byte(skiStr),
 	})
 
+	// 需要区块链落块持久化，采用Invoke方式发送交易
 	_, err = invoke.InvokeContract(invoke.DIDContractName, model.Method_DeleteAdmin, params, client)
 	if err != nil {
 		return err
@@ -71,11 +80,15 @@ func DeleteAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, clien
 // @params hash：哈希算法（一般与链保持一致）
 // @params client：长安链客户端
 func IsAdminOfDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) (bool, error) {
+
+	// 由于长安链合约中获取的CreatorPk和SenderPk是公钥的SKI
+	// 所以这里进行SKI的转换
 	ski, err := cmcert.ComputeSKI(hash, pubKey)
 	if err != nil {
 		return false, err
 	}
 
+	// 十六进制编码
 	skiStr := hex.EncodeToString(ski)
 
 	params := make([]*common.KeyValuePair, 0)
@@ -85,6 +98,7 @@ func IsAdminOfDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cm
 		Value: []byte(skiStr),
 	})
 
+	// 只是查询，采用Query方式发送交易
 	resp, err := invoke.QueryContract(invoke.DIDContractName, model.Method_IsAdmin, params, client)
 	if err != nil {
 		return false, err

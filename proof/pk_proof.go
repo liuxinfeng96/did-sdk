@@ -78,7 +78,7 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 		return nil, errors.New("unknown publicKey algorithm")
 	}
 
-	// 国密算法哈希摘要在其签名里作实现
+	// 国密算法哈希摘要在其签名里实现
 	if !isSm2 {
 		h := cryptoHash.New()
 		h.Write(msg)

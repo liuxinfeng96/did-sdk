@@ -8,11 +8,11 @@
 
 ## 快速体验
 
-使用DID命令行工具，快速搭建DID应用，体验DID SDK功能。
+使用DID**命令行工具**，快速体验DID应用主要功能流程，了解`DID SDK`功能。
 
 ### 搭建长安链
 
-[链接快速搭建]
+[快速搭建长安链]()
 
 ### 安装DID智能合约
 
@@ -31,7 +31,27 @@ $ cd did-sdk && cd contract
 $ ./build.sh ChainMakerDid
 ```
 
-#### 使用CMC工具安装
+**CMC工具安装合约**
+
+进入长安链项目主目录：
+
+```shell
+$ cd chainmaker-go
+```
+
+进入`cmc`文件夹：
+
+```shell
+$ cd tools/cmc/
+```
+
+编译`cmc`:
+
+```shell
+$ go build
+```
+
+执行`cmc`安装合约命令：
 
 ```shell
 $ ./cmc client contract user create \
@@ -46,24 +66,24 @@ $ ./cmc client contract user create \
 --params="{\"didMethod\":\"cm\",\"enableTrustIssuer\":\"true\"}"
 ```
 
-#### 代码安装
+**测试脚本安装合约**
 
-拷贝证书密钥文件：
+拷贝长安链证书密钥文件：
 
 ```shell
 $ cd chainmaker-go/build && cp -r ./crypto-config/ ../../did-sdk/testdata/
 ```
+
+执行测试脚本：
 
 ```shell
 $ cd ../../did-sdk/testdata/
 $ go test -v -run TestInstallDidContract
 ```
 
+### 主要功能
 
-
-### 使用命令行工具
-
-拷贝证书密钥文件：
+拷贝长安链证书密钥文件至**命令行工具**文件夹：
 
 ```shell
 $ cp -r ./testdata/crypto-config/ ./console/testdata/
@@ -96,7 +116,7 @@ $ ./console doc gen \
 --doc-path=./testdata/doc.json
 ```
 
-文档展示：
+DID文档`doc.json`内容：
 
 ```json
 {
@@ -131,8 +151,6 @@ $ ./console doc gen \
 }
 ```
 
-
-
 DID文档上链：
 
 ```shell
@@ -149,13 +167,13 @@ $ ./console did gen \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
-返回：
+返回DID字符串：
 
 ```shell
 did: [did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK]
 ```
 
-从链上获取DID文档，将上一步返回的did填入--did参数：
+从链上获取DID文档，将上一步返回的did填入`--did`参数：
 
 ```shell
 $ ./console doc get \
@@ -181,13 +199,13 @@ $ ./console issuer list \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
-返回列表：
+返回信任签发者列表：
 
 ```shell
 get the did list of issuer: [[did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK]]
 ```
 
-签发者申请密钥：
+被签发者申请密钥：
 
 ```shell
 $ ./console key gen \
@@ -207,7 +225,7 @@ $ ./console doc gen \
 --doc-path=./testdata/doc2.json
 ```
 
-文档展示：
+DID文档`doc2.json`内容：
 
 ```json
 {
@@ -256,13 +274,13 @@ $ ./console did gen \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
-返回：
+返回DID字符串：
 
 ```shell
 did: [did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc]
 ```
 
-签发者生成VC模板：
+生成`VC`模板：
 
 ```shell
 $ ./console vc-template gen \
@@ -271,7 +289,7 @@ $ ./console vc-template gen \
 --temp-path=./testdata/temp.json
 ```
 
-VC模板展示：
+`VC`模板`temp.json`内容：
 
 ```json
 {
@@ -305,7 +323,7 @@ VC模板展示：
 }
 ```
 
-签发者VC模板上链：
+`VC`模板上链：
 
 ```shell
 $ ./console vc-template add \
@@ -316,13 +334,13 @@ $ ./console vc-template add \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
-新建被签发主体json文件：
+新建被签发者主体`subject.json`文件：
 
 ```shell
 $ vim ./testdata/subject.json
 ```
 
-写入需要签发的主体：
+将下面签发的主体内容复制并保存至`subject.json`文件：
 
 ```json
 {
@@ -333,7 +351,7 @@ $ vim ./testdata/subject.json
 }
 ```
 
-颁发VC：
+签发者颁发可验证凭证`VC`：
 
 ```shell
 $ ./console vc issue \
@@ -349,7 +367,7 @@ $ ./console vc issue \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
-VC 内容展示：
+可验证凭证 `vc.json`内容：
 
 ```json
 {
@@ -385,7 +403,7 @@ VC 内容展示：
 }
 ```
 
-查询VC签发日志：
+查询`VC`签发日志：
 
 ```shell
 $ ./console vc log \
@@ -395,13 +413,13 @@ $ ./console vc log \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
-返回内容：
+返回签发日志内容：
 
 ```shell
 &{Issuer:did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK Did:did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc TemplateId:temp001 VcId:vc001 IssueTime:1709627172}
 ```
 
-VC链上验证：
+链上`VC`验证：
 
 ```shell
 $ ./console vc verify \
@@ -409,13 +427,13 @@ $ ./console vc verify \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
-返回内容：
+返回校验结果：
 
 ```shell
 the verification result of vc is: [true]
 ```
 
-VP生成：
+可验证表述`VP`的生成：
 
 ```shell
 $ ./console vp gen \
@@ -428,7 +446,7 @@ $ ./console vp gen \
 --vp-path=./testdata/vp.json
 ```
 
-VP内容展示：
+可验证表述`vp.json`内容：
 
 ```json
 {
@@ -485,7 +503,7 @@ VP内容展示：
 }
 ```
 
-VP验证
+链上`VP`验证
 
 ```shell
 $ ./console vp verify \
@@ -493,7 +511,7 @@ $ ./console vp verify \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
-返回内容：
+返回校验结果：
 
 ```shell
 the verification result of vp is: [true]
@@ -501,11 +519,11 @@ the verification result of vp is: [true]
 
 
 
-## SDK
+## DID SDK
 
 [SDK接口详情](./README.md)
 
 ## 命令行工具
 
-[命令行工具命令详情](./console/READMA.md)
+[命令行工具命令详情](./console/README.md)
 

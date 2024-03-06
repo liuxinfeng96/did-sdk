@@ -213,6 +213,7 @@ func sendContractTxRequest(payload *common.Payload, sender *common.EndorsementEn
 	}
 
 	// 开启交易订阅
+
 	txC, err := client.SubscribeTx(context.Background(), -1, -1, "", []string{resp.TxId})
 	if err != nil {
 		return nil, fmt.Errorf("[%s] subscribe tx failed, err: [%s]", resp.TxId, err.Error())
@@ -230,9 +231,12 @@ func sendContractTxRequest(payload *common.Payload, sender *common.EndorsementEn
 		}
 
 		if txInfo.Result.Code != common.TxStatusCode_SUCCESS || txInfo.Result.ContractResult.Code != 0 {
-			return nil, fmt.Errorf("exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Msg: [%s], Result: [%s]",
-				txInfo.Payload.TxId, txInfo.Result.Code.String(),
-				txInfo.Result.ContractResult.Code, txInfo.Result.ContractResult.Message, string(txInfo.Result.ContractResult.Result))
+			return nil,
+				fmt.Errorf("exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Result: [%s]",
+					txInfo.Payload.TxId,
+					txInfo.Result.Code.String(),
+					txInfo.Result.ContractResult.Code,
+					string(txInfo.Result.ContractResult.Result))
 		}
 
 		return txInfo.Result.ContractResult.Result, nil
@@ -241,4 +245,5 @@ func sendContractTxRequest(payload *common.Payload, sender *common.EndorsementEn
 	case <-time.After(10 * time.Minute):
 		return nil, fmt.Errorf("[%s] subscribe tx failed, after 10 min, timeout", resp.TxId)
 	}
+
 }

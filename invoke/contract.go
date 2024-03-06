@@ -74,7 +74,7 @@ func InvokeContract(contractName, method string,
 	}
 }
 
-// QueryContract
+// QueryContract 基于ChainMakerSDK包装的合约调用接口，仅查询使用，不落块
 // @params contractName: 合约名称
 // @params method: 方法名称
 // @params params: 合约调用参数

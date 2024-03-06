@@ -371,8 +371,8 @@ func DeleteTrustIssuerListFromChain(dids []string, client *cmsdk.ChainClient) er
 - client：长安链客户端
 - vcId：VC的`id`字段，可以根据业务自定义
 - expirationDate：VC的到期时间
-- vcTemplate：VC的模板内容，是一个JSON schema，一般存储在链上
-- vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写“VerifiableCredential”,可继续根据业务类型追加）
+- vcTemplate：VC的模板内容，是一个`JSON schema`，一般存储在链上
+- vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写`VerifiableCredential`,可继续根据业务类型追加）
 
 ```go
 func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{}, client *cmsdk.ChainClient, vcId string, expirationDate int64, vcTemplateId string, vcType ...string) ([]byte, error)
@@ -391,8 +391,8 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 - issuer：颁发者的DID编号
 - vcId：VC的`id`字段，可以根据业务自定义
 - expirationDate：VC的到期时间
-- vcTemplate：VC的模板内容，是一个JSON schema，一般存储在链上
-- vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写“VerifiableCredential”,可继续根据业务类型追加）
+- vcTemplate：VC的模板内容，是一个`JSON schema`，一般存储在链上
+- vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写`VerifiableCredential`,可继续根据业务类型追加）
 
 ```go
 func IssueVCLocal(skPem []byte, algorithm string, keyIndex int, subject map[string]interface{}, issuer string, vcId string, expirationDate int64, vcTemplate []byte, vcType ...string) ([]byte, error)
@@ -460,7 +460,7 @@ func GenerateSimpleVcTemplate(fieldsMap map[string]string) ([]byte, error)
 - id：模板ID
 - name：模板名称
 - version：模板版本
-- template：模板内容，需要JSON schema格式
+- template：模板内容，需要`JSON schema`格式
 - client：长安链客户端
 
 ```go
@@ -545,7 +545,7 @@ func GetVcIssueLogListFromChain(vcIdSearch string, start int, count int, client 
 - keyIndex：公钥在DID文档中的索引
 - vpId：VP的`id`字段，可以根据业务自定义
 - vcList：VP中包含的VC列表
-- VP中的`type`字段，描述VP的类型信息（可变参数，默认会填写“VerifiablePresentation”,可继续根据业务类型追加）
+- VP中的`type`字段，描述VP的类型信息（可变参数，默认会填写`VerifiablePresentation`,可继续根据业务类型追加）
 
 ```go
 func GenerateVP(skPem []byte, algorithm string, keyIndex int, holder string, vpId string, vcList []string, vpType ...string) ([]byte, error)
