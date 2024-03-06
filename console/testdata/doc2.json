@@ -1,0 +1,28 @@
+{
+    "@context": "https://www.w3.org/ns/did/v1",
+    "id": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
+    "created": "2024-03-05T16:00:23+08:00",
+    "updated": "2024-03-05T16:00:23+08:00",
+    "verificationMethod": [
+        {
+            "id": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc#keys-0",
+            "type": "SM2",
+            "controller": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
+            "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEaeJ+8eGI31XJpxIiV5xw0kie0fYt\niNO0FxSGnaLquKfTzZOWdJSJDHQVb3vNEHuKwPlbeRiSrfEBCeUqsgZ9SQ==\n-----END PUBLIC KEY-----\n",
+            "address": "d3b5c271d534722ed110263592d74a30447f8c29"
+        }
+    ],
+    "authentication": [
+        "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc#keys-0"
+    ],
+    "controller": [
+        "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc"
+    ],
+    "proof": {
+        "type": "SM2",
+        "created": "2024-03-05T16:00:23+08:00",
+        "proofPurpose": "assertionMethod",
+        "verificationMethod": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc#keys-0",
+        "proofValue": "MEQCIEN8GGtczsOnNWfHLmr2AlLgimdggxMPwCkRMQvBSKm2AiAOFK70Ab1B5N9+IaKeDFsTLgpmyHmrDZKnzhFPAKM7jQ=="
+    }
+}
