@@ -15,24 +15,27 @@ func TestDidContractAdmin(t *testing.T) {
 	c, err := testdata.GetChainmakerClient(testdata.ConfigPath2)
 	require.Nil(t, err)
 
-	err = DeleteAdminForDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), creatorC)
+	cpk, err := c.GetPublicKey().String()
 	require.Nil(t, err)
 
-	ok, err := IsAdminOfDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), c)
+	err = DeleteAdminForDidContract([]byte(cpk), creatorC)
+	require.Nil(t, err)
+
+	ok, err := IsAdminOfDidContract([]byte(cpk), c)
 	require.Nil(t, err)
 	require.Equal(t, false, ok)
 
-	err = SetAdminForDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), creatorC)
+	err = SetAdminForDidContract([]byte(cpk), creatorC)
 	require.Nil(t, err)
 
-	ok2, err := IsAdminOfDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), c)
+	ok2, err := IsAdminOfDidContract([]byte(cpk), c)
 	require.Nil(t, err)
 	require.Equal(t, true, ok2)
 
-	err = DeleteAdminForDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), creatorC)
+	err = DeleteAdminForDidContract([]byte(cpk), creatorC)
 	require.Nil(t, err)
 
-	ok3, err := IsAdminOfDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), c)
+	ok3, err := IsAdminOfDidContract([]byte(cpk), c)
 	require.Nil(t, err)
 	require.Equal(t, false, ok3)
 }
@@ -49,11 +52,14 @@ func TestPermissionDidContractAdmin(t *testing.T) {
 	creatorC, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
-	// 添加管理员
-	err = SetAdminForDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), creatorC)
+	cpk, err := c.GetPublicKey().String()
 	require.Nil(t, err)
 
-	ok, err := IsAdminOfDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), c)
+	// 添加管理员
+	err = SetAdminForDidContract([]byte(cpk), creatorC)
+	require.Nil(t, err)
+
+	ok, err := IsAdminOfDidContract([]byte(cpk), c)
 	require.Nil(t, err)
 	require.Equal(t, true, ok)
 
@@ -61,6 +67,6 @@ func TestPermissionDidContractAdmin(t *testing.T) {
 	err = did.AddDidBlackListToChain(blackList, c)
 	require.Nil(t, err)
 
-	err = DeleteAdminForDidContract(c.GetPublicKey().ToStandardKey(), c.GetHashType(), creatorC)
+	err = DeleteAdminForDidContract([]byte(cpk), creatorC)
 	require.Nil(t, err)
 }

@@ -111,9 +111,21 @@ func (d *DidContract) GetDidDocument(did string) (string, error) {
 
 // UpdateDidDocument 更新DID Document
 func (d *DidContract) UpdateDidDocument(didDocument string) error {
+
 	didDoc, err := model.NewDIDDocument(didDocument)
 	if err != nil {
 		return errors.New("invalid did document")
+	}
+
+	// 检查old DID Document是否存在
+	oldDocBytes, err := d.dal.getDidDocument(didDoc.Id)
+	if err != nil || oldDocBytes == nil {
+		return errors.New("did does not exist")
+	}
+
+	oldDoc, err := model.NewDIDDocument(string(oldDocBytes))
+	if err != nil {
+		return errors.New("invalid old did document")
 	}
 
 	senderDid, err := d.dal.getSenderDid()
@@ -123,10 +135,12 @@ func (d *DidContract) UpdateDidDocument(didDocument string) error {
 
 	var hasPermission bool
 
-	for _, c := range didDoc.Controller {
-		if senderDid == c {
-			hasPermission = true
-			break
+	if len(senderDid) != 0 {
+		for _, c := range oldDoc.Controller {
+			if senderDid == c {
+				hasPermission = true
+				break
+			}
 		}
 	}
 
@@ -147,30 +161,19 @@ func (d *DidContract) UpdateDidDocument(didDocument string) error {
 		return fmt.Errorf("the DID doc proof verify failed, err: [%s]", err.Error())
 	}
 
-	return d.updateDidDocument(didDoc)
+	return d.updateDidDocument(didDoc, oldDoc)
 }
 
-func (d *DidContract) updateDidDocument(didDoc *model.DidDocument) error {
+func (d *DidContract) updateDidDocument(didDoc, oldDoc *model.DidDocument) error {
 
 	did, pubKeys, addresses := didDoc.ParsePubKeyAddress()
-
-	// 检查old DID Document是否存在
-	oldDocBytes, err := d.dal.getDidDocument(did)
-	if err != nil || oldDocBytes == nil {
-		return errors.New("did does not exist")
-	}
-
-	oldDoc, err := model.NewDIDDocument(string(oldDocBytes))
-	if err != nil {
-		return errors.New("invalid old did document")
-	}
 
 	_, oldPks, oldAddresses := oldDoc.ParsePubKeyAddress()
 
 	// 如果oldPubKeys在新的pubKeys中不存在，则删除
 	for _, oldPk := range oldPks {
 		if !isInList(oldPk, pubKeys) {
-			err = d.dal.deleteIndexPubKey(oldPk)
+			err := d.dal.deleteIndexPubKey(oldPk)
 			if err != nil {
 				return err
 			}
@@ -179,7 +182,7 @@ func (d *DidContract) updateDidDocument(didDoc *model.DidDocument) error {
 	// 如果oldAddresses在新的addresses中不存在，则删除
 	for _, oldAddr := range oldAddresses {
 		if !isInList(oldAddr, addresses) {
-			err = d.dal.deleteIndexAddress(oldAddr)
+			err := d.dal.deleteIndexAddress(oldAddr)
 			if err != nil {
 				return err
 			}

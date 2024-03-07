@@ -1,6 +1,8 @@
 package did
 
 import (
+	"crypto/ecdsa"
+	"crypto/rsa"
 	"crypto/sha256"
 	"did-sdk/invoke"
 	"did-sdk/key"
@@ -8,7 +10,6 @@ import (
 	"did-sdk/utils"
 	"encoding/hex"
 	"encoding/json"
-	"encoding/pem"
 	"errors"
 	"fmt"
 	"strconv"
@@ -17,12 +18,13 @@ import (
 	"chainmaker.org/chainmaker/pb-go/v2/common"
 	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
 	"github.com/mr-tron/base58"
-
-	ethcrypto "github.com/ethereum/go-ethereum/crypto"
+	"github.com/tjfoc/gmsm/sm2"
 
 	bcx509 "github.com/liuxinfeng96/bc-crypto/x509"
 
+	"chainmaker.org/chainmaker/common/v2/evmutils"
 	"chainmaker.org/chainmaker/did-contract/model"
+	bcecdsa "github.com/liuxinfeng96/bc-crypto/ecdsa"
 )
 
 const (
@@ -310,7 +312,7 @@ func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller .
 		authentication := make([]string, 0)
 
 		if len(controller) != 0 {
-			newDoc.Controller = append(controller, newDoc.Id)
+			newDoc.Controller = append(newDoc.Controller, controller...)
 		}
 
 		// 多密钥生成VerificationMethod
@@ -402,23 +404,44 @@ func base58Encode(hash []byte) string {
 
 func newVerificationMethod(id, algo, controller string, pkPem []byte) (*model.VerificationMethod, error) {
 
-	var pkDer []byte
-
-	block, rest := pem.Decode(pkPem)
-	if block == nil {
-		pkDer = rest
-	} else {
-		pkDer = block.Bytes
-	}
-
 	// 校验是否是公钥
-	_, err := bcx509.ParsePublicKeyFromDER(pkDer)
+	pubKey, err := bcx509.ParsePublicKey(pkPem)
 	if err != nil {
 		return nil, err
 	}
 
-	// 计算出Address
-	bytesAddr := ethcrypto.Keccak256(pkDer)
+	// 根据pk判断密钥算法类型
+	if len(algo) == 0 {
+		switch pk := pubKey.(type) {
+
+		case *bcecdsa.PublicKey:
+
+			if pk.Curve == sm2.P256Sm2() {
+				algo = key.PkAlgorithmSM2
+			} else {
+				algo = key.PkAlgorithmECDSA
+			}
+
+		case *ecdsa.PrivateKey:
+
+			algo = key.PkAlgorithmECDSA
+
+		case *rsa.PrivateKey:
+
+			algo = key.PkAlgorithmRSA
+
+		default:
+			return nil, errors.New("unknown publicKey algorithm")
+		}
+	}
+
+	ski, err := bcx509.ComputeSKI(pubKey)
+	if err != nil {
+		return nil, err
+	}
+
+	// 根据长安链规则, 计算出Address
+	bytesAddr := evmutils.Keccak256(ski)
 	addr := hex.EncodeToString(bytesAddr)[24:]
 
 	return &model.VerificationMethod{

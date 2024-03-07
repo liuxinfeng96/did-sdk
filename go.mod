@@ -8,7 +8,7 @@ require (
 	chainmaker.org/chainmaker/pb-go/v2 v2.3.3
 	chainmaker.org/chainmaker/sdk-go/v2 v2.3.3
 	github.com/ethereum/go-ethereum v1.9.16
-	github.com/liuxinfeng96/bc-crypto v0.2.18
+	github.com/liuxinfeng96/bc-crypto v0.2.19
 	github.com/mr-tron/base58 v1.2.0
 	github.com/spf13/cobra v1.1.1
 	github.com/test-go/testify v1.1.4

@@ -622,8 +622,8 @@ github.com/lightstep/lightstep-tracer-common/golang/gogo v0.0.0-20190605223551-b
 github.com/lightstep/lightstep-tracer-go v0.18.1/go.mod h1:jlF1pusYV4pidLvZ+XD0UBX0ZE6WURAspgAczcDHrL4=
 github.com/linvon/cuckoo-filter v0.4.0 h1:vNlwcnvLOgmVJrhfE7gE4RYsxhrdW3LzLV7t27YsOuU=
 github.com/linvon/cuckoo-filter v0.4.0/go.mod h1:L3YZEEsEkbEEWCA2r4sVk1dkrqz+TZ+uxGihtb6BwwI=
-github.com/liuxinfeng96/bc-crypto v0.2.18 h1:C4dWYqGkiHUo5nFTWO4ydS9lY2n4AX5CSkbJAnTsL3o=
-github.com/liuxinfeng96/bc-crypto v0.2.18/go.mod h1:26cYE2oRhChNI+NkFO+4hZYjVR81S5+klBI7HwP+oIE=
+github.com/liuxinfeng96/bc-crypto v0.2.19 h1:triyuKQgcc2qHcubN8pNkE27mdyh+4QEvYBibPNp4uI=
+github.com/liuxinfeng96/bc-crypto v0.2.19/go.mod h1:26cYE2oRhChNI+NkFO+4hZYjVR81S5+klBI7HwP+oIE=
 github.com/lyft/protoc-gen-validate v0.0.13/go.mod h1:XbGvPuh87YZc5TdIa2/I4pLk0QoUACkjt2znoq26NVQ=
 github.com/magiconair/properties v1.8.0/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=
 github.com/magiconair/properties v1.8.1/go.mod h1:PppfXfuXeibc/6YijjN8zIbojt8czPbwD3XqdrwzmxQ=

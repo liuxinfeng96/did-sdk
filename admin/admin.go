@@ -4,22 +4,25 @@ import (
 	"did-sdk/invoke"
 	"encoding/hex"
 
-	cmcert "chainmaker.org/chainmaker/common/v2/cert"
-	cmcrypto "chainmaker.org/chainmaker/common/v2/crypto"
 	"chainmaker.org/chainmaker/did-contract/model"
 	"chainmaker.org/chainmaker/pb-go/v2/common"
 	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
+	bcx509 "github.com/liuxinfeng96/bc-crypto/x509"
 )
 
 // SetAdminForDidContract 为DID合约设置管理员（仅合约创建者有权限）
-// @params pubKey：公钥
-// @params hash：哈希算法（一般与链保持一致）
+// @params pubKeyPem：公钥PEM编码
 // @params client：长安链客户端
-func SetAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) error {
+func SetAdminForDidContract(pubKeyPem []byte, client *cmsdk.ChainClient) error {
+
+	pubKey, err := bcx509.ParsePublicKey(pubKeyPem)
+	if err != nil {
+		return err
+	}
 
 	// 由于长安链合约中获取的CreatorPk和SenderPk是公钥的SKI
 	// 所以这里进行SKI的转换
-	ski, err := cmcert.ComputeSKI(hash, pubKey)
+	ski, err := bcx509.ComputeSKI(pubKey)
 	if err != nil {
 		return err
 	}
@@ -44,14 +47,18 @@ func SetAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *
 }
 
 // DeleteAdminForDidContract 为DID合约删除管理员（仅合约创建者有权限）
-// @params pubKey：公钥
-// @params hash：哈希算法（一般与链保持一致）
+// @params pubKeyPem：公钥PEM编码
 // @params client：长安链客户端
-func DeleteAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) error {
+func DeleteAdminForDidContract(pubKeyPem []byte, client *cmsdk.ChainClient) error {
+
+	pubKey, err := bcx509.ParsePublicKey(pubKeyPem)
+	if err != nil {
+		return err
+	}
 
 	// 由于长安链合约中获取的CreatorPk和SenderPk是公钥的SKI
 	// 所以这里进行SKI的转换
-	ski, err := cmcert.ComputeSKI(hash, pubKey)
+	ski, err := bcx509.ComputeSKI(pubKey)
 	if err != nil {
 		return err
 	}
@@ -76,14 +83,18 @@ func DeleteAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, clien
 }
 
 // IsAdminOfDidContract 查询是否拥有合约管理员权限
-// @params pubKey：公钥
-// @params hash：哈希算法（一般与链保持一致）
+// @params pubKeyPem：公钥PEM编码
 // @params client：长安链客户端
-func IsAdminOfDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) (bool, error) {
+func IsAdminOfDidContract(pubKeyPem []byte, client *cmsdk.ChainClient) (bool, error) {
+
+	pubKey, err := bcx509.ParsePublicKey(pubKeyPem)
+	if err != nil {
+		return false, err
+	}
 
 	// 由于长安链合约中获取的CreatorPk和SenderPk是公钥的SKI
 	// 所以这里进行SKI的转换
-	ski, err := cmcert.ComputeSKI(hash, pubKey)
+	ski, err := bcx509.ComputeSKI(pubKey)
 	if err != nil {
 		return false, err
 	}

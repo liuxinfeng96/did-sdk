@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"chainmaker.org/chainmaker/common/v2/evmutils"
 	"chainmaker.org/chainmaker/contract-sdk-go/v2/sdk"
 )
 
@@ -481,10 +482,18 @@ func vcIdToKey(vcID string) string {
 }
 
 func (dal *Dal) getSenderDid() (string, error) {
-	senderPk, err := sdk.Instance.GetSenderPk()
+	ski, err := sdk.Instance.GetSenderPk()
 	if err != nil {
 		return "", err
 	}
 
-	return dal.getDidByPubKey(senderPk)
+	skiBytes, err := hex.DecodeString(ski)
+	if err != nil {
+		return "", err
+	}
+
+	bytesAddr := evmutils.Keccak256(skiBytes)
+	addr := hex.EncodeToString(bytesAddr)[24:]
+
+	return dal.getDidByAddress(addr)
 }

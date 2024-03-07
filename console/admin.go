@@ -58,8 +58,12 @@ $ ./console admin add \
 				return err
 			}
 
-			err = admin.SetAdminForDidContract(adminc.GetPublicKey().ToStandardKey(),
-				adminc.GetHashType(), c)
+			adminPk, err := adminc.GetPublicKey().String()
+			if err != nil {
+				return err
+			}
+
+			err = admin.SetAdminForDidContract([]byte(adminPk), c)
 			if err != nil {
 				return err
 			}
@@ -111,8 +115,12 @@ $ ./console admin delete \
 				return err
 			}
 
-			err = admin.DeleteAdminForDidContract(adminc.GetPublicKey().ToStandardKey(),
-				adminc.GetHashType(), c)
+			adminPk, err := adminc.GetPublicKey().String()
+			if err != nil {
+				return err
+			}
+
+			err = admin.DeleteAdminForDidContract([]byte(adminPk), c)
 			if err != nil {
 				return err
 			}
@@ -154,8 +162,12 @@ $ ./console admin auth \
 				return err
 			}
 
-			ok, err := admin.IsAdminOfDidContract(c.GetPublicKey().ToStandardKey(),
-				c.GetHashType(), c)
+			pk, err := c.GetPublicKey().String()
+			if err != nil {
+				return err
+			}
+
+			ok, err := admin.IsAdminOfDidContract([]byte(pk), c)
 			if err != nil {
 				return err
 			}

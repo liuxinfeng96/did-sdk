@@ -144,10 +144,36 @@ func TestUpdateDidDocToChain(t *testing.T) {
 	c, err := testdata.GetChainmakerClient(testdata.ConfigPath1)
 	require.Nil(t, err)
 
+	c2, err := testdata.GetChainmakerClient(testdata.ConfigPath2)
+	require.Nil(t, err)
+	c2pk, err := c2.GetPublicKey().String()
+	require.Nil(t, err)
+	c2sk, err := c2.GetPrivateKey().String()
+	require.Nil(t, err)
+
+	c2KeyInfo := &key.KeyInfo{
+		PkPEM: []byte(c2pk),
+		SkPEM: []byte(c2sk),
+	}
+
+	c2doc, err := GenerateDidDoc([]*key.KeyInfo{c2KeyInfo}, c)
+	require.Nil(t, err)
+
+	err = AddDidDocToChain(string(c2doc), c)
+	require.Nil(t, err)
+
+	var c2Doc model.DidDocument
+
+	json.Unmarshal(c2doc, &c2Doc)
+	require.Nil(t, err)
+
+	c2Did, err := GetDidByAddressFromChain(c2Doc.VerificationMethod[0].Address, c)
+	require.Nil(t, err)
+
 	keyInfo, err := key.GenerateKey("EC_Secp256k1")
 	require.Nil(t, err)
 
-	doc, err := GenerateDidDoc([]*key.KeyInfo{keyInfo}, c)
+	doc, err := GenerateDidDoc([]*key.KeyInfo{keyInfo}, c, c2Did)
 	require.Nil(t, err)
 
 	err = AddDidDocToChain(string(doc), c)
@@ -161,10 +187,11 @@ func TestUpdateDidDocToChain(t *testing.T) {
 	newKeyInfo, err := key.GenerateKey("SM2")
 	require.Nil(t, err)
 
-	newDoc, err := UpdateDidDoc(oldDoc, []*key.KeyInfo{newKeyInfo}, "did:cm:admin")
+	newDoc, err := UpdateDidDoc(oldDoc, []*key.KeyInfo{newKeyInfo})
 	require.Nil(t, err)
 
-	err = UpdateDidDocToChain(string(newDoc), c)
+	// 使用c2更新，测试权限逻辑
+	err = UpdateDidDocToChain(string(newDoc), c2)
 	require.Nil(t, err)
 
 	getDoc, err := GetDidDocFromChain(oldDoc.Id, c)

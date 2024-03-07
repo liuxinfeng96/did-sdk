@@ -234,12 +234,12 @@ func isInList(str string, list []string) bool {
 }
 
 func (d *DidContract) isSenderIssued(vcId string) (bool, error) {
-	senderPk, err := sdk.Instance.GetSenderPk()
+	addr, err := sdk.Instance.Origin()
 	if err != nil {
 		return false, err
 	}
 
-	did, err := d.GetDidByPubkey(senderPk)
+	did, err := d.GetDidByAddress(addr)
 	if err != nil {
 		return false, err
 	}

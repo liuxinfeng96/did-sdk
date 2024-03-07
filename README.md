@@ -8,12 +8,11 @@
 
 **参数说明**
 
-- pubKey：公钥
-- hash：哈希算法（一般与链保持一致）
+- pubKeyPem：公钥PEM编码
 - client：长安链客户端
 
 ```go
-func SetAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) error
+func SetAdminForDidContract(pubKeyPem []byte, client *cmsdk.ChainClient) error
 ```
 
 ### DeleteAdminForDidContract
@@ -22,12 +21,11 @@ func SetAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *
 
 **参数说明**
 
-- pubKey：公钥
-- hash：哈希算法（一般与链保持一致）
+- pubKeyPem：公钥PEM编码
 - client：长安链客户端
 
 ```go
-func DeleteAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) error
+func DeleteAdminForDidContract(pubKeyPem []byte, client *cmsdk.ChainClient) error
 ```
 
 ### IsAdminOfDidContract
@@ -36,12 +34,11 @@ func DeleteAdminForDidContract(pubKey interface{}, hash cmcrypto.HashType, clien
 
 **参数说明**
 
-- pubKey：公钥
-- hash：哈希算法（一般与链保持一致）
+- pubKeyPem：公钥PEM编码
 - client：长安链客户端
 
 ```go
-func IsAdminOfDidContract(pubKey interface{}, hash cmcrypto.HashType, client *cmsdk.ChainClient) (bool, error)
+func IsAdminOfDidContract(pubKeyPem []byte, client *cmsdk.ChainClient) (bool, error)
 ```
 
 
