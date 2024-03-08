@@ -10,22 +10,22 @@
     ],
     "credentialSubject": {
         "age": "18",
-        "id": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
+        "id": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe",
         "name": "xiaoming",
         "sex": "男"
     },
-    "issuer": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK",
-    "issuanceDate": "2024-03-05T16:26:12+08:00",
+    "issuer": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3",
+    "issuanceDate": "2024-03-08T16:49:03+08:00",
     "expirationDate": "2025-01-25T00:00:00+08:00",
     "template": {
         "id": "temp001",
         "name": "模板1"
     },
     "proof": {
-        "type": "SM2",
-        "created": "2024-03-05T16:26:12+08:00",
+        "type": "SM2-SM3",
+        "created": "2024-03-08T16:49:03+08:00",
         "proofPurpose": "assertionMethod",
-        "verificationMethod": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK#keys-0",
-        "proofValue": "MEQCIHMDrRwRVT37Ya1PsfgNEsX1VcoMzGtUjF7IYCDL52elAiB0lMMYWMQCWfRBW93s4GpqPDcR4tz+ueNp6tuaCi6iug=="
+        "verificationMethod": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3#keys-0",
+        "proofValue": "MEYCIQCh7l5EJckKjZ+yMbOabCBzfnfU47EiHE4cY2HJSYWmOQIhANmGwmvHas1d/jGa20ain5s/s7yV37BfPRkKIljtvAWk"
     }
 }

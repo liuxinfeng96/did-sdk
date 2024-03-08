@@ -110,7 +110,6 @@ $ ./console key gen \
 $ ./console doc gen \
 --sks-path=./testdata/sk.pem \
 --pks-path=./testdata/pk.pem \
---algos=SM2 \
 --controller=did:cm:test1,did:cm:test2 \
 --sdk-path=./testdata/sdk_config.yml \
 --doc-path=./testdata/doc.json
@@ -121,32 +120,32 @@ DID文档`doc.json`内容：
 ```json
 {
     "@context": "https://www.w3.org/ns/did/v1",
-    "id": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK",
-    "created": "2024-03-05T15:23:03+08:00",
-    "updated": "2024-03-05T15:23:03+08:00",
+    "id": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3",
+    "created": "2024-03-08T16:38:21+08:00",
+    "updated": "2024-03-08T16:38:21+08:00",
     "verificationMethod": [
         {
-            "id": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK#keys-0",
-            "type": "SM2",
-            "controller": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK",
-            "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEEQ4ArKOuk8kQWRKsmCAqXMiv5g3f\nt0uJUZie8pKeHTyfeJz4UPjutOKJERfIWIQmvwYZZSj3Vq2edOjv5lW6Zw==\n-----END PUBLIC KEY-----\n",
-            "address": "dc15154528df50108ad5e497b69cf275d911a727"
+            "id": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3#keys-0",
+            "type": "SM2-SM3",
+            "controller": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3",
+            "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEIFvBi8CbbD3fVwfn4QSIckx12mpr\nQGFJCbcAqsLkeQ7pJKOxF4vOOeE9JFvt8qXnqRPgQHbjfnyUcQCdi6SmJg==\n-----END PUBLIC KEY-----\n",
+            "address": "8c6e1121ac269037b69d69ca5bdf5db812ebb55a"
         }
     ],
     "authentication": [
-        "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK#keys-0"
+        "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3#keys-0"
     ],
     "controller": [
         "did:cm:test1",
         "did:cm:test2",
-        "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK"
+        "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3"
     ],
     "proof": {
-        "type": "SM2",
-        "created": "2024-03-05T15:23:03+08:00",
+        "type": "SM2-SM3",
+        "created": "2024-03-08T16:38:21+08:00",
         "proofPurpose": "assertionMethod",
-        "verificationMethod": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK#keys-0",
-        "proofValue": "MEYCIQDnmjFocSgpkYTm5dUFEgq4laFAq1eUenvBGviC4V6m6AIhAN49lmhDOl/avCn94IyiYGTel0QRTYdpJdimUSmv3MWt"
+        "verificationMethod": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3#keys-0",
+        "proofValue": "MEUCIQC7mxQgOFCknMqrAv6Ix5Jaftm3POrdXusi0F5qtDqo3gIgfdO1yjfA2WXqHqPN6eGSbORJwS9T14aV8tVxHw08z9I="
     }
 }
 ```
@@ -170,14 +169,14 @@ $ ./console did gen \
 返回DID字符串：
 
 ```shell
-did: [did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK]
+did: [did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3]
 ```
 
 从链上获取DID文档，将上一步返回的did填入`--did`参数：
 
 ```shell
 $ ./console doc get \
---did=did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK \
+--did=did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3 \
 --sdk-path=./testdata/sdk_config.yml \
 --doc-path=./testdata/doc.json
 ```
@@ -186,7 +185,7 @@ $ ./console doc get \
 
 ```shell
 $ ./console issuer add \
---dids=did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK \
+--dids=did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3 \
 --sdk-path=./testdata/sdk_config.yml
 ```
 
@@ -202,14 +201,14 @@ $ ./console issuer list \
 返回信任签发者列表：
 
 ```shell
-get the did list of issuer: [[did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK]]
+get the did list of issuer: [[did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3]]
 ```
 
 被签发者申请密钥：
 
 ```shell
 $ ./console key gen \
---algo=SM2 \
+--algo=EC_Secp256k1 \
 --pk-path=./testdata/pk2.pem \
 --sk-path=./testdata/sk2.pem
 ```
@@ -220,7 +219,6 @@ $ ./console key gen \
 $ ./console doc gen \
 --sks-path=./testdata/sk2.pem \
 --pks-path=./testdata/pk2.pem \
---algos=SM2 \
 --sdk-path=./testdata/sdk_config.yml \
 --doc-path=./testdata/doc2.json
 ```
@@ -230,30 +228,30 @@ DID文档`doc2.json`内容：
 ```json
 {
     "@context": "https://www.w3.org/ns/did/v1",
-    "id": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
-    "created": "2024-03-05T16:00:23+08:00",
-    "updated": "2024-03-05T16:00:23+08:00",
+    "id": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe",
+    "created": "2024-03-08T16:42:30+08:00",
+    "updated": "2024-03-08T16:42:30+08:00",
     "verificationMethod": [
         {
-            "id": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc#keys-0",
-            "type": "SM2",
-            "controller": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
-            "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoEcz1UBgi0DQgAEaeJ+8eGI31XJpxIiV5xw0kie0fYt\niNO0FxSGnaLquKfTzZOWdJSJDHQVb3vNEHuKwPlbeRiSrfEBCeUqsgZ9SQ==\n-----END PUBLIC KEY-----\n",
-            "address": "d3b5c271d534722ed110263592d74a30447f8c29"
+            "id": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe#keys-0",
+            "type": "ECDSA-SHA256",
+            "controller": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe",
+            "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFYwEAYHKoZIzj0CAQYFK4EEAAoDQgAEk8LPsj8/8OF1/P5E885/taW9Z5briwXI\n+adAsK8bVluJGFZSK/TOoLklAhTgxGj1TBKRh0TSayUTBwC+oH0gdw==\n-----END PUBLIC KEY-----\n",
+            "address": "2fc542c747a1a26b977c5b1fb824e070cb41b181"
         }
     ],
     "authentication": [
-        "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc#keys-0"
+        "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe#keys-0"
     ],
     "controller": [
-        "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc"
+        "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe"
     ],
     "proof": {
-        "type": "SM2",
-        "created": "2024-03-05T16:00:23+08:00",
+        "type": "ECDSA-SHA256",
+        "created": "2024-03-08T16:42:30+08:00",
         "proofPurpose": "assertionMethod",
-        "verificationMethod": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc#keys-0",
-        "proofValue": "MEQCIEN8GGtczsOnNWfHLmr2AlLgimdggxMPwCkRMQvBSKm2AiAOFK70Ab1B5N9+IaKeDFsTLgpmyHmrDZKnzhFPAKM7jQ=="
+        "verificationMethod": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe#keys-0",
+        "proofValue": "MEYCIQDU/qVbPIT6yumUuIH4L2Fvxu/ZAfuGdD6Jb8DtomgIdgIhALW6lnslC0d1NW+9WEn5ffDz5DR4P5KJonnM9J7nclg8"
     }
 }
 ```
@@ -277,7 +275,7 @@ $ ./console did gen \
 返回DID字符串：
 
 ```shell
-did: [did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc]
+did: [did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe]
 ```
 
 生成`VC`模板：
@@ -340,11 +338,11 @@ $ ./console vc-template add \
 $ vim ./testdata/subject.json
 ```
 
-将下面签发的主体内容复制并保存至`subject.json`文件：
+将下面签发的主体内容复制并保存至`subject.json`文件，**将查询的被签发者DID填入`id`字段**：
 
 ```json
 {
-    "id": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
+    "id": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe",
     "name": "xiaoming",
     "age": "18",
     "sex": "男"
@@ -357,7 +355,6 @@ $ vim ./testdata/subject.json
 $ ./console vc issue \
 --sk-path=./testdata/sk.pem \
 --pk-path=./testdata/pk.pem \
---algo=SM2 \
 --subject=./testdata/subject.json \
 --expiration=2025-01-25 \
 --id=vc001 \
@@ -382,23 +379,23 @@ $ ./console vc issue \
     ],
     "credentialSubject": {
         "age": "18",
-        "id": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
+        "id": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe",
         "name": "xiaoming",
         "sex": "男"
     },
-    "issuer": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK",
-    "issuanceDate": "2024-03-05T16:26:12+08:00",
+    "issuer": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3",
+    "issuanceDate": "2024-03-08T16:49:03+08:00",
     "expirationDate": "2025-01-25T00:00:00+08:00",
     "template": {
         "id": "temp001",
         "name": "模板1"
     },
     "proof": {
-        "type": "SM2",
-        "created": "2024-03-05T16:26:12+08:00",
+        "type": "SM2-SM3",
+        "created": "2024-03-08T16:49:03+08:00",
         "proofPurpose": "assertionMethod",
-        "verificationMethod": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK#keys-0",
-        "proofValue": "MEQCIHMDrRwRVT37Ya1PsfgNEsX1VcoMzGtUjF7IYCDL52elAiB0lMMYWMQCWfRBW93s4GpqPDcR4tz+ueNp6tuaCi6iug=="
+        "verificationMethod": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3#keys-0",
+        "proofValue": "MEYCIQCh7l5EJckKjZ+yMbOabCBzfnfU47EiHE4cY2HJSYWmOQIhANmGwmvHas1d/jGa20ain5s/s7yV37BfPRkKIljtvAWk"
     }
 }
 ```
@@ -416,7 +413,7 @@ $ ./console vc log \
 返回签发日志内容：
 
 ```shell
-&{Issuer:did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK Did:did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc TemplateId:temp001 VcId:vc001 IssueTime:1709627172}
+&{Issuer:did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3 Did:did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe TemplateId:temp001 VcId:vc001 IssueTime:1709887743}
 ```
 
 链上`VC`验证：
@@ -433,13 +430,12 @@ $ ./console vc verify \
 the verification result of vc is: [true]
 ```
 
-可验证表述`VP`的生成：
+可验证表述`VP`的生成，**`--holder`参数填入被签发者DID，同`subject.json`文件里的`id`字段**：
 
 ```shell
 $ ./console vp gen \
 --sk-path=./testdata/sk2.pem \
---algo=SM2 \
---holder=did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc \
+--holder=did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe \
 --id=vp001 \
 --vc-list=./testdata/vc.json \
 --type=Identity \
@@ -472,33 +468,33 @@ $ ./console vp gen \
             ],
             "credentialSubject": {
                 "age": "18",
-                "id": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
+                "id": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe",
                 "name": "xiaoming",
                 "sex": "男"
             },
-            "issuer": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK",
-            "issuanceDate": "2024-03-05T16:26:12+08:00",
+            "issuer": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3",
+            "issuanceDate": "2024-03-08T16:49:03+08:00",
             "expirationDate": "2025-01-25T00:00:00+08:00",
             "template": {
                 "id": "temp001",
                 "name": "模板1"
             },
             "proof": {
-                "type": "SM2",
-                "created": "2024-03-05T16:26:12+08:00",
+                "type": "SM2-SM3",
+                "created": "2024-03-08T16:49:03+08:00",
                 "proofPurpose": "assertionMethod",
-                "verificationMethod": "did:cm:EuBrMKrgK1LTbtKUv1xfXxU9fKCDqkRjPTvFjYzRmthK#keys-0",
-                "proofValue": "MEQCIHMDrRwRVT37Ya1PsfgNEsX1VcoMzGtUjF7IYCDL52elAiB0lMMYWMQCWfRBW93s4GpqPDcR4tz+ueNp6tuaCi6iug=="
+                "verificationMethod": "did:cm:AmGZacodAgjdnoEDpH9v2VToz1UMhi5FD6SkVL2fYUo3#keys-0",
+                "proofValue": "MEYCIQCh7l5EJckKjZ+yMbOabCBzfnfU47EiHE4cY2HJSYWmOQIhANmGwmvHas1d/jGa20ain5s/s7yV37BfPRkKIljtvAWk"
             }
         }
     ],
-    "holder": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc",
+    "holder": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe",
     "proof": {
-        "type": "SM2",
-        "created": "2024-03-05T16:47:38+08:00",
+        "type": "ECDSA-SHA256",
+        "created": "2024-03-08T16:52:31+08:00",
         "proofPurpose": "assertionMethod",
-        "verificationMethod": "did:cm:CvQbc2X7cSa3JGyYzVEyVSNYqVVGiiLCQHTyW8RZJFnc#keys-0",
-        "proofValue": "MEUCIDD+f6QIM09KZzz7Fsl113PfDQ39i0giFCg+GI/3x4+7AiEAtycipZU0qtDiRdx7hBChf2d0Xc2ANFOCuCr0mBzVp1U="
+        "verificationMethod": "did:cm:Hyi8uUrBPhsH2i1sd1zaZGYeQA9WdxGgiAu8YPgY8pxe#keys-0",
+        "proofValue": "MEQCIFUXSUz0TCBANreHVGfVR3+hhkqbiXSpURfErOXx1tXbAiBBR5vDKdfS2nhmKZ8otwqtFZQpcV1BjO6t5UTHJxD+xQ=="
     }
 }
 ```
