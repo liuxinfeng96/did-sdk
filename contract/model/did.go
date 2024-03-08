@@ -69,6 +69,8 @@ func (d *DidDocument) VerifyProof() (bool, error) {
 		return false, err
 	}
 
+	// 反序列化判断是一把密钥还是多把密钥
+	// 如果是一把密钥，默认验证索引为0的公钥
 	var pf Proof
 	if err := json.Unmarshal(d.Proof, &pf); err == nil {
 		return pf.Verify(msg, []byte(d.VerificationMethod[0].PublicKeyPem))

@@ -93,6 +93,8 @@ $ ./console vp gen \
 				return err
 			}
 
+			fmt.Println(ConsoleOutputSuccessfulOperation)
+
 			return nil
 		},
 	}

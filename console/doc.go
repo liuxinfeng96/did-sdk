@@ -110,6 +110,8 @@ $ ./console doc gen \
 				return err
 			}
 
+			fmt.Println(ConsoleOutputSuccessfulOperation)
+
 			return nil
 		},
 	}
@@ -219,6 +221,8 @@ $ ./console doc get \
 				return err
 			}
 
+			fmt.Println(ConsoleOutputSuccessfulOperation)
+
 			return nil
 		},
 	}
@@ -309,6 +313,8 @@ $ ./console doc update-local  \
 			if err != nil {
 				return err
 			}
+
+			fmt.Println(ConsoleOutputSuccessfulOperation)
 
 			return nil
 		},

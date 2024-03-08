@@ -2,6 +2,7 @@ package main
 
 import (
 	"did-sdk/key"
+	"fmt"
 	"os"
 	"strings"
 
@@ -75,6 +76,8 @@ func keyGen(algo, skPath, pkPath string) error {
 	if err != nil {
 		return err
 	}
+
+	fmt.Println(ConsoleOutputSuccessfulOperation)
 
 	return nil
 }

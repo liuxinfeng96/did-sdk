@@ -193,6 +193,8 @@ $ ./console vc-template get \
 				return err
 			}
 
+			fmt.Println(ConsoleOutputSuccessfulOperation)
+
 			return nil
 		},
 	}

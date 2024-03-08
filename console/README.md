@@ -299,7 +299,7 @@ $ ./console black list \
 ```shell
 $ ./console black delete \
 --dids=did:cm:test1,did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
---sdk-path=./testdata/sdk_config.yml 
+--sdk-path=./testdata/sdk_config.yml
 ```
 
 ```shell

@@ -143,6 +143,8 @@ $ ./console vc issue \
 				return err
 			}
 
+			fmt.Println(ConsoleOutputSuccessfulOperation)
+
 			return nil
 		},
 	}
@@ -268,6 +270,8 @@ $ ./console vc issue-local \
 			if err != nil {
 				return err
 			}
+
+			fmt.Println(ConsoleOutputSuccessfulOperation)
 
 			return nil
 		},

@@ -517,6 +517,180 @@ $ ./console vp verify \
 the verification result of vp is: [true]
 ```
 
+### 其他功能
+
+DID智能合约在`DID文档的更新`、`黑名单的管理`、`权威签发者的管理`和`VC的吊销`等操作需要一定的操作权限限制。
+
+合约的`创建者（creator）`拥有合约最大权限，`creator`可以为合约设置管理员`admin`，添加合约管理员需要使用管理员的`公钥`。
+
+操作权限具体看下表：
+
+|                        | creator | admin | issuer | controller | other |
+| :--------------------: | :-----: | :---: | :----: | :--------: | :---: |
+|   管理员的设置、删除   |    Y    |   N   |   N    |     N      |   N   |
+|   黑名单的添加、删除   |    Y    |   Y   |   N    |     N      |   N   |
+| 权威签发者的添加、删除 |    Y    |   Y   |   N    |     N      |   N   |
+|       凭证的吊销       |    Y    |   Y   |   Y    |     N      |   N   |
+|       模板的添加       |    Y    |   Y   |   Y    |     N      |   N   |
+|     DID文档的更新      |    Y    |   Y   |   Y    |     Y      |   N   |
+
+**管理员的管理**
+
+查询是否拥有管理员权限：
+
+```shell
+$ ./console admin auth \
+--sdk-path=./testdata/sdk_config2.yml
+```
+
+返回管理员权限的结果：
+
+```shell
+Is admin: [false]
+```
+
+增加管理员：
+
+```shell
+$ ./console admin add \
+--admin-sdk-path=./testdata/sdk_config2.yml \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+查询是否拥有管理员权限：
+
+```shell
+$ ./console admin auth \
+--sdk-path=./testdata/sdk_config2.yml
+```
+
+返回管理员权限的结果：
+
+```shell
+Is admin: [true]
+```
+
+删除管理员：
+
+```shell
+$ ./console admin delete \
+--admin-sdk-path=./testdata/sdk_config2.yml \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+查询是否拥有管理员权限：
+
+```shell
+$ ./console admin auth \
+--sdk-path=./testdata/sdk_config2.yml
+```
+
+返回管理员权限的结果：
+
+```shell
+Is admin: [false]
+```
+
+**黑名单的管理**
+
+查询DID在链上是否有效：
+
+```shell
+$ ./console did valid \
+--did=did:cm:test1 \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+返回验证结果：
+
+```shell
+whether the did is valid: [true]
+```
+
+添加DID黑名单：
+
+```shell
+$ ./console black add \
+--dids=did:cm:test1,did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+查询DID在链上是否有效：
+
+```shell
+$ ./console did valid \
+--did=did:cm:test1 \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+返回验证结果：
+
+```shell
+whether the did is valid: [false], err: [[ChainMakerDid-IsValidDid] exec contract failed, TxId:[17baa93f7fc48952ca0379f1af81e3b4c33456a171a04e5ebfe1ecc14a45c631], TxStatusCode: [CONTRACT_FAIL], ContractCode: [1], Result: [the did in the black list]]
+```
+
+链上获取黑名单列表：
+
+```shell
+$ ./console black list \
+--start=1 \
+--count=10 \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+返回黑名单结果：
+
+```shell
+get the did black list: [[did:cm:9h6JLhdJbDdPFGJrf2YaxQzj1UX2NmcWfzL65VhmvoUT did:cm:test1]]
+```
+
+删除DID黑名单：
+
+```shell
+./console black delete \
+--dids=did:cm:test1 \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+查询DID在链上是否有效：
+
+```shell
+$ ./console did valid \
+--did=did:cm:test1 \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+返回验证结果：
+
+```shell
+whether the did is valid: [true]
+```
+
+**VC吊销**
+
+吊销VC：
+
+```shell
+$ ./console vc-revoke add \
+--id=vc001 \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+获取吊销列表：
+
+```shell
+$ ./console vc-revoke list \
+--start=1 \
+--count=10 \
+--sdk-path=./testdata/sdk_config.yml
+```
+
+返回吊销列表：
+
+```shell
+get the vc revoke list: [[vc001]]
+```
+
 
 
 ## DID SDK

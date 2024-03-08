@@ -234,12 +234,7 @@ func isInList(str string, list []string) bool {
 }
 
 func (d *DidContract) isSenderIssued(vcId string) (bool, error) {
-	addr, err := sdk.Instance.Origin()
-	if err != nil {
-		return false, err
-	}
-
-	did, err := d.GetDidByAddress(addr)
+	senderDid, err := d.dal.getSenderDid()
 	if err != nil {
 		return false, err
 	}
@@ -256,5 +251,5 @@ func (d *DidContract) isSenderIssued(vcId string) (bool, error) {
 		return false, err
 	}
 
-	return did == issueLog.Issuer, nil
+	return senderDid == issueLog.Issuer, nil
 }
