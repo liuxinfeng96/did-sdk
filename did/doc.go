@@ -2,6 +2,7 @@ package did
 
 import (
 	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rsa"
 	"crypto/sha256"
 	"did-sdk/invoke"
@@ -17,6 +18,7 @@ import (
 
 	"chainmaker.org/chainmaker/pb-go/v2/common"
 	cmsdk "chainmaker.org/chainmaker/sdk-go/v2"
+	"github.com/ethereum/go-ethereum/crypto/secp256k1"
 	"github.com/mr-tron/base58"
 	"github.com/tjfoc/gmsm/sm2"
 
@@ -91,7 +93,7 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 		keyId := did + VerificationMethodKeySuffix + strconv.Itoa(k)
 
 		var vm *model.VerificationMethod
-		vm, err = newVerificationMethod(keyId, v.Algorithm, did, v.PkPEM)
+		vm, err = newVerificationMethod(keyId, did, v.PkPEM)
 		if err != nil {
 			return nil, err
 		}
@@ -136,7 +138,7 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 
 			// 生成证明
 			var pf *model.Proof
-			pf, err = proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, key.GetHashTypeByAlgorithm(v.Algorithm))
+			pf, err = proof.GenerateProofByKey(v.SkPEM, msg, keyId)
 			if err != nil {
 				return nil, err
 			}
@@ -153,8 +155,7 @@ func GenerateDidDoc(keyInfo []*key.KeyInfo, client *cmsdk.ChainClient, controlle
 		keyId := did + VerificationMethodKeySuffix + "0"
 
 		// 生成证明
-		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId, keyInfo[0].Algorithm,
-			key.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
+		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId)
 		if err != nil {
 			return nil, err
 		}
@@ -319,7 +320,7 @@ func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller .
 		for k, v := range keyInfo {
 			keyId := newDoc.Id + VerificationMethodKeySuffix + strconv.Itoa(k)
 
-			vm, err := newVerificationMethod(keyId, v.Algorithm, newDoc.Id, v.PkPEM)
+			vm, err := newVerificationMethod(keyId, newDoc.Id, v.PkPEM)
 			if err != nil {
 				return nil, err
 			}
@@ -358,7 +359,7 @@ func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller .
 			keyId := newDoc.Id + VerificationMethodKeySuffix + strconv.Itoa(k)
 
 			var pf *model.Proof
-			pf, err = proof.GenerateProofByKey(v.SkPEM, msg, keyId, v.Algorithm, key.GetHashTypeByAlgorithm(v.Algorithm))
+			pf, err = proof.GenerateProofByKey(v.SkPEM, msg, keyId)
 			if err != nil {
 				return nil, err
 			}
@@ -374,8 +375,7 @@ func UpdateDidDoc(oldDoc model.DidDocument, keyInfo []*key.KeyInfo, controller .
 
 		keyId := newDoc.Id + VerificationMethodKeySuffix + "0"
 
-		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId, keyInfo[0].Algorithm,
-			key.GetHashTypeByAlgorithm(keyInfo[0].Algorithm))
+		pf, err := proof.GenerateProofByKey(keyInfo[0].SkPEM, msg, keyId)
 		if err != nil {
 			return nil, err
 		}
@@ -402,7 +402,7 @@ func base58Encode(hash []byte) string {
 	return encoded
 }
 
-func newVerificationMethod(id, algo, controller string, pkPem []byte) (*model.VerificationMethod, error) {
+func newVerificationMethod(id, controller string, pkPem []byte) (*model.VerificationMethod, error) {
 
 	// 校验是否是公钥
 	pubKey, err := bcx509.ParsePublicKey(pkPem)
@@ -410,29 +410,46 @@ func newVerificationMethod(id, algo, controller string, pkPem []byte) (*model.Ve
 		return nil, err
 	}
 
-	// 根据pk判断密钥算法类型
-	if len(algo) == 0 {
-		switch pk := pubKey.(type) {
+	var algorithm string
 
-		case *bcecdsa.PublicKey:
+	switch pk := pubKey.(type) {
 
-			if pk.Curve == sm2.P256Sm2() {
-				algo = key.PkAlgorithmSM2
-			} else {
-				algo = key.PkAlgorithmECDSA
-			}
+	case *bcecdsa.PublicKey:
 
-		case *ecdsa.PrivateKey:
-
-			algo = key.PkAlgorithmECDSA
-
-		case *rsa.PrivateKey:
-
-			algo = key.PkAlgorithmRSA
-
+		switch pk.Curve {
+		case elliptic.P224(), elliptic.P256(), secp256k1.S256():
+			algorithm = model.ECDSAWithSHA256
+		case elliptic.P384():
+			algorithm = model.ECDSAWithSHA384
+		case elliptic.P521():
+			algorithm = model.ECDSAWithSHA512
+		case sm2.P256Sm2():
+			algorithm = model.SM2WithSM3
 		default:
-			return nil, errors.New("unknown publicKey algorithm")
+			return nil, errors.New("x509: unknown elliptic curve")
 		}
+
+	case *ecdsa.PrivateKey:
+
+		switch pk.Curve {
+		case elliptic.P224(), elliptic.P256(), secp256k1.S256():
+			algorithm = model.ECDSAWithSHA256
+		case elliptic.P384():
+			algorithm = model.ECDSAWithSHA384
+		case elliptic.P521():
+			algorithm = model.ECDSAWithSHA512
+		case sm2.P256Sm2():
+			algorithm = model.SM2WithSM3
+		default:
+			return nil, errors.New("x509: unknown elliptic curve")
+		}
+
+	case *rsa.PrivateKey:
+
+		algorithm = model.SHA256WithRSA
+
+	default:
+		return nil, errors.New("unknown publicKey algorithm")
 	}
 
 	ski, err := bcx509.ComputeSKI(pubKey)
@@ -446,7 +463,7 @@ func newVerificationMethod(id, algo, controller string, pkPem []byte) (*model.Ve
 
 	return &model.VerificationMethod{
 		Id:           id,
-		Type:         algo,
+		Type:         algorithm,
 		Controller:   controller,
 		PublicKeyPem: string(pkPem),
 		Address:      addr,

@@ -33,7 +33,7 @@ func DocCMD() *cobra.Command {
 
 func docGenCmd() *cobra.Command {
 	var sdkPath, docPath string
-	var sksPath, pksPath, algos, controller []string
+	var sksPath, pksPath, controller []string
 
 	docGenCmd := &cobra.Command{
 		Use:   "gen",
@@ -44,7 +44,6 @@ Example:
 $ ./console doc gen \
 --sks-path=./testdata/sk.pem \
 --pks-path=./testdata/pk.pem \
---algos=SM2 \
 --controller=did:cm:test1,did:cm:test2 \
 --sdk-path=./testdata/sdk_config.yml \
 --doc-path=./testdata/doc.json
@@ -70,8 +69,8 @@ $ ./console doc gen \
 				return err
 			}
 
-			if (len(sksPath) != len(pksPath)) || (len(sksPath) != len(algos)) {
-				return errors.New("the number of public and private keys and algorithm names are not equal")
+			if len(sksPath) != len(pksPath) {
+				return errors.New("the number of public and private keys names are not equal")
 			}
 
 			keyInfos := make([]*key.KeyInfo, 0)
@@ -88,12 +87,9 @@ $ ./console doc gen \
 					return err
 				}
 
-				algo := algos[i]
-
 				keyInfo := &key.KeyInfo{
-					PkPEM:     pkPem,
-					SkPEM:     skPem,
-					Algorithm: algo,
+					PkPEM: pkPem,
+					SkPEM: skPem,
 				}
 
 				keyInfos = append(keyInfos, keyInfo)
@@ -118,7 +114,6 @@ $ ./console doc gen \
 
 	attachFlagStringSlice(docGenCmd, ParamsFlagPksPath, &pksPath)
 	attachFlagStringSlice(docGenCmd, ParamsFlagSksPath, &sksPath)
-	attachFlagStringSlice(docGenCmd, ParamsFlagAlgorithms, &algos)
 	attachFlagString(docGenCmd, ParamsFlagCMSdkPath, &sdkPath)
 	attachFlagString(docGenCmd, ParamsFlagDocPath, &docPath)
 	attachFlagStringSlice(docGenCmd, ParamsFlagController, &controller)
@@ -236,7 +231,7 @@ $ ./console doc get \
 
 func docUpdateLocal() *cobra.Command {
 	var oldDocPath, newDocPath string
-	var sksPath, pksPath, algos, controller []string
+	var sksPath, pksPath, controller []string
 
 	docUpdateLocalCmd := &cobra.Command{
 		Use:   "update-local",
@@ -247,7 +242,6 @@ Example:
 $ ./console doc update-local  \
 --sks-path=./testdata/sk.pem \
 --pks-path=./testdata/pk.pem \
---algos=SM2 \
 --controller=did:cm:test1,did:cm:test2 \
 --old-doc-path=./testdata/doc.json \
 --new-doc-path=./testdata/doc2.json
@@ -263,8 +257,8 @@ $ ./console doc update-local  \
 				return ParamsEmptyError(ParamsFlagNewDocPath)
 			}
 
-			if (len(sksPath) != len(pksPath)) || (len(sksPath) != len(algos)) {
-				return errors.New("the number of public and private keys and algorithm names are not equal")
+			if len(sksPath) != len(pksPath) {
+				return errors.New("the number of public and private keys names are not equal")
 			}
 
 			keyInfos := make([]*key.KeyInfo, 0)
@@ -280,12 +274,9 @@ $ ./console doc update-local  \
 					return err
 				}
 
-				algo := algos[i]
-
 				keyInfo := &key.KeyInfo{
-					PkPEM:     pkPem,
-					SkPEM:     skPem,
-					Algorithm: algo,
+					PkPEM: pkPem,
+					SkPEM: skPem,
 				}
 
 				keyInfos = append(keyInfos, keyInfo)
@@ -322,7 +313,6 @@ $ ./console doc update-local  \
 
 	attachFlagStringSlice(docUpdateLocalCmd, ParamsFlagPksPath, &pksPath)
 	attachFlagStringSlice(docUpdateLocalCmd, ParamsFlagSksPath, &sksPath)
-	attachFlagStringSlice(docUpdateLocalCmd, ParamsFlagAlgorithms, &algos)
 	attachFlagString(docUpdateLocalCmd, ParamsFlagOldDocPath, &oldDocPath)
 	attachFlagString(docUpdateLocalCmd, ParamsFlagNewDocPath, &newDocPath)
 	attachFlagStringSlice(docUpdateLocalCmd, ParamsFlagController, &controller)

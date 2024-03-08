@@ -11,7 +11,6 @@ import (
 	"errors"
 
 	"github.com/ethereum/go-ethereum/crypto/secp256k1"
-	bccrypto "github.com/liuxinfeng96/bc-crypto"
 	bcecdsa "github.com/liuxinfeng96/bc-crypto/ecdsa"
 	bcx509 "github.com/liuxinfeng96/bc-crypto/x509"
 	"github.com/tjfoc/gmsm/sm2"
@@ -22,18 +21,6 @@ const (
 	PEMPrivateKeyTypeStr = "PRIVATE KEY"
 	// PEMPublicKeyTypeStr a string suffix for the Type field of the PEM Block when used as a public key
 	PEMPublicKeyTypeStr = "PUBLIC KEY"
-
-	// HashTypeSM3 SM3
-	HashTypeSM3 = "SM3"
-	// HashTypeSHA256 SHA256
-	HashTypeSHA256 = "SHA-256"
-
-	// PkAlgorithmSM2 SM2
-	PkAlgorithmSM2 = "SM2"
-	// PkAlgorithmECDSA ECDSA
-	PkAlgorithmECDSA = "ECDSA"
-	// PkAlgorithmRSA RSA
-	PkAlgorithmRSA = "RSA"
 )
 
 // KeyInfo the asymmetric encryption key information
@@ -43,9 +30,6 @@ type KeyInfo struct {
 	PkPEM []byte
 	// 私钥的PEM编码
 	SkPEM []byte
-
-	// 公钥算法名称
-	Algorithm string
 }
 
 // SupportAlgorithm list of public key algorithms currently supported by this project
@@ -84,56 +68,56 @@ func GenerateKey(algorithm string) (*KeyInfo, error) {
 			return nil, err
 		}
 
-		return bcEcdsaKeyMarshal(key, algorithm)
+		return bcEcdsaKeyMarshal(key)
 	case "SM2":
 		key, err := bcecdsa.GenerateKey(sm2.P256Sm2(), rand.Reader)
 		if err != nil {
 			return nil, err
 		}
 
-		return bcEcdsaKeyMarshal(key, algorithm)
+		return bcEcdsaKeyMarshal(key)
 	case "EC_NISTP224":
 		key, err := ecdsa.GenerateKey(elliptic.P224(), rand.Reader)
 		if err != nil {
 			return nil, err
 		}
 
-		return ecdsaKeyMarshal(key, algorithm)
+		return ecdsaKeyMarshal(key)
 	case "EC_NISTP256":
 		key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
 		if err != nil {
 			return nil, err
 		}
 
-		return ecdsaKeyMarshal(key, algorithm)
+		return ecdsaKeyMarshal(key)
 	case "EC_NISTP384":
 		key, err := ecdsa.GenerateKey(elliptic.P384(), rand.Reader)
 		if err != nil {
 			return nil, err
 		}
 
-		return ecdsaKeyMarshal(key, algorithm)
+		return ecdsaKeyMarshal(key)
 	case "EC_NISTP521":
 		key, err := ecdsa.GenerateKey(elliptic.P521(), rand.Reader)
 		if err != nil {
 			return nil, err
 		}
 
-		return ecdsaKeyMarshal(key, algorithm)
+		return ecdsaKeyMarshal(key)
 	case "RSA2048":
 		key, err := rsa.GenerateKey(rand.Reader, 2048)
 		if err != nil {
 			return nil, err
 		}
 
-		return rsaKeyMarshal(key, algorithm)
+		return rsaKeyMarshal(key)
 	case "RSA3072":
 		key, err := rsa.GenerateKey(rand.Reader, 3072)
 		if err != nil {
 			return nil, err
 		}
 
-		return rsaKeyMarshal(key, algorithm)
+		return rsaKeyMarshal(key)
 	default:
 		return nil, errors.New("the public key algorithm curve is unknown")
 	}
@@ -144,7 +128,7 @@ func spliceSkPEMBlockType(algo string) string {
 	return algo + " " + PEMPrivateKeyTypeStr
 }
 
-func ecdsaKeyMarshal(key *ecdsa.PrivateKey, algo string) (*KeyInfo, error) {
+func ecdsaKeyMarshal(key *ecdsa.PrivateKey) (*KeyInfo, error) {
 	skDer, err := x509.MarshalECPrivateKey(key)
 	if err != nil {
 		return nil, err
@@ -176,13 +160,12 @@ func ecdsaKeyMarshal(key *ecdsa.PrivateKey, algo string) (*KeyInfo, error) {
 	}
 
 	return &KeyInfo{
-		SkPEM:     skBuf.Bytes(),
-		PkPEM:     pkBuf.Bytes(),
-		Algorithm: algo,
+		SkPEM: skBuf.Bytes(),
+		PkPEM: pkBuf.Bytes(),
 	}, nil
 }
 
-func bcEcdsaKeyMarshal(key *bcecdsa.PrivateKey, algo string) (*KeyInfo, error) {
+func bcEcdsaKeyMarshal(key *bcecdsa.PrivateKey) (*KeyInfo, error) {
 	skDer, err := bcx509.MarshalECPrivateKey(key)
 	if err != nil {
 		return nil, err
@@ -214,13 +197,12 @@ func bcEcdsaKeyMarshal(key *bcecdsa.PrivateKey, algo string) (*KeyInfo, error) {
 	}
 
 	return &KeyInfo{
-		SkPEM:     skBuf.Bytes(),
-		PkPEM:     pkBuf.Bytes(),
-		Algorithm: algo,
+		SkPEM: skBuf.Bytes(),
+		PkPEM: pkBuf.Bytes(),
 	}, nil
 }
 
-func rsaKeyMarshal(key *rsa.PrivateKey, algo string) (*KeyInfo, error) {
+func rsaKeyMarshal(key *rsa.PrivateKey) (*KeyInfo, error) {
 	skDer, err := x509.MarshalPKCS8PrivateKey(key)
 	if err != nil {
 		return nil, err
@@ -249,68 +231,7 @@ func rsaKeyMarshal(key *rsa.PrivateKey, algo string) (*KeyInfo, error) {
 	}
 
 	return &KeyInfo{
-		SkPEM:     skBuf.Bytes(),
-		PkPEM:     pkBuf.Bytes(),
-		Algorithm: algo,
+		SkPEM: skBuf.Bytes(),
+		PkPEM: pkBuf.Bytes(),
 	}, nil
-}
-
-func GetHashTypeByAlgorithm(algo string) string {
-	var hash string
-	if algo == PkAlgorithmSM2 {
-		hash = HashTypeSM3
-	} else {
-		hash = HashTypeSHA256
-	}
-	return hash
-}
-
-// HashStringToHashType 哈希字符串转换成bc crypto包哈希类型
-//
-//nolint:gocyclo
-func HashStringToHashType(h string) bccrypto.Hash {
-	switch h {
-	case "MD4":
-		return bccrypto.MD4
-	case "MD5":
-		return bccrypto.MD5
-	case "SHA-1":
-		return bccrypto.SHA1
-	case "SHA-224":
-		return bccrypto.SHA224
-	case "SHA-256":
-		return bccrypto.SHA256
-	case "SHA-384":
-		return bccrypto.SHA384
-	case "SHA-512":
-		return bccrypto.SHA512
-	case "MD5+SHA1":
-		return bccrypto.MD5SHA1
-	case "RIPEMD-160":
-		return bccrypto.RIPEMD160
-	case "SHA3-224":
-		return bccrypto.SHA3_224
-	case "SHA3-256":
-		return bccrypto.SHA3_256
-	case "SHA3-384":
-		return bccrypto.SHA3_384
-	case "SHA3-512":
-		return bccrypto.SHA3_512
-	case "SHA-512/224":
-		return bccrypto.SHA512_224
-	case "SHA-512/256":
-		return bccrypto.SHA512 / 256
-	case "BLAKE2s-256":
-		return bccrypto.BLAKE2s_256
-	case "BLAKE2b-256":
-		return bccrypto.BLAKE2b_256
-	case "BLAKE2b-384":
-		return bccrypto.BLAKE2b_384
-	case "BLAKE2b-512":
-		return bccrypto.BLAKE2b_512
-	case "SM3":
-		return bccrypto.SM3
-	default:
-		return bccrypto.Hash(0)
-	}
 }

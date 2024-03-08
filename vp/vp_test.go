@@ -35,14 +35,14 @@ func TestGenerateVP(t *testing.T) {
 	subject["id"] = "did:cm:test1"
 
 	e := time.Now().Local().Add(time.Hour * 48).Unix()
-	vcBytes, err := vc.IssueVCLocal(keyInfo.SkPEM, keyInfo.Algorithm, 0, subject,
+	vcBytes, err := vc.IssueVCLocal(keyInfo.SkPEM, 0, subject,
 		"did:cmdid:0xadfwfkqwfmkqm", "vc1", e, jsonSchema)
 	require.Nil(t, err)
 
 	keyInfo2, err := key.GenerateKey("EC_Secp256k1")
 	require.Nil(t, err)
 
-	vpBytes, err := GenerateVP(keyInfo.SkPEM, keyInfo2.Algorithm, 0, "did:cmdid:vpholder", "vp1", []string{string(vcBytes)})
+	vpBytes, err := GenerateVP(keyInfo2.SkPEM, 0, "did:cmdid:vpholder", "vp1", []string{string(vcBytes)})
 	require.Nil(t, err)
 
 	println(string(vpBytes))
@@ -113,11 +113,11 @@ func TestVerifyVPOnChain(t *testing.T) {
 	e := time.Now().Add(time.Hour * 24 * 365).Unix()
 
 	// 颁发VC
-	vcBytes, err := vc.IssueVC(issuerKey, 0, sub, c, "vc_001", e, "template001")
+	vcBytes, err := vc.IssueVC(issuerKey.SkPEM, issuerKey.PkPEM, 0, sub, c, "vc_001", e, "template001")
 	require.Nil(t, err)
 
 	// 被签发者生成VP
-	vpBytes, err := GenerateVP(holderKey.SkPEM, holderKey.Algorithm, 0, holderDoc.Id, "vp_001", []string{string(vcBytes)})
+	vpBytes, err := GenerateVP(holderKey.SkPEM, 0, holderDoc.Id, "vp_001", []string{string(vcBytes)})
 	require.Nil(t, err)
 
 	// 链上验证VP

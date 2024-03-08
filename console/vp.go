@@ -25,7 +25,7 @@ func VpCMD() *cobra.Command {
 }
 
 func vpGenCmd() *cobra.Command {
-	var algo, skPath, id, holder, vpPath string
+	var skPath, id, holder, vpPath string
 	var keyIndex int
 	var vpType, vcListPath []string
 
@@ -37,7 +37,6 @@ func vpGenCmd() *cobra.Command {
 Example:
 $ ./console vp gen \
 --sk-path=./testdata/sk.pem \
---algo=SM2 \
 --holder=did:cm:admin \
 --id=vp001 \
 --vc-list=./testdata/vc.json \
@@ -48,10 +47,6 @@ $ ./console vp gen \
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if len(skPath) == 0 {
 				return ParamsEmptyError(ParamsFlagSkPath)
-			}
-
-			if len(algo) == 0 {
-				return ParamsEmptyError(ParamsFlagAlgorithm)
 			}
 
 			if len(id) == 0 {
@@ -83,7 +78,7 @@ $ ./console vp gen \
 				vcList = append(vcList, string(vc))
 			}
 
-			vp, err := vp.GenerateVP(skPem, algo, keyIndex, holder, id, vcList, vpType...)
+			vp, err := vp.GenerateVP(skPem, keyIndex, holder, id, vcList, vpType...)
 			if err != nil {
 				return err
 			}
@@ -100,7 +95,6 @@ $ ./console vp gen \
 	}
 
 	attachFlagString(vpGenCmd, ParamsFlagSkPath, &skPath)
-	attachFlagString(vpGenCmd, ParamsFlagAlgorithm, &algo)
 	attachFlagString(vpGenCmd, ParamsFlagId, &id)
 	attachFlagString(vpGenCmd, ParamsFlagHolder, &holder)
 	attachFlagString(vpGenCmd, ParamsFlagVpPath, &vpPath)

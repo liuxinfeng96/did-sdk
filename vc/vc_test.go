@@ -34,7 +34,7 @@ func TestIssueVCLocal(t *testing.T) {
 	subject["id"] = "did:cm:test66"
 
 	e := time.Now().Local().Add(time.Hour * 48).Unix()
-	vcBytes, err := IssueVCLocal(keyInfo.SkPEM, keyInfo.Algorithm, 0, subject,
+	vcBytes, err := IssueVCLocal(keyInfo.SkPEM, 0, subject,
 		"did:cmdid:0xadfwfkqwfmkqm", "vc1", e, jsonSchema)
 	require.Nil(t, err)
 
@@ -50,7 +50,7 @@ func TestIssueVCLocal(t *testing.T) {
 	subject2["id"] = "did:cm:test1"
 
 	e = time.Now().Local().Add(time.Hour * 48).Unix()
-	_, err = IssueVCLocal(keyInfo.SkPEM, keyInfo.Algorithm, 0, subject2,
+	_, err = IssueVCLocal(keyInfo.SkPEM, 0, subject2,
 		"did:cmdid:0xadfwfkqwfmkqm", "vc1", e, jsonSchema)
 	require.NotNil(t, err)
 }
@@ -111,7 +111,7 @@ func TestIssueVC(t *testing.T) {
 
 	e := time.Now().Add(time.Hour * 24 * 365).Unix()
 
-	vcBytes, err := IssueVC(keyInfo, 0, sub, c, "vc_1111", e, "abc12312")
+	vcBytes, err := IssueVC(keyInfo.SkPEM, keyInfo.PkPEM, 0, sub, c, "vc_1111", e, "abc12312")
 	require.Nil(t, err)
 	fmt.Println(string(vcBytes))
 
@@ -206,7 +206,7 @@ func TestVerifyVCOnChain(t *testing.T) {
 
 	e := time.Now().Add(time.Hour * 24 * 365).Unix()
 
-	vcBytes, err := IssueVC(keyInfo, 0, sub, c, "vc_2222", e, "abc12345")
+	vcBytes, err := IssueVC(keyInfo.SkPEM, keyInfo.PkPEM, 0, sub, c, "vc_2222", e, "abc12345")
 	require.Nil(t, err)
 	fmt.Println(string(vcBytes))
 

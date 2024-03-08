@@ -63,9 +63,6 @@ type KeyInfo struct {
 	PkPEM []byte
 	// 私钥的PEM编码
 	SkPEM []byte
-
-	// 公钥算法名称
-	Algorithm string
 }
 ```
 
@@ -102,15 +99,13 @@ func IsSupportAlgorithm(algo string) bool
 - skPem：私钥的PEM编码
 - msg：签名的信息
 - verificationMethod：did中的验证方法，通常是`[DID]#key-[i]`格式
-- algorithm：公钥算法（如果为空，可自行解析）
-- hash：信息做摘要的哈希类型
 
 **返回值说明**
 
 - Proof：证明结构（引自DID合约）
 
 ```go
-func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash string) (*model.Proof, error)
+func GenerateProofByKey(skPem, msg []byte, verificationMethod string) (*model.Proof, error)
 ```
 
 ### VerifyPKProof
@@ -362,7 +357,8 @@ func DeleteTrustIssuerListFromChain(dids []string, client *cmsdk.ChainClient) er
 
 **参数说明**
 
-- keyInfo：颁发者的密钥信息
+- skPem: 私钥的PEM编码
+- pkPem: 公钥的PEM编码
 - keyIndex：公钥在DID文档中的索引
 - subject：颁发信息主体，对应VC中的`credentialSubject`字段
 - client：长安链客户端
@@ -372,7 +368,7 @@ func DeleteTrustIssuerListFromChain(dids []string, client *cmsdk.ChainClient) er
 - vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写`VerifiableCredential`,可继续根据业务类型追加）
 
 ```go
-func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{}, client *cmsdk.ChainClient, vcId string, expirationDate int64, vcTemplateId string, vcType ...string) ([]byte, error)
+func IssueVC(skPem, pkPem []byte, keyIndex int, subject map[string]interface{}, client *cmsdk.ChainClient, vcId string, expirationDate int64, vcTemplateId string, vcType ...string) ([]byte, error)
 ```
 
 ### IssueVCLocal
@@ -382,7 +378,6 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 **参数说明**
 
 - skPem：私钥的PEM编码
-- algorithm：公钥算法名称
 - keyIndex：公钥在DID文档中的索引
 - subject：颁发信息主体，对应VC中的`credentialSubject`字段
 - issuer：颁发者的DID编号
@@ -392,7 +387,7 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 - vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写`VerifiableCredential`,可继续根据业务类型追加）
 
 ```go
-func IssueVCLocal(skPem []byte, algorithm string, keyIndex int, subject map[string]interface{}, issuer string, vcId string, expirationDate int64, vcTemplate []byte, vcType ...string) ([]byte, error)
+func IssueVCLocal(skPem []byte, keyIndex int, subject map[string]interface{}, issuer string, vcId string, expirationDate int64, vcTemplate []byte, vcType ...string) ([]byte, error)
 ```
 
 ### VerifyVCOnChain
@@ -538,14 +533,13 @@ func GetVcIssueLogListFromChain(vcIdSearch string, start int, count int, client 
 **参数说明**
 
 - skPem：私钥的PEM编码
-- algorithm: 公钥算法名称
 - keyIndex：公钥在DID文档中的索引
 - vpId：VP的`id`字段，可以根据业务自定义
 - vcList：VP中包含的VC列表
 - VP中的`type`字段，描述VP的类型信息（可变参数，默认会填写`VerifiablePresentation`,可继续根据业务类型追加）
 
 ```go
-func GenerateVP(skPem []byte, algorithm string, keyIndex int, holder string, vpId string, vcList []string, vpType ...string) ([]byte, error)
+func GenerateVP(skPem []byte, keyIndex int, holder string, vpId string, vcList []string, vpType ...string) ([]byte, error)
 ```
 
 ### VerifyVPOnChain

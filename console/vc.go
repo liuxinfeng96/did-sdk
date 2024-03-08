@@ -1,7 +1,6 @@
 package main
 
 import (
-	"did-sdk/key"
 	"did-sdk/vc"
 	"encoding/json"
 	"fmt"
@@ -30,7 +29,7 @@ func VcCMD() *cobra.Command {
 }
 
 func vcIssueCmd() *cobra.Command {
-	var algo, skPath, pkPath string
+	var skPath, pkPath string
 	var keyIndex int
 	var subjectPath, expiration, id, tid, vcPath, sdkPath string
 	var timeUnix int64
@@ -45,7 +44,6 @@ Example:
 $ ./console vc issue \
 --sk-path=./testdata/sk.pem \
 --pk-path=./testdata/pk.pem \
---algo=SM2 \
 --subject=./testdata/subject.json \
 --expiration=2025-01-25 \
 --id=vc001 \
@@ -62,10 +60,6 @@ $ ./console vc issue \
 
 			if len(pkPath) == 0 {
 				return ParamsEmptyError(ParamsFlagPkPath)
-			}
-
-			if len(algo) == 0 {
-				return ParamsEmptyError(ParamsFlagAlgorithm)
 			}
 
 			if len(subjectPath) == 0 {
@@ -120,12 +114,6 @@ $ ./console vc issue \
 				return err
 			}
 
-			keyInfo := &key.KeyInfo{
-				PkPEM:     pkPem,
-				SkPEM:     skPem,
-				Algorithm: algo,
-			}
-
 			sub := make(map[string]interface{})
 
 			err = json.Unmarshal(subjectJson, &sub)
@@ -133,7 +121,7 @@ $ ./console vc issue \
 				return err
 			}
 
-			vcBytes, err := vc.IssueVC(keyInfo, keyIndex, sub, c, id, timeUnix, tid, vcType...)
+			vcBytes, err := vc.IssueVC(skPem, pkPem, keyIndex, sub, c, id, timeUnix, tid, vcType...)
 			if err != nil {
 				return err
 			}
@@ -151,7 +139,6 @@ $ ./console vc issue \
 
 	attachFlagString(vcIssueCmd, ParamsFlagPkPath, &pkPath)
 	attachFlagString(vcIssueCmd, ParamsFlagSkPath, &skPath)
-	attachFlagString(vcIssueCmd, ParamsFlagAlgorithm, &algo)
 	attachFlagString(vcIssueCmd, ParamsFlagCMSdkPath, &sdkPath)
 
 	attachFlagString(vcIssueCmd, ParamsFlagSubjectPath, &subjectPath)
@@ -168,7 +155,7 @@ $ ./console vc issue \
 }
 
 func vcIssueLocalCmd() *cobra.Command {
-	var skPath, algo, issuer string
+	var skPath, issuer string
 	var keyIndex int
 	var tempPath, subjectPath, expiration, id, vcPath string
 	var timeUnix int64
@@ -182,7 +169,6 @@ func vcIssueLocalCmd() *cobra.Command {
 Example:
 $ ./console vc issue-local \
 --sk-path=./testdata/sk.pem \
---algo=SM2 \
 --subject=./testdata/subject.json \
 --issuer=did:cm:admin \
 --expiration=2025-01-25 \
@@ -195,10 +181,6 @@ $ ./console vc issue-local \
 		RunE: func(_ *cobra.Command, _ []string) error {
 			if len(skPath) == 0 {
 				return ParamsEmptyError(ParamsFlagSkPath)
-			}
-
-			if len(algo) == 0 {
-				return ParamsEmptyError(ParamsFlagAlgorithm)
 			}
 
 			if len(issuer) == 0 {
@@ -261,7 +243,7 @@ $ ./console vc issue-local \
 				return err
 			}
 
-			vcBytes, err := vc.IssueVCLocal(skPem, algo, keyIndex, sub, issuer, id, timeUnix, []byte(vcTemp.Template), vcType...)
+			vcBytes, err := vc.IssueVCLocal(skPem, keyIndex, sub, issuer, id, timeUnix, []byte(vcTemp.Template), vcType...)
 			if err != nil {
 				return err
 			}
@@ -278,7 +260,6 @@ $ ./console vc issue-local \
 	}
 
 	attachFlagString(vcIssueCmd, ParamsFlagSkPath, &skPath)
-	attachFlagString(vcIssueCmd, ParamsFlagAlgorithm, &algo)
 	attachFlagString(vcIssueCmd, ParamsFlagIssuer, &issuer)
 
 	attachFlagString(vcIssueCmd, ParamsFlagSubjectPath, &subjectPath)

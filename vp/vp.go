@@ -3,7 +3,6 @@ package vp
 import (
 	"did-sdk/did"
 	"did-sdk/invoke"
-	"did-sdk/key"
 	"did-sdk/proof"
 	"did-sdk/utils"
 	"encoding/json"
@@ -21,12 +20,11 @@ var ContextVP = []string{
 
 // GenerateVP 生成自己的VP
 // @params skPem: 私钥的PEM编码
-// @params algorithm: 公钥算法名称
 // @params keyIndex：公钥在DID文档中的索引
 // @params vpId：VP的`id`字段，可以根据业务自定义
 // @params VP中包含的VC列表
 // @params vpType：VP中的`type`字段，描述VP的类型信息（可变参数，默认会填写“VerifiablePresentation”,可继续根据业务类型追加）
-func GenerateVP(skPem []byte, algorithm string, keyIndex int, holder string,
+func GenerateVP(skPem []byte, keyIndex int, holder string,
 	vpId string, vcList []string, vpType ...string) ([]byte, error) {
 
 	var verifiablePresentation model.VerifiablePresentation
@@ -60,8 +58,7 @@ func GenerateVP(skPem []byte, algorithm string, keyIndex int, holder string,
 
 	keyId := holder + did.VerificationMethodKeySuffix + strconv.Itoa(keyIndex)
 
-	pf, err := proof.GenerateProofByKey(skPem, msg, keyId,
-		algorithm, key.GetHashTypeByAlgorithm(algorithm))
+	pf, err := proof.GenerateProofByKey(skPem, msg, keyId)
 	if err != nil {
 		return nil, err
 	}

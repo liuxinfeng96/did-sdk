@@ -3,7 +3,6 @@ package vc
 import (
 	"did-sdk/did"
 	"did-sdk/invoke"
-	"did-sdk/key"
 	"did-sdk/proof"
 	"did-sdk/utils"
 	"encoding/json"
@@ -24,7 +23,8 @@ var ContextVC = []string{
 }
 
 // IssueVC 颁发VC（需要链上校验）
-// @params keyInfo：颁发者的密钥信息
+// @params skPem: 私钥的PEM编码
+// @params pkPem: 公钥的PEM编码
 // @params keyIndex：公钥在DID文档中的索引
 // @params subject：颁发信息主体，对应VC中的`credentialSubject`字段
 // @params client：长安链客户端
@@ -32,7 +32,7 @@ var ContextVC = []string{
 // @params expirationDate：VC的到期时间
 // @params vcTemplateId：VC的模板Id，在链上获取VC模板
 // @params vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写“VerifiableCredential”,可继续根据业务类型追加）
-func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{}, client *cmsdk.ChainClient,
+func IssueVC(skPem, pkPem []byte, keyIndex int, subject map[string]interface{}, client *cmsdk.ChainClient,
 	vcId string, expirationDate int64, vcTemplateId string, vcType ...string) ([]byte, error) {
 
 	// 获取sunject中的DID
@@ -69,7 +69,7 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 	}
 
 	vcType = append(vcType, "VerifiableCredential")
-	issuer, err := did.GenerateDidByPK(keyInfo.PkPEM, client)
+	issuer, err := did.GenerateDidByPK(pkPem, client)
 	if err != nil {
 		return nil, err
 	}
@@ -105,8 +105,7 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 	}
 
 	keyId := issuer + did.VerificationMethodKeySuffix + strconv.Itoa(keyIndex)
-	pf, err := proof.GenerateProofByKey(keyInfo.SkPEM, msg, keyId,
-		keyInfo.Algorithm, key.GetHashTypeByAlgorithm(keyInfo.Algorithm))
+	pf, err := proof.GenerateProofByKey(skPem, msg, keyId)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +128,6 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 
 // IssueVCLocal 本地颁发VC（不经过链上计算和校验）
 // @params skPem: 私钥的PEM编码
-// @params algorithm: 公钥算法名称
 // @params keyIndex：公钥在DID文档中的索引
 // @params subject: 颁发信息主体，对应VC中的`credentialSubject`字段
 // @params issuer: 颁发者的DID编号
@@ -137,7 +135,7 @@ func IssueVC(keyInfo *key.KeyInfo, keyIndex int, subject map[string]interface{},
 // @params expirationDate：VC的到期时间
 // @params vcTemplate：VC的模板内容，是一个JSON schema，一般存储在链上
 // @params vcType：VC中的`type`字段，描述VC的类型信息（可变参数，默认会填写“VerifiableCredential”,可继续根据业务类型追加）
-func IssueVCLocal(skPem []byte, algorithm string, keyIndex int, subject map[string]interface{}, issuer string,
+func IssueVCLocal(skPem []byte, keyIndex int, subject map[string]interface{}, issuer string,
 	vcId string, expirationDate int64, vcTemplate []byte, vcType ...string) ([]byte, error) {
 	// 获取sunject中的DID
 	d, ok := subject["id"]
@@ -182,8 +180,7 @@ func IssueVCLocal(skPem []byte, algorithm string, keyIndex int, subject map[stri
 	}
 
 	keyId := issuer + did.VerificationMethodKeySuffix + strconv.Itoa(keyIndex)
-	pf, err := proof.GenerateProofByKey(skPem, msg, keyId,
-		algorithm, key.GetHashTypeByAlgorithm(algorithm))
+	pf, err := proof.GenerateProofByKey(skPem, msg, keyId)
 	if err != nil {
 		return nil, err
 	}

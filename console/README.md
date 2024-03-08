@@ -147,7 +147,6 @@ $ ./console did get \
 $ ./console doc gen \
 --sks-path=./testdata/sk.pem \
 --pks-path=./testdata/pk.pem \
---algos=SM2 \
 --controller=did:cm:test1,did:cm:test2 \
 --sdk-path=./testdata/sdk_config.yml \
 --doc-path=./testdata/doc.json
@@ -158,8 +157,6 @@ $ ./console doc gen \
 --sks-path
 ## DID文档中公钥路径（可配置多个，用 "," 隔开）
 --pks-path
-## DID文档中公钥算法名称（可配置多个，用 "," 隔开）
---algos
 ## DID文档中控制者DID字符串（如果不填，默认是其本身DID）
 --controller
 ## 长安链sdk配置路径
@@ -213,7 +210,6 @@ $ ./console doc get \
 $ ./console doc update-local  \
 --sks-path=./testdata/sk.pem \
 --pks-path=./testdata/pk.pem \
---algos=SM2 \
 --controller=did:cm:test6 \
 --old-doc-path=./testdata/doc.json \
 --new-doc-path=./testdata/newdoc.json
@@ -224,8 +220,6 @@ $ ./console doc update-local  \
 --sks-path
 ## DID文档中公钥路径（可配置多个，用 "," 隔开）
 --pks-path
-## DID文档中公钥算法名称（可配置多个，用 "," 隔开）
---algos
 ## DID文档中控制者DID字符串（如果不填，默认是其本身DID）
 --controller
 ## 更新前DID文档路径
@@ -377,7 +371,6 @@ $ ./console issuer delete \
 $ ./console vc issue \
 --sk-path=./testdata/sk.pem \
 --pk-path=./testdata/pk.pem \
---algo=SM2 \
 --subject=./testdata/subject.json \
 --expiration=2025-01-25 \
 --id=vc001 \
@@ -392,8 +385,6 @@ $ ./console vc issue \
 --sk-path
 ## 签发者公钥PEM编码文件路径
 --pk-path
-## 签发者公钥算法名称
---algo
 ## 公钥索引，如果签发者DID文档中拥有多个公钥，需要指定索引，（可不填，默认为0）
 --key-index
 ## 颁发主体内容的JSON文件路径
@@ -419,7 +410,6 @@ $ ./console vc issue \
 ```shell
 $ ./console vc issue-local \
 --sk-path=./testdata/sk.pem \
---algo=SM2 \
 --subject=./testdata/subject.json \
 --issuer=did:cm:admin \
 --expiration=2025-01-25 \
@@ -432,8 +422,6 @@ $ ./console vc issue-local \
 ```shell
 ## 签发者私钥PEM编码文件路径
 --sk-path
-## 签发者公钥算法名称
---algo
 ## 颁发主体内容的JSON文件路径
 --subject
 ## 公钥索引，如果签发者DID文档中拥有多个公钥，需要指定索引，（可不填，默认为0）
@@ -631,8 +619,7 @@ $ ./console vc-template gen \
 
 ```shell
 $ ./console vp gen \
---sk-path=./testdata/sk.pem \
---algo=SM2 \
+--sk-path=./testdata/sk.pem \s
 --holder=did:cm:5hEKjps5VQjyVsSsugqQfEWoXh4qeJacHgnchH7cwWEf \
 --id=vp001 \
 --vc-list=./testdata/vc.json \
@@ -643,8 +630,6 @@ $ ./console vp gen \
 ```shell
 ## 持有者私钥PEM编码的文件路径
 --sk-path
-## 持有者的公钥算法名称
---algo
 ## 持有者的DID
 --holder
 ## VP的编号（根据业务自定义）

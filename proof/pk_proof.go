@@ -3,15 +3,17 @@ package proof
 import (
 	"crypto"
 	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/rsa"
-	"did-sdk/key"
 	"did-sdk/utils"
 	"encoding/base64"
 	"errors"
 	"time"
 
 	"chainmaker.org/chainmaker/did-contract/model"
+	"github.com/ethereum/go-ethereum/crypto/secp256k1"
+	bccrypto "github.com/liuxinfeng96/bc-crypto"
 	bcecdsa "github.com/liuxinfeng96/bc-crypto/ecdsa"
 	bcx509 "github.com/liuxinfeng96/bc-crypto/x509"
 	"github.com/tjfoc/gmsm/sm2"
@@ -21,9 +23,7 @@ import (
 // @params skPem：私钥的PEM编码
 // @params msg：签名的信息
 // @params verificationMethod did中的验证方法，通常是`[DID]#key-[i]`格式
-// @params algorithm：公钥算法（如果为空，可自行解析）
-// @params hash：信息做摘要的哈希类型
-func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash string) (*model.Proof, error) {
+func GenerateProofByKey(skPem, msg []byte, verificationMethod string) (*model.Proof, error) {
 
 	// 使用bcx509包里的解析密钥方法，反序列化密钥，不采用[chainmaker common]包是为了支持Secp256k1公钥算法
 	privateKey, err := bcx509.ParsePrivateKey(skPem)
@@ -36,56 +36,68 @@ func GenerateProofByKey(skPem, msg []byte, verificationMethod, algorithm, hash s
 		return nil, errors.New("private key does not implement crypto.Signer")
 	}
 
-	cryptoHash := key.HashStringToHashType(hash)
-
 	var (
-		setAlgo, isSm2 bool
+		hashFunc  bccrypto.Hash
+		algorithm string
 	)
-
-	// 如果传入的公钥算法名称为空，通过密钥类型设置算法名称
-	if len(algorithm) == 0 {
-		setAlgo = true
-	}
 
 	switch sk := privateKey.(type) {
 
 	case *bcecdsa.PrivateKey:
 
-		if sk.Curve == sm2.P256Sm2() {
-			isSm2 = true
-			if setAlgo {
-				algorithm = key.PkAlgorithmSM2
-			}
-		} else {
-			if setAlgo {
-				algorithm = key.PkAlgorithmECDSA
-			}
+		switch sk.Curve {
+		case elliptic.P224(), elliptic.P256(), secp256k1.S256():
+			hashFunc = bccrypto.SHA256
+			algorithm = model.ECDSAWithSHA256
+		case elliptic.P384():
+			hashFunc = bccrypto.SHA384
+			algorithm = model.ECDSAWithSHA384
+		case elliptic.P521():
+			hashFunc = bccrypto.SHA512
+			algorithm = model.ECDSAWithSHA512
+		case sm2.P256Sm2():
+			hashFunc = bccrypto.SM3
+			algorithm = model.SM2WithSM3
+		default:
+			return nil, errors.New("x509: unknown elliptic curve")
 		}
 
 	case *ecdsa.PrivateKey:
 
-		if setAlgo {
-			algorithm = key.PkAlgorithmECDSA
+		switch sk.Curve {
+		case elliptic.P224(), elliptic.P256(), secp256k1.S256():
+			hashFunc = bccrypto.SHA256
+			algorithm = model.ECDSAWithSHA256
+		case elliptic.P384():
+			hashFunc = bccrypto.SHA384
+			algorithm = model.ECDSAWithSHA384
+		case elliptic.P521():
+			hashFunc = bccrypto.SHA512
+			algorithm = model.ECDSAWithSHA512
+		case sm2.P256Sm2():
+			hashFunc = bccrypto.SM3
+			algorithm = model.SM2WithSM3
+		default:
+			return nil, errors.New("x509: unknown elliptic curve")
 		}
 
 	case *rsa.PrivateKey:
 
-		if setAlgo {
-			algorithm = key.PkAlgorithmRSA
-		}
+		hashFunc = bccrypto.SHA256
+		algorithm = model.SHA256WithRSA
 
 	default:
 		return nil, errors.New("unknown publicKey algorithm")
 	}
 
 	// 国密算法哈希摘要在其签名里实现
-	if !isSm2 {
-		h := cryptoHash.New()
+	if hashFunc != bccrypto.SM3 {
+		h := hashFunc.New()
 		h.Write(msg)
 		msg = h.Sum(nil)
 	}
 
-	var signerOpts crypto.SignerOpts = cryptoHash
+	var signerOpts crypto.SignerOpts = hashFunc
 
 	// 对传入的信息进行签名
 	signature, err := privKey.Sign(rand.Reader, msg, signerOpts)

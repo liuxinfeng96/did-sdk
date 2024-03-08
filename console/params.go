@@ -17,7 +17,6 @@ func ParamsEmptyError(params string) error {
 const (
 	ParamsFlagCMSdkPath       = "sdk-path"
 	ParamsFlagAlgorithm       = "algo"
-	ParamsFlagAlgorithms      = "algos"
 	ParamsFlagPkPath          = "pk-path"
 	ParamsFlagPksPath         = "pks-path"
 	ParamsFlagSkPath          = "sk-path"
@@ -58,7 +57,6 @@ var paramsList = map[string]struct {
 }{
 	ParamsFlagCMSdkPath:       {"C", "", "specify the path of ChainMaker's sdk config file"},
 	ParamsFlagAlgorithm:       {"a", "", "specify the public key encryption algorithm. eg. SM2,EC_Secp256k1"},
-	ParamsFlagAlgorithms:      {"A", "", "specify the public key encryption algorithm list. eg. SM2,EC_Secp256k1"},
 	ParamsFlagPkPath:          {"p", "", "specify storage path of public key"},
 	ParamsFlagPksPath:         {"P", "", "specify the storage path of public key list"},
 	ParamsFlagSkPath:          {"s", "", "specify storage path of private key"},

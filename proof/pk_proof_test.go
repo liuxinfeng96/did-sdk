@@ -13,7 +13,7 @@ func TestGenerateProofByKey(t *testing.T) {
 
 	msg := []byte("test_data")
 
-	proof, err := GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1", "EC_Secp256k1", "SHA-256")
+	proof, err := GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1")
 	require.Nil(t, err)
 
 	println(proof)
@@ -23,7 +23,7 @@ func TestGenerateProofByKey(t *testing.T) {
 
 	msg = []byte("test_data")
 
-	proof, err = GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1", "SM2", "SM3")
+	proof, err = GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1")
 	require.Nil(t, err)
 
 	println(proof)
@@ -36,7 +36,7 @@ func TestVerifyPKProof(t *testing.T) {
 
 	msg := []byte("test_data")
 
-	proof, err := GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1", "EC_Secp256k1", "SHA-256")
+	proof, err := GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1")
 	require.Nil(t, err)
 
 	ok, err := VerifyPKProof(msg, keyInfo.PkPEM, proof)
@@ -48,7 +48,7 @@ func TestVerifyPKProof(t *testing.T) {
 
 	msg = []byte("test_data")
 
-	proof, err = GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1", "SM2", "SM3")
+	proof, err = GenerateProofByKey(keyInfo.SkPEM, msg, "did:cmid:gongan1234#keys-1")
 	require.Nil(t, err)
 
 	ok, err = VerifyPKProof(msg, keyInfo.PkPEM, proof)
