@@ -2,6 +2,8 @@ package main
 
 import "errors"
 
+// SetAdmin 设置管理员
+// @params ski 与GetSenderPk()保持一致，采用公钥ski的形式
 func (d *DidContract) SetAdmin(ski string) error {
 	// 必须是合约创建者才能操作
 	ok, err := isSenderCreator()
@@ -21,6 +23,8 @@ func (d *DidContract) SetAdmin(ski string) error {
 	return nil
 }
 
+// SetAdmin 删除管理员
+// @params ski 与GetSenderPk()保持一致，采用公钥ski的形式
 func (d *DidContract) DeleteAdmin(ski string) error {
 	// 必须是合约创建者才能操作
 	ok, err := isSenderCreator()
@@ -40,6 +44,8 @@ func (d *DidContract) DeleteAdmin(ski string) error {
 	return nil
 }
 
+// IsAdmin 判断是否是管理员
+// @params ski 与GetSenderPk()保持一致，采用公钥ski的形式
 func (d *DidContract) IsAdmin(ski string) bool {
 	return d.dal.isAdmin(ski)
 }

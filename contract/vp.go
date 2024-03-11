@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+// VerifyVp 验证vp
+// @params vpJson vp的json字符串
 func (d *DidContract) VerifyVp(vpJson string) (bool, error) {
 
 	vp, err := model.NewVerifiablePresentation(vpJson)
@@ -56,6 +58,7 @@ func (d *DidContract) VerifyVp(vpJson string) (bool, error) {
 
 	signerDid := vp.Proof.VerificationMethod[0:strings.Index(vp.Proof.VerificationMethod, "#")]
 
+	// 判断证明是不是属于持有者
 	if signerDid != vp.Holder {
 		return false, errors.New("the proof that does not belong to the holder")
 	}

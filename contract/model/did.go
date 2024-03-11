@@ -7,8 +7,6 @@ import (
 	"github.com/buger/jsonparser"
 )
 
-const ChainMakerDIDMethod = "cm"
-
 // DidDocument the JSON structure of the DID document
 type DidDocument struct {
 	rawData            json.RawMessage

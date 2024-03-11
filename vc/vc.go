@@ -63,7 +63,7 @@ func IssueVC(skPem, pkPem []byte, keyIndex int, subject map[string]interface{}, 
 	}
 
 	// 验证subject是否符合VC模板规范
-	ok, err = verifyCredentialSubject(subject, vcTemplate)
+	ok, err = verifyCredentialSubject(subject, template.Template)
 	if !ok {
 		return nil, err
 	}

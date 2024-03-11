@@ -50,6 +50,9 @@ func (vc *VerifiableCredential) GetCredentialSubjectID() (string, error) {
 	return v.(string), nil
 }
 
+// VerifiableCredential VC的验证
+// @params pkPem 公钥的PEM编码
+// @params template
 func (vc *VerifiableCredential) Verify(pkPem, template []byte) (bool, error) {
 
 	// Check if the VC type is correct
@@ -139,22 +142,25 @@ type VcTemplateJSONSchema struct {
 
 func (vc *VerifiableCredential) verifyCredentialSubject(vcTemplate []byte) (bool, error) {
 
+	// 将VC中的Subject字段序列化
 	subjectBytes, err := json.Marshal(vc.CredentialSubject)
 	if err != nil {
 		return false, err
 	}
 
+	// 反序列化VC模板
 	var template VcTemplate
 	err = json.Unmarshal(vcTemplate, &template)
 	if err != nil {
 		return false, fmt.Errorf("invalid VC template: [%s]", err.Error())
 	}
 
+	// 判断模板名称与VC中的名称是否一致
 	if template.Name != vc.Template.Name {
 		return false, errors.New("invalid VC template name")
 	}
 
-	schemaLoader := jsonschema.NewBytesLoader(vcTemplate)
+	schemaLoader := jsonschema.NewBytesLoader(template.Template)
 	subjectLoader := jsonschema.NewBytesLoader(subjectBytes)
 
 	result, err := jsonschema.Validate(schemaLoader, subjectLoader)
@@ -174,6 +180,7 @@ func (vc *VerifiableCredential) verifyCredentialSubject(vcTemplate []byte) (bool
 	return false, fmt.Errorf(errMsg)
 }
 
+// VcIssueLog VC签发日志
 type VcIssueLog struct {
 	Issuer     string `json:"issuer"`
 	Did        string `json:"did"`
@@ -182,6 +189,12 @@ type VcIssueLog struct {
 	IssueTime  int64  `json:"issueTime"`
 }
 
+// NewVcIssueLog 新建VC签发日志
+// @params issuer 签发者DID
+// @params did 被签发者DID
+// @params templateId VC模板ID
+// @params vcId VC编号
+// @params issueTime 签发时间
 func NewVcIssueLog(issuer, did, templateId,
 	vcId string, issueTime int64) *VcIssueLog {
 	return &VcIssueLog{

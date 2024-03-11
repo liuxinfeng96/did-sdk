@@ -9,6 +9,7 @@ import (
 )
 
 // VerifyVc 验证VC的有效性
+// @params vcJson vc的json字符串
 func (d *DidContract) VerifyVc(vcJson string) (bool, error) {
 
 	vc, err := model.NewVerifiableCredential(vcJson)
@@ -75,6 +76,7 @@ func (d *DidContract) VerifyVc(vcJson string) (bool, error) {
 }
 
 // RevokeVc 撤销VC
+// @params vcID VC业务编号
 func (d *DidContract) RevokeVc(vcID string) error {
 	// 判断是不是管理员
 	ok, err := isSenderAdmin(d)
@@ -220,6 +222,7 @@ func (d *DidContract) VcIssueLog(issuer, did, templateId, vcId string) error {
 	return d.dal.putVcIssueLog(vcId, v)
 }
 
+// GetVcIssueLogs 获取签发日志列表
 func (d *DidContract) GetVcIssueLogs(vcIdSearch string, start int, count int) (
 	[]*model.VcIssueLog, error) {
 	return d.dal.searchVcIssueLogs(vcIdSearch, start, count)

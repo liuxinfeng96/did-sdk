@@ -104,7 +104,7 @@ func (p *Proof) Verify(msg, pkPem []byte) (bool, error) {
 	return true, nil
 }
 
-// compactJson 压缩json字符串，去掉空格换行等
+// CompactJson 压缩json字符串，去掉空格换行等
 func CompactJson(raw []byte) ([]byte, error) {
 	var buf bytes.Buffer
 	err := json.Compact(&buf, raw)
