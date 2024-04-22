@@ -5,8 +5,8 @@ go 1.19
 require (
 	chainmaker.org/chainmaker/common/v2 v2.3.3
 	chainmaker.org/chainmaker/did-contract v1.0.0
-	chainmaker.org/chainmaker/pb-go/v2 v2.3.3
-	chainmaker.org/chainmaker/sdk-go/v2 v2.3.3
+	chainmaker.org/chainmaker/pb-go/v2 v2.3.4
+	chainmaker.org/chainmaker/sdk-go/v2 v2.3.4
 	github.com/ethereum/go-ethereum v1.9.16
 	github.com/liuxinfeng96/bc-crypto v0.2.19
 	github.com/mr-tron/base58 v1.2.0
@@ -18,8 +18,8 @@ require (
 
 require (
 	chainmaker.org/chainmaker/contract-sdk-go/v2 v2.3.5 // indirect
-	chainmaker.org/chainmaker/protocol/v2 v2.3.3 // indirect
-	chainmaker.org/chainmaker/utils/v2 v2.3.3 // indirect
+	chainmaker.org/chainmaker/protocol/v2 v2.3.4 // indirect
+	chainmaker.org/chainmaker/utils/v2 v2.3.4 // indirect
 	github.com/Rican7/retry v0.1.0 // indirect
 	github.com/StackExchange/wmi v0.0.0-20190523213315-cbe66965904d // indirect
 	github.com/btcsuite/btcd v0.21.0-beta // indirect
