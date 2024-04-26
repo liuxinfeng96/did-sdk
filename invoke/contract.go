@@ -31,7 +31,16 @@ func InvokeContract(contractName, method string,
 		return nil, fmt.Errorf("[%s] send tx failed, err: [%s]", contractAndMethodName, err.Error())
 	}
 
-	if resp.Code != common.TxStatusCode_SUCCESS || resp.ContractResult.Code != 0 {
+	if resp.Code != common.TxStatusCode_SUCCESS {
+		if resp.ContractResult == nil {
+			return nil,
+				fmt.Errorf("[%s] exec contract failed, TxId: [%s], TxStatusCode: [%s], TxMsg: [%s]",
+					contractAndMethodName,
+					resp.TxId,
+					resp.Code.String(),
+					resp.Message)
+		}
+
 		return nil,
 			fmt.Errorf("[%s] exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Result: [%s]",
 				contractAndMethodName,
@@ -61,7 +70,16 @@ func QueryContract(contractName, method string,
 		return nil, fmt.Errorf("[%s] send tx failed, err: [%s]", contractAndMethodName, err.Error())
 	}
 
-	if resp.Code != common.TxStatusCode_SUCCESS || resp.ContractResult.Code != 0 {
+	if resp.Code != common.TxStatusCode_SUCCESS {
+		if resp.ContractResult == nil {
+			return nil,
+				fmt.Errorf("[%s] exec contract failed, TxId: [%s], TxStatusCode: [%s], TxMsg: [%s]",
+					contractAndMethodName,
+					resp.TxId,
+					resp.Code.String(),
+					resp.Message)
+		}
+
 		return nil,
 			fmt.Errorf("[%s] exec contract failed, TxId: [%s], TxStatusCode: [%s], ContractCode: [%d], Result: [%s]",
 				contractAndMethodName,
