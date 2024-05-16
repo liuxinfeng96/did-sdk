@@ -15,10 +15,6 @@ chain_client:
   user_sign_key_file_path: "../testdata/crypto-config/wx-org2.chainmaker.org/user/client1/client1.sign.key"
   # 客户端用户交易签名证书路径(若未设置，将使用user_crt_file_path)
   user_sign_crt_file_path: "../testdata/crypto-config/wx-org2.chainmaker.org/user/client1/client1.sign.crt"
-  # 同步交易结果模式下，轮训获取交易结果时的最大轮训次数，删除此项或设为<=0则使用默认值 10
-  retry_limit: 10
-  # 同步交易结果模式下，每次轮训交易结果时的等待时间，单位：ms 删除此项或设为<=0则使用默认值 500
-  retry_interval: 500
   # 当前签名证书的别名。当设置此配置项时，chain client 对象将自动检查链上是否已添加此别名，如果没有则自动上链此证书别名，
   # 并且后续所有交易都会使用别名，别名可降低交易体大小。若为空则不启用。
 #  alias: my_cert_alias

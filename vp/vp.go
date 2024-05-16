@@ -1,3 +1,10 @@
+/*
+Copyright (C) BABEC. All rights reserved.
+Copyright (C) DCPS. All rights reserved.
+
+SPDX-License-Identifier: Apache-2.0
+*/
+
 package vp
 
 import (
