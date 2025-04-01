@@ -16,15 +16,31 @@ import (
 )
 
 type DidContract struct {
-	didMethod         string
-	dal               *Dal
-	enableTrustIssuer bool
+	dal *Dal
 }
 
-func (d *DidContract) InitDidContract(didMethod string, enableTrustIssuer bool) {
-	d.didMethod = didMethod
-	d.dal = NewDal(didMethod)
-	d.enableTrustIssuer = enableTrustIssuer
+func (d *DidContract) InitDidContract(didMethod string, enableTrustIssuer bool) error {
+	d.dal = NewDal()
+
+	// 需要存储，防止虚拟机重启内存丢失
+	err := d.dal.putDidMethod(didMethod)
+	if err != nil {
+		return err
+	}
+
+	if enableTrustIssuer {
+		err = d.dal.putEnableTrustIssuer("true")
+		if err != nil {
+			return err
+		}
+	} else {
+		err = d.dal.putEnableTrustIssuer("false")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 // InitContract install contract func
@@ -39,7 +55,10 @@ func (d *DidContract) InitContract() protogo.Response {
 		return sdk.Error(err.Error())
 	}
 
-	d.InitDidContract(method, enableTrustIssuer)
+	err = d.InitDidContract(method, enableTrustIssuer)
+	if err != nil {
+		return sdk.Error(err.Error())
+	}
 
 	return sdk.SuccessResponse
 }
@@ -56,7 +75,10 @@ func (d *DidContract) UpgradeContract() protogo.Response {
 		return sdk.Error(err.Error())
 	}
 
-	d.InitDidContract(method, enableTrustIssuer)
+	err = d.InitDidContract(method, enableTrustIssuer)
+	if err != nil {
+		return sdk.Error(err.Error())
+	}
 
 	return sdk.SuccessResponse
 }
@@ -72,7 +94,7 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 
 	switch method {
 	case model.Method_DidMethod:
-		return sdk.Success([]byte(d.DidMethod()))
+		return ReturnString(d.DidMethod())
 	case model.Method_IsValidDid:
 		did, err := RequireString(model.Params_Did)
 		if err != nil {
@@ -231,7 +253,12 @@ func (d *DidContract) InvokeContract(method string) (result protogo.Response) { 
 		return ReturnJson(d.GetVcIssueLogs(string(vcIdSearch), start, count))
 	}
 
-	if d.enableTrustIssuer {
+	enableTrustIssuer, err := d.dal.getEnableTrustIssuer()
+	if err != nil {
+		return sdk.Error(err.Error())
+	}
+
+	if enableTrustIssuer == "true" {
 		switch method {
 		case model.Method_AddTrustIssuer:
 			dids, err := RequireStringList(model.Params_Did, model.Params_DidList)

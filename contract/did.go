@@ -15,13 +15,19 @@ import (
 )
 
 // DidMethod 获取DID Method
-func (d *DidContract) DidMethod() string {
-	return d.didMethod
+func (d *DidContract) DidMethod() (string, error) {
+	return d.dal.getDidMethod()
 }
 
 // IsValidDid 判断DID URL是否合法
 func (d *DidContract) IsValidDid(did string) (bool, error) {
-	didPrefix := "did:" + d.didMethod + ":"
+
+	didMethod, err := d.dal.getDidMethod()
+	if err != nil {
+		return false, err
+	}
+
+	didPrefix := "did:" + didMethod + ":"
 
 	ok := strings.HasPrefix(did, didPrefix)
 	if !ok {

@@ -193,7 +193,8 @@ func isSenderAdmin(d *DidContract) (bool, error) {
 }
 
 func (d *DidContract) isSenderTrustIssuer() bool {
-	if !d.enableTrustIssuer {
+	enableTrustIssuer, _ := d.dal.getEnableTrustIssuer()
+	if enableTrustIssuer != "true" {
 		return true
 	}
 
@@ -215,7 +216,9 @@ func (d *DidContract) isSenderTrustIssuer() bool {
 }
 
 func (d *DidContract) isTrustIssuer(did string) bool {
-	if !d.enableTrustIssuer {
+
+	enableTrustIssuer, _ := d.dal.getEnableTrustIssuer()
+	if enableTrustIssuer != "true" {
 		return true
 	}
 

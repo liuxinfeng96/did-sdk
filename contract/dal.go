@@ -29,6 +29,11 @@ const (
 	keyVcTemplate    = "vt"
 	keyContractAdmin = "admin"
 	keyVcIssueLog    = "l"
+
+	// 合约状态数据，只存出一次，不需要很短的key来节省空间
+	keyContractStatus       = "cs"
+	failedDidMethod         = "didMethod"
+	failedEnableTrustIssuer = "enableTrustIssuer"
 )
 
 const (
@@ -38,18 +43,51 @@ const (
 
 // Dal 数据库访问层
 type Dal struct {
-	didMethod string
 }
 
-func NewDal(didMethod string) *Dal {
-	return &Dal{
-		didMethod: didMethod,
-	}
+func NewDal() *Dal {
+	return &Dal{}
 }
 
 // Db 获取数据库实例
 func (dal *Dal) Db() sdk.SDKInterface {
 	return sdk.Instance
+}
+
+func (dal *Dal) putDidMethod(didMethod string) error {
+	// 将DID Method存入数据库
+	err := dal.Db().PutStateByte(keyContractStatus, failedDidMethod, []byte(didMethod))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dal *Dal) getDidMethod() (string, error) {
+	// 从数据库中获取DID Method
+	didMethod, err := dal.Db().GetStateByte(keyContractStatus, failedDidMethod)
+	if err != nil {
+		return "", err
+	}
+	return string(didMethod), nil
+}
+
+func (dal *Dal) putEnableTrustIssuer(enableTrustIssuer string) error {
+	// 将EnableTrustIssuer 存入数据库
+	err := dal.Db().PutStateByte(keyContractStatus, failedEnableTrustIssuer, []byte(enableTrustIssuer))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (dal *Dal) getEnableTrustIssuer() (string, error) {
+	// 从数据库中获取 EnableTrustIssuer
+	enableTrustIssuer, err := dal.Db().GetStateByte(keyContractStatus, failedEnableTrustIssuer)
+	if err != nil {
+		return "", err
+	}
+	return string(enableTrustIssuer), nil
 }
 
 func (dal *Dal) putAdmin(ski string) error {
@@ -466,7 +504,8 @@ func (dal *Dal) searchVcIssueLogs(searchVcId string, start, count int) ([]*model
 }
 
 func (dal *Dal) didToDbKey(did string) string {
-	didPrefix := "did:" + dal.didMethod + ":"
+	didMethod, _ := dal.getDidMethod()
+	didPrefix := "did:" + didMethod + ":"
 	return strings.TrimPrefix(did, didPrefix)
 }
 
